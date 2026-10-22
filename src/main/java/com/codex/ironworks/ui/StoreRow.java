@@ -8,8 +8,6 @@ import com.codex.ironworks.core.Tally;
 import com.codex.ironworks.core.Use;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
@@ -49,8 +47,8 @@ class StoreRow extends Card
 			+ Ui.escape(Words.pace(s.runway)) + (open ? "" : "<br>Click for where it came from") + "</html>");
 	}
 
-	/** The row itself, painted. */
-	private static final class Head extends JComponent
+	/** The row itself, painted; a long name or pace wraps and the row grows to fit. */
+	private static final class Head extends Fitted
 	{
 		private final View.StoreView s;
 		private final View view;
@@ -61,8 +59,55 @@ class StoreRow extends Card
 			this.s = s;
 			this.view = view;
 			this.icons = icons;
-			setOpaque(false);
-			setPreferredSize(new Dimension(10, HEAD));
+		}
+
+		/** Paints the text and groove, or with no graphics only measures them; returns the height used. */
+		private int lay(Graphics2D g, int w)
+		{
+			Runway r = s.runway;
+			Color color = Palette.of(r.status);
+			int x = Well.SIZE + 10;
+			int room = w - x;
+			String figure = Words.runway(r);
+			int fw = getFontMetrics(Theme.title()).stringWidth(figure);
+			List<String> name = Ui.wrap(s.store, getFontMetrics(Theme.body()), room - fw - 6);
+			List<String> pace = Ui.wrap(Words.pace(r), getFontMetrics(Theme.small()), room);
+			int groove = 21 + (name.size() - 1) * 13;
+			int last = groove + 15 + (pace.size() - 1) * 11;
+			if (g == null)
+			{
+				return last + 4;
+			}
+			g.setFont(Theme.title());
+			Ui.shadowed(g, figure, w - fw, 15, color);
+			g.setFont(Theme.body());
+			for (int i = 0; i < name.size(); i++)
+			{
+				Ui.shadowed(g, name.get(i), x, 15 + i * 13, Theme.TEXT);
+			}
+
+			// The runway against the one wanted; idle and unknown stores get an empty groove.
+			double fill = r.status == Runway.Status.IDLE || r.status == Runway.Status.LEARNING ? 0
+				: r.status == Runway.Status.STEADY ? 1 : Math.min(1, r.hours / Math.max(1, view.target));
+			g.setColor(Theme.INK_DEEP);
+			g.fill(new RoundRectangle2D.Float(x, groove, room, 3, 3, 3));
+			if (fill > 0)
+			{
+				g.setColor(color);
+				g.fill(new RoundRectangle2D.Float(x, groove, Math.max(3, (float) (room * fill)), 3, 3, 3));
+			}
+			g.setFont(Theme.small());
+			for (int i = 0; i < pace.size(); i++)
+			{
+				Ui.shadowed(g, pace.get(i), x, groove + 15 + i * 11, Theme.TEXT_MUTED);
+			}
+			return last + 4;
+		}
+
+		@Override
+		int heightFor(int width)
+		{
+			return Math.max(HEAD, lay(null, width));
 		}
 
 		@Override
@@ -70,40 +115,12 @@ class StoreRow extends Card
 		{
 			Graphics2D g = (Graphics2D) graphics.create();
 			Theme.smooth(g);
-			int w = getWidth();
 			Runway r = s.runway;
-			Color color = Palette.of(r.status);
 			BufferedImage icon = icons == null || s.icon < 0 ? null : icons.icon(s.icon, this::repaint);
-			Well.paint(g, 0, 4, icon, r.wanting() ? Theme.alpha(color, 160) : null);
+			Well.paint(g, 0, 4, icon, r.wanting() ? Theme.alpha(Palette.of(r.status), 160) : null);
 			g.setFont(Theme.small());
-			String stack = Format.stack(s.stock);
-			Ui.shadowed(g, stack, 2, 13, s.stock <= 0 ? Theme.BLOOD : Format.stackColor(s.stock));
-
-			int x = Well.SIZE + 10;
-			int room = w - x;
-			g.setFont(Theme.title());
-			FontMetrics bold = g.getFontMetrics();
-			String figure = Words.runway(r);
-			int fw = bold.stringWidth(figure);
-			Ui.shadowed(g, figure, w - fw, 15, color);
-			g.setFont(Theme.body());
-			FontMetrics body = g.getFontMetrics();
-			Ui.shadowed(g, Ui.clip(s.store, body, room - fw - 6), x, 15, Theme.TEXT);
-
-			// The runway against the one wanted; idle and unknown stores get an empty groove.
-			double fill = r.status == Runway.Status.IDLE || r.status == Runway.Status.LEARNING ? 0
-				: r.status == Runway.Status.STEADY ? 1 : Math.min(1, r.hours / Math.max(1, view.target));
-			RoundRectangle2D groove = new RoundRectangle2D.Float(x, 21, room, 3, 3, 3);
-			g.setColor(Theme.INK_DEEP);
-			g.fill(groove);
-			if (fill > 0)
-			{
-				g.setColor(color);
-				g.fill(new RoundRectangle2D.Float(x, 21, Math.max(3, (float) (room * fill)), 3, 3, 3));
-			}
-			g.setFont(Theme.small());
-			FontMetrics small = g.getFontMetrics();
-			Ui.shadowed(g, Ui.clip(Words.pace(r), small, room), x, 36, Theme.TEXT_MUTED);
+			Ui.shadowed(g, Format.stack(s.stock), 2, 13, s.stock <= 0 ? Theme.BLOOD : Format.stackColor(s.stock));
+			lay(g, getWidth());
 			g.dispose();
 		}
 	}

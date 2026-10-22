@@ -702,7 +702,7 @@ public class IronworksPanel extends PluginPanel
 				Color tint = w.open ? Palette.of(w.kind.getSource()) : Theme.TEXT_FAINT;
 				String figure = w.perHour > 0 ? Words.rate(w.perHour) + "/h"
 					: !w.open && w.skill != null ? Ui.skill(w.skill) + " " + w.level : null;
-				in.add(new Wrapped(w.text, figure, tint, w.open ? Theme.TEXT : Theme.TEXT_FAINT, w.perHour > 0 ? Theme.TEAL : Theme.TEXT_FAINT));
+				in.add(new Line(w.text, figure, tint, w.open ? Theme.TEXT : Theme.TEXT_FAINT, w.perHour > 0 ? Theme.TEAL : Theme.TEXT_FAINT));
 			}
 			card.add(in, BorderLayout.CENTER);
 			p.add(card);
@@ -866,7 +866,7 @@ public class IronworksPanel extends PluginPanel
 		in.add(new IconLine(f.icon, f.name, Format.amount(f.total) + (f.doses ? " doses" : ""), icons, Theme.TEXT, Theme.GOLD));
 		List<String> where = new ArrayList<>();
 		f.where.forEach((spot, n) -> where.add(spot.getLabel() + " " + Format.amount(n)));
-		in.add(new Wrapped(String.join(" · ", where), null, null, Theme.TEXT_MUTED, Theme.TEXT_MUTED));
+		in.add(new Line(String.join(" · ", where), null, null, Theme.TEXT_MUTED, Theme.TEXT_MUTED));
 		card.add(in, BorderLayout.CENTER);
 		return card;
 	}
@@ -879,7 +879,7 @@ public class IronworksPanel extends PluginPanel
 		StackPanel in = new StackPanel(2, 0);
 		boolean grave = d.graveLeft > 0;
 		in.add(new Line(grave ? "At your grave" : "At Death's Office", d.worth > 0 ? Format.coins(d.worth) : null, Theme.BLOOD, Theme.TEXT, Theme.EMBER));
-		in.add(new Wrapped(grave ? Format.estimate(d.graveLeft) + " of play left, world " + d.world
+		in.add(new Line(grave ? Format.estimate(d.graveLeft) + " of play left, world " + d.world
 			: "Reclaim it before you die again, or it is lost", null, null, grave ? Theme.EMBER : Theme.TEXT_MUTED, null));
 		in.add(wells(d.items));
 		if (d.items.size() > 4)
@@ -937,7 +937,7 @@ public class IronworksPanel extends PluginPanel
 	}
 
 	/** A large figure with a quiet line beside it. */
-	private static final class Figure extends JComponent
+	private static final class Figure extends Fitted
 	{
 		private final String figure;
 		private final String label;
@@ -948,8 +948,19 @@ public class IronworksPanel extends PluginPanel
 			this.figure = figure;
 			this.label = label;
 			this.tint = tint;
-			setOpaque(false);
-			setPreferredSize(new Dimension(10, 34));
+			setFont(Theme.small());
+		}
+
+		private int figureWidth()
+		{
+			return Crest.largeWidth(this, figure);
+		}
+
+		@Override
+		int heightFor(int width)
+		{
+			int n = Ui.wrap(label, getFontMetrics(getFont()), width - figureWidth() - 6).size();
+			return Math.max(34, 12 + n * 13);
 		}
 
 		@Override
@@ -958,15 +969,19 @@ public class IronworksPanel extends PluginPanel
 			Graphics2D g = (Graphics2D) graphics.create();
 			Theme.smooth(g);
 			int fw = Crest.paintLarge(g, figure, 0, 2, tint);
-			g.setFont(Theme.small());
-			FontMetrics fm = g.getFontMetrics();
-			Ui.shadowed(g, Ui.clip(label, fm, getWidth() - fw - 6), fw + 6, 22, Theme.TEXT_MUTED);
+			g.setFont(getFont());
+			List<String> rows = Ui.wrap(label, g.getFontMetrics(), getWidth() - fw - 6);
+			int y = rows.size() == 1 ? 22 : 22 - 13 * (rows.size() - 1) / 2;
+			for (int i = 0; i < rows.size(); i++)
+			{
+				Ui.shadowed(g, rows.get(i), fw + 6, y + i * 13, Theme.TEXT_MUTED);
+			}
 			g.dispose();
 		}
 	}
 
-	/** A label, a share and a thin bar of it. */
-	private static final class Meter extends JComponent
+	/** A label, a share and a thin bar of it; a long label wraps above the bar. */
+	private static final class Meter extends Fitted
 	{
 		private final String label;
 		private final String figure;
@@ -979,8 +994,18 @@ public class IronworksPanel extends PluginPanel
 			this.figure = figure;
 			this.share = share;
 			this.color = color;
-			setOpaque(false);
-			setPreferredSize(new Dimension(10, 20));
+			setFont(Theme.small());
+		}
+
+		private List<String> rows(FontMetrics fm, int width)
+		{
+			return Ui.wrap(label, fm, width - fm.stringWidth(figure) - 6);
+		}
+
+		@Override
+		int heightFor(int width)
+		{
+			return 7 + rows(getFontMetrics(getFont()), width).size() * 13;
 		}
 
 		@Override
@@ -988,91 +1013,29 @@ public class IronworksPanel extends PluginPanel
 		{
 			Graphics2D g = (Graphics2D) graphics.create();
 			Theme.smooth(g);
-			g.setFont(Theme.small());
+			g.setFont(getFont());
 			FontMetrics fm = g.getFontMetrics();
 			int w = getWidth();
+			List<String> rows = rows(fm, w);
 			Ui.shadowed(g, figure, w - fm.stringWidth(figure), 11, Theme.TEXT_MUTED);
-			Ui.shadowed(g, Ui.clip(label, fm, w - fm.stringWidth(figure) - 6), 0, 11, Theme.TEXT);
-			g.setColor(Theme.INK_DEEP);
-			g.fillRoundRect(0, 15, w, 3, 3, 3);
-			g.setColor(color);
-			g.fillRoundRect(0, 15, Math.max(3, (int) Math.round(w * share)), 3, 3, 3);
-			g.dispose();
-		}
-	}
-
-	/** A line like {@link Line} whose label wraps onto further lines rather than being cut short. */
-	private static final class Wrapped extends JComponent
-	{
-		private static final int ROW = 13;
-		private final List<String> rows = new ArrayList<>();
-		private final String figure;
-		private final Color dot;
-		private final Color labelColor;
-		private final Color figureColor;
-
-		Wrapped(String label, String figure, Color dot, Color labelColor, Color figureColor)
-		{
-			this.figure = figure;
-			this.dot = dot;
-			this.labelColor = labelColor;
-			this.figureColor = figureColor;
-			setOpaque(false);
-			FontMetrics fm = getFontMetrics(Theme.small());
-			int room = IronworksPanel.WIDTH - 26 - (dot != null ? 11 : 0) - (figure == null ? 0 : fm.stringWidth(figure) + 6);
-			StringBuilder row = new StringBuilder();
-			for (String word : label.split(" "))
-			{
-				String next = row.length() == 0 ? word : row + " " + word;
-				if (fm.stringWidth(next) > room && row.length() > 0)
-				{
-					rows.add(row.toString());
-					row = new StringBuilder(word);
-				}
-				else
-				{
-					row = new StringBuilder(next);
-				}
-			}
-			if (row.length() > 0)
-			{
-				rows.add(row.toString());
-			}
-			setPreferredSize(new Dimension(10, Math.max(15, rows.size() * ROW + 2)));
-			setToolTipText(label);
-		}
-
-		@Override
-		protected void paintComponent(Graphics graphics)
-		{
-			Graphics2D g = (Graphics2D) graphics.create();
-			Theme.smooth(g);
-			g.setFont(Theme.small());
-			FontMetrics fm = g.getFontMetrics();
-			int x = 0;
-			int base = fm.getAscent();
-			if (dot != null)
-			{
-				g.setColor(dot);
-				g.fill(new java.awt.geom.Ellipse2D.Float(1, base / 2f - 2, 6, 6));
-				x = 11;
-			}
-			if (figure != null)
-			{
-				Ui.shadowed(g, figure, getWidth() - fm.stringWidth(figure), base, figureColor);
-			}
 			for (int i = 0; i < rows.size(); i++)
 			{
-				Ui.shadowed(g, rows.get(i), x, base + i * ROW, labelColor);
+				Ui.shadowed(g, rows.get(i), 0, 11 + i * 13, Theme.TEXT);
 			}
+			int bar = 2 + rows.size() * 13;
+			g.setColor(Theme.INK_DEEP);
+			g.fillRoundRect(0, bar, w, 3, 3, 3);
+			g.setColor(color);
+			g.fillRoundRect(0, bar, Math.max(3, (int) Math.round(w * share)), 3, 3, 3);
 			g.dispose();
 		}
 	}
 
-	/** A small item picture, a label and a figure on one line. */
-	private static final class IconLine extends JComponent
+	/** A small item picture, a label and a figure; a long label wraps beside the picture. */
+	private static final class IconLine extends Fitted
 	{
 		private static final int ICON = 18;
+		private static final int ROW = 13;
 		private final int item;
 		private final String label;
 		private final String figure;
@@ -1088,9 +1051,21 @@ public class IronworksPanel extends PluginPanel
 			this.icons = icons;
 			this.labelColor = labelColor;
 			this.figureColor = figureColor;
-			setOpaque(false);
-			setPreferredSize(new Dimension(10, ICON + 2));
+			setFont(Theme.small());
 			setToolTipText(figure == null ? label : label + ": " + figure);
+		}
+
+		private List<String> rows(FontMetrics fm, int width)
+		{
+			int fw = figure == null ? 0 : fm.stringWidth(figure) + 6;
+			return Ui.wrap(label, fm, width - ICON - 5 - fw);
+		}
+
+		@Override
+		int heightFor(int width)
+		{
+			int n = rows(getFontMetrics(getFont()), width).size();
+			return Math.max(ICON + 2, n * ROW + 6);
 		}
 
 		@Override
@@ -1107,16 +1082,19 @@ public class IronworksPanel extends PluginPanel
 				g.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 				g.drawImage(icon, (ICON - w) / 2, (ICON - h) / 2 + 1, w, h, null);
 			}
-			g.setFont(Theme.small());
+			g.setFont(getFont());
 			FontMetrics fm = g.getFontMetrics();
 			int x = ICON + 5;
-			int fw = figure == null ? 0 : fm.stringWidth(figure);
-			int base = (getHeight() + fm.getAscent()) / 2 - 1;
+			List<String> rows = rows(fm, getWidth());
+			int base = rows.size() == 1 ? (getHeight() + fm.getAscent()) / 2 - 1 : 3 + fm.getAscent();
 			if (figure != null)
 			{
-				Ui.shadowed(g, figure, getWidth() - fw, base, figureColor);
+				Ui.shadowed(g, figure, getWidth() - fm.stringWidth(figure), base, figureColor);
 			}
-			Ui.shadowed(g, Ui.clip(label, fm, getWidth() - x - fw - 6), x, base, labelColor);
+			for (int i = 0; i < rows.size(); i++)
+			{
+				Ui.shadowed(g, rows.get(i), x, base + i * ROW, labelColor);
+			}
 			g.dispose();
 		}
 	}
