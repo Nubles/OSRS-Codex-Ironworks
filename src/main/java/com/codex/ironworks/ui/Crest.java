@@ -70,6 +70,12 @@ public class Crest extends JComponent
 	 *
 	 * @return the width drawn
 	 */
+	/** How wide {@link #paintLarge} draws the text. */
+	static int largeWidth(java.awt.Component c, String text)
+	{
+		return 2 * Math.max(1, c.getFontMetrics(Theme.title()).stringWidth(text) + 1);
+	}
+
 	static int paintLarge(Graphics2D g, String text, int x, int y, Color tint)
 	{
 		Font font = Theme.title();

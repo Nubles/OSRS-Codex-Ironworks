@@ -4,12 +4,10 @@ import com.codex.ironworks.core.Catalogue;
 import com.codex.ironworks.core.Runway;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
 /** A store on the shopping list: how much is needed, and where it was bought or how it is made. */
@@ -56,7 +54,7 @@ class WantRow extends Card
 		return null;
 	}
 
-	private static final class Head extends JComponent
+	private static final class Head extends Fitted
 	{
 		private final View.Want w;
 		private final ItemIcons icons;
@@ -65,8 +63,80 @@ class WantRow extends Card
 		{
 			this.w = w;
 			this.icons = icons;
-			setOpaque(false);
-			setPreferredSize(new Dimension(10, 40 + (w.shop != null ? 11 : 0) + (extra(w) != null ? 11 : 0)));
+		}
+
+		private String figure()
+		{
+			return "+" + Format.amount(w.need);
+		}
+
+		/** The smaller lines under the name, each with its colour. */
+		private Object[][] lines()
+		{
+			Color color = Palette.of(w.status);
+			String when = w.status == Runway.Status.OUT ? "Out now" : "Lasts " + Format.estimate((long) (w.hours * 3_600_000));
+			String extra = extra(w);
+			return new Object[][]{
+				{when, color},
+				{how(w), Theme.TEXT_MUTED},
+				{w.shop == null ? null : "at " + w.shop, Theme.TEXT_FAINT},
+				{extra, Theme.TEAL},
+			};
+		}
+
+		/** Paints the text, or with no graphics only measures it; returns the height used. */
+		private int lay(Graphics2D g, int width)
+		{
+			int x = Well.SIZE + 10;
+			int room = width - x;
+			FontMetrics bold = getFontMetrics(Theme.title());
+			FontMetrics body = getFontMetrics(Theme.body());
+			FontMetrics small = getFontMetrics(Theme.small());
+			String figure = figure();
+			int fw = bold.stringWidth(figure);
+			int y = 15;
+			java.util.List<String> name = Ui.wrap(w.store, body, room - fw - 6);
+			if (g != null)
+			{
+				g.setFont(Theme.title());
+				Ui.shadowed(g, figure, width - fw, 15, Palette.of(w.status));
+				g.setFont(Theme.body());
+			}
+			for (String row : name)
+			{
+				if (g != null)
+				{
+					Ui.shadowed(g, row, x, y, Theme.TEXT);
+				}
+				y += 13;
+			}
+			y -= 2;
+			if (g != null)
+			{
+				g.setFont(Theme.small());
+			}
+			for (Object[] line : lines())
+			{
+				if (line[0] == null)
+				{
+					continue;
+				}
+				for (String row : Ui.wrap((String) line[0], small, room))
+				{
+					if (g != null)
+					{
+						Ui.shadowed(g, row, x, y, (Color) line[1]);
+					}
+					y += 11;
+				}
+			}
+			return y - 8;
+		}
+
+		@Override
+		int heightFor(int width)
+		{
+			return Math.max(40, lay(null, width));
 		}
 
 		@Override
@@ -74,35 +144,9 @@ class WantRow extends Card
 		{
 			Graphics2D g = (Graphics2D) graphics.create();
 			Theme.smooth(g);
-			int width = getWidth();
-			Color color = Palette.of(w.status);
 			BufferedImage icon = icons == null || w.icon < 0 ? null : icons.icon(w.icon, this::repaint);
-			Well.paint(g, 0, 4, icon, Theme.alpha(color, 160));
-			int x = Well.SIZE + 10;
-			int room = width - x;
-			g.setFont(Theme.title());
-			FontMetrics bold = g.getFontMetrics();
-			String figure = "+" + Format.amount(w.need);
-			int fw = bold.stringWidth(figure);
-			Ui.shadowed(g, figure, width - fw, 15, color);
-			g.setFont(Theme.body());
-			Ui.shadowed(g, Ui.clip(w.store, g.getFontMetrics(), room - fw - 6), x, 15, Theme.TEXT);
-			g.setFont(Theme.small());
-			FontMetrics small = g.getFontMetrics();
-			String when = w.status == Runway.Status.OUT ? "Out now" : "Lasts " + Format.estimate((long) (w.hours * 3_600_000));
-			Ui.shadowed(g, Ui.clip(when, small, room), x, 26, color);
-			Ui.shadowed(g, Ui.clip(how(w), small, room), x, 37, Theme.TEXT_MUTED);
-			int y = 48;
-			if (w.shop != null)
-			{
-				Ui.shadowed(g, Ui.clip("at " + w.shop, small, room), x, y, Theme.TEXT_FAINT);
-				y += 11;
-			}
-			String extra = extra(w);
-			if (extra != null)
-			{
-				Ui.shadowed(g, Ui.clip(extra, small, room), x, y, Theme.TEAL);
-			}
+			Well.paint(g, 0, 4, icon, Theme.alpha(Palette.of(w.status), 160));
+			lay(g, getWidth());
 			g.dispose();
 		}
 	}
