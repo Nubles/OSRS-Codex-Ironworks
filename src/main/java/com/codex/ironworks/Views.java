@@ -1,14 +1,25 @@
 package com.codex.ironworks;
 
+import com.codex.ironworks.core.Altar;
 import com.codex.ironworks.core.Catalogue;
+import com.codex.ironworks.core.Death;
+import com.codex.ironworks.core.Holding;
+import com.codex.ironworks.core.Price;
+import com.codex.ironworks.core.Rate;
+import com.codex.ironworks.core.Recipe;
+import com.codex.ironworks.core.Recipes;
 import com.codex.ironworks.core.Family;
 import com.codex.ironworks.core.Place;
 import com.codex.ironworks.core.Run;
 import com.codex.ironworks.core.Runway;
 import com.codex.ironworks.core.Shop;
+import com.codex.ironworks.core.Source;
+import com.codex.ironworks.core.Spot;
 import com.codex.ironworks.core.Summary;
 import com.codex.ironworks.core.Ware;
+import com.codex.ironworks.core.Ways;
 import com.codex.ironworks.core.Window;
+import com.codex.ironworks.core.Workshop;
 import com.codex.ironworks.core.Works;
 import com.codex.ironworks.ui.View;
 import java.time.LocalDate;
@@ -20,7 +31,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.ToDoubleFunction;
+import java.util.function.ToLongFunction;
+import net.runelite.api.Skill;
 
 /** Works out everything the panel shows from the saved works, on the client thread, as a copy the panel can keep. */
 final class Views
@@ -51,11 +65,24 @@ final class Views
 		return m == null ? 1 : m.units;
 	}
 
-	/**
-	 * @param unitWorth what one unit of a store is worth, such as one dose of a potion
-	 */
+	/** Share a shop's price may climb by before it is cheaper to hop worlds. */
+	static final double HOP_SHARE = 0.1;
+
 	static View build(Works works, Catalogue.Lookup lookup, double target, double warn, long now, LocalDate today,
 		ToDoubleFunction<String> unitWorth)
+	{
+		return build(works, lookup, target, warn, now, today, unitWorth, Collections.emptyMap(), Collections.emptyMap(),
+			Altar.GILDED, id -> 0);
+	}
+
+	/**
+	 * @param unitWorth what one unit of a store is worth, such as one dose of a potion
+	 * @param levels the player's levels, empty when not known
+	 * @param priceOf what one of an item is worth, by item id
+	 */
+	static View build(Works works, Catalogue.Lookup lookup, double target, double warn, long now, LocalDate today,
+		ToDoubleFunction<String> unitWorth, Map<Skill, Integer> levels, Map<Skill, Integer> xp, Altar altar,
+		ToLongFunction<Integer> priceOf)
 	{
 		View v = new View();
 		v.now = now;
@@ -100,6 +127,12 @@ final class Views
 				wv.coins = w.getSpent().getOrDefault("Coins", 0L);
 				wv.restockMs = w.getRestockMs();
 				wv.refillMs = w.refillMs();
+				Price price = w.price();
+				if (price != null)
+				{
+					wv.price = price.first;
+					wv.climb = price.climb;
+				}
 				List<View.WorldView> worlds = new ArrayList<>();
 				w.getWorlds().forEach((world, seen) ->
 				{
@@ -174,7 +207,7 @@ final class Views
 			stores.add(sv);
 			if (sv.runway.wanting() && !Catalogue.money(store))
 			{
-				wants.add(want(sv, v.shops));
+				wants.add(want(sv, v.shops, works, levels));
 			}
 		}
 		stores.sort((a, b) -> a.family != b.family ? a.family.compareTo(b.family)
@@ -184,6 +217,12 @@ final class Views
 		v.stores = stores;
 		v.wants = wants;
 		v.icons = icons;
+		Map<String, View.StoreView> byStore = new HashMap<>();
+		for (View.StoreView sv : stores)
+		{
+			byStore.put(sv.store, sv);
+		}
+		v.byStore = byStore;
 
 		List<View.RunView> runs = new ArrayList<>();
 		List<Run> list = works.getRuns();
@@ -207,11 +246,162 @@ final class Views
 			runs.add(rv);
 		}
 		v.runs = runs;
+
+		v.levels = levels;
+		v.xp = xp;
+		v.altar = altar;
+		v.workshop = Workshop.plan(stocks, lookup, levels, altar);
+		Map<String, View.Getting> getting = new HashMap<>();
+		for (View.StoreView sv : stores)
+		{
+			if (!Catalogue.money(sv.store))
+			{
+				getting.put(sv.store, getting(sv.store, sv.icon, works, lookup, levels));
+			}
+		}
+		v.getting = getting;
+		long listCoins = 0;
+		for (View.Want w : wants)
+		{
+			listCoins += w.coins;
+		}
+		v.listCoins = listCoins;
+		v.coins = stocks.getOrDefault("Coins", 0L);
+		found(v, works, lookup, priceOf, now);
 		return v;
 	}
 
+	/** Everything owned, wherever kept, and the places themselves, and the last death. */
+	private static void found(View v, Works works, Catalogue.Lookup lookup, ToLongFunction<Integer> priceOf, long now)
+	{
+		Map<String, View.Found> byName = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+		List<View.SpotView> spots = new ArrayList<>();
+		for (Spot spot : Spot.values())
+		{
+			Holding h = works.holding(spot);
+			if (h == null)
+			{
+				continue;
+			}
+			View.SpotView sv = new View.SpotView();
+			sv.spot = spot;
+			sv.at = h.getAt();
+			sv.kinds = h.getItems().size();
+			List<long[]> valued = new ArrayList<>();
+			for (Map.Entry<Integer, Long> e : h.getItems().entrySet())
+			{
+				int id = e.getKey();
+				long qty = e.getValue();
+				String name = works.itemName(id);
+				if (name == null)
+				{
+					continue;
+				}
+				long each = priceOf.applyAsLong(id);
+				sv.worth += each * qty;
+				valued.add(new long[]{id, qty, each * qty});
+				Catalogue.Match m = lookup.match(name);
+				boolean potion = m != null && m.family == Family.POTIONS;
+				// Potion storage holds one-dose potions counted in doses; other places hold whole potions.
+				long units = potion && spot != Spot.POTION_STORAGE ? qty * m.units : qty;
+				String key = potion ? m.store : name;
+				View.Found f = byName.get(key);
+				if (f == null)
+				{
+					f = new View.Found();
+					f.name = key;
+					f.doses = potion;
+					f.store = m == null ? null : m.store;
+					f.where = new EnumMap<>(Spot.class);
+					byName.put(key, f);
+				}
+				if (f.icon < 0 || potion && m.model)
+				{
+					f.icon = id;
+				}
+				f.total += units;
+				f.where.merge(spot, units, Long::sum);
+			}
+			valued.sort((a, b) -> Long.compare(b[2], a[2]));
+			sv.top = new ArrayList<>(valued.subList(0, Math.min(4, valued.size())));
+			spots.add(sv);
+		}
+		v.found = new ArrayList<>(byName.values());
+		v.spots = spots;
+		Death d = works.getDeath();
+		if (d != null)
+		{
+			View.DeathView dv = new View.DeathView();
+			dv.at = d.getAt();
+			dv.world = d.getWorld();
+			dv.graveLeft = d.graveLeft(works.getPlayed());
+			List<long[]> items = new ArrayList<>();
+			for (Map.Entry<Integer, Long> e : d.getItems().entrySet())
+			{
+				long worth = priceOf.applyAsLong(e.getKey()) * e.getValue();
+				dv.worth += worth;
+				items.add(new long[]{e.getKey(), e.getValue(), worth});
+			}
+			items.sort((a, b) -> Long.compare(b[2], a[2]));
+			dv.items = items;
+			List<String> names = new ArrayList<>();
+			for (long[] it : items)
+			{
+				String n = works.itemName((int) it[0]);
+				names.add(n == null ? "?" : n);
+			}
+			dv.names = names;
+			v.death = dv;
+		}
+	}
+
+	/** The ways to get more of a store: the player's own paces first, then what they have the levels for. */
+	static View.Getting getting(String store, int icon, Works works, Catalogue.Lookup lookup, Map<Skill, Integer> levels)
+	{
+		View.Getting g = new View.Getting();
+		g.store = store;
+		g.icon = icon;
+		List<View.WayView> ways = new ArrayList<>();
+		for (Ways.Way w : Ways.of(store))
+		{
+			View.WayView wv = new View.WayView();
+			wv.kind = w.kind;
+			wv.text = w.text;
+			wv.skill = w.skill;
+			wv.level = w.level;
+			wv.open = w.skill == null || levels.getOrDefault(w.skill, 99) >= w.level;
+			Rate r = works.rate(store, w.kind.getSource());
+			wv.perHour = r == null ? 0 : r.perHour();
+			ways.add(wv);
+		}
+		for (Recipe r : Recipes.all())
+		{
+			Catalogue.Match m = r.count > 0 ? lookup.match(r.product) : null;
+			if (m == null || !m.store.equals(store))
+			{
+				continue;
+			}
+			View.WayView wv = new View.WayView();
+			wv.kind = Ways.Kind.MAKE;
+			List<String> in = new ArrayList<>();
+			r.inputs.forEach((k, q) -> in.add(q > 1 ? q + " " + k.toLowerCase(java.util.Locale.ENGLISH) : k.toLowerCase(java.util.Locale.ENGLISH)));
+			wv.text = "Make it from " + String.join(" and ", in);
+			wv.skill = r.skill;
+			wv.level = r.level;
+			wv.open = levels.getOrDefault(r.skill, 99) >= r.level;
+			Rate rate = works.rate(store, Source.MADE);
+			wv.perHour = rate == null ? 0 : rate.perHour();
+			ways.add(wv);
+		}
+		// Ways the player has a pace for come first, fastest first; then the open ones; locked ones last.
+		ways.sort((a, b) -> a.perHour > 0 || b.perHour > 0 ? Double.compare(b.perHour, a.perHour)
+			: Boolean.compare(b.open, a.open));
+		g.ways = ways;
+		return g;
+	}
+
 	/** A store short of its runway, with the shop it was bought at, or the skill it is made with. */
-	private static View.Want want(View.StoreView sv, List<View.ShopView> shops)
+	private static View.Want want(View.StoreView sv, List<View.ShopView> shops, Works works, Map<Skill, Integer> levels)
 	{
 		View.Want w = new View.Want();
 		w.store = sv.store;
@@ -240,6 +430,13 @@ final class Views
 			w.units = best.units;
 			w.base = best.base;
 			w.refillMs = best.refillMs;
+			if (best.price > 0)
+			{
+				Price p = new Price(best.price, best.climb, best.base);
+				long items = (w.need + w.units - 1) / Math.max(1, w.units);
+				w.coins = p.costHopping(items, HOP_SHARE);
+				w.perWorld = p.perWorld(HOP_SHARE);
+			}
 		}
 		else
 		{
@@ -255,6 +452,17 @@ final class Views
 			}
 			w.skill = skill;
 		}
+		double fastest = 0;
+		for (Source src : new Source[]{Source.GATHERED, Source.FARMED, Source.MADE, Source.LOOTED})
+		{
+			Rate r = works.rate(sv.store, src);
+			if (r != null && r.perHour() > fastest)
+			{
+				fastest = r.perHour();
+				w.how = src.getLabel().toLowerCase(java.util.Locale.ENGLISH);
+			}
+		}
+		w.perHour = fastest;
 		return w;
 	}
 

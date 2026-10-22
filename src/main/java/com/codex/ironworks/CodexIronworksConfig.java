@@ -1,5 +1,6 @@
 package com.codex.ironworks;
 
+import com.codex.ironworks.core.Altar;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -65,6 +66,39 @@ public interface CodexIronworksConfig extends Config
 	default boolean shopPlaque()
 	{
 		return true;
+	}
+
+	@ConfigItem(
+		keyName = "itemTips",
+		name = "Item tooltips",
+		description = "Hover an item in your inventory or bank to see how long its store lasts and what it makes",
+		position = 4
+	)
+	default boolean itemTips()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "othersLoot",
+		name = "Others' loot last",
+		description = "On an ironman, put Take below Walk here for ground items that belong to another player",
+		position = 5
+	)
+	default boolean othersLoot()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "altar",
+		name = "Bones go to",
+		description = "Where you offer bones, which sets the Prayer experience the Workshop counts for them",
+		position = 6
+	)
+	default Altar altar()
+	{
+		return Altar.GILDED;
 	}
 
 	@ConfigItem(

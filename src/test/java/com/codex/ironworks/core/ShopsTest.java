@@ -16,7 +16,7 @@ public class ShopsTest
 		Shop shop = w.visit("Gerrant's Fishy Business", 12082, 302, 0);
 		w.stock(shop, 11881, "Feather pack", 302, 10, 0);
 		w.stock(shop, 11881, "Feather pack", 302, 0, 5_000);
-		w.purchase(shop, 11881, "Feather pack", 10, Collections.singletonMap("Coins", 20_000L), 5_000);
+		w.purchase(shop, 11881, "Feather pack", 10, Collections.singletonMap("Coins", 20_000L), 301, 5_000);
 		// Five back a minute later, still short of ten: one every twelve seconds.
 		w.stock(shop, 11881, "Feather pack", 302, 5, 5_000 + MIN);
 		Ware ware = shop.getWare(11881);
@@ -47,7 +47,7 @@ public class ShopsTest
 	{
 		Works w = new Works(0);
 		Shop a = w.visit("Gerrant's Fishy Business", 12082, 302, 0);
-		w.purchase(a, 11881, "Feather pack", 10, Collections.singletonMap("Coins", 20_000L), 1_000);
+		w.purchase(a, 11881, "Feather pack", 10, Collections.singletonMap("Coins", 20_000L), 301, 1_000);
 		w.visit("Gerrant's Fishy Business", 12082, 303, 2 * MIN);
 		w.visit("Betty's Magic Emporium", 12082, 303, 4 * MIN);
 		w.visit("Gerrant's Fishy Business", 12082, 304, 30 * MIN);

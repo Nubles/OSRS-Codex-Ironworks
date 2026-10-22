@@ -9,10 +9,12 @@ import com.codex.ironworks.core.Runway;
 import com.codex.ironworks.core.Settle;
 import com.codex.ironworks.core.SharedBank;
 import com.codex.ironworks.core.Shop;
+import com.codex.ironworks.core.Spot;
 import com.codex.ironworks.core.Tracker;
 import com.codex.ironworks.core.Ware;
 import com.codex.ironworks.core.Window;
 import com.codex.ironworks.core.Works;
+import com.codex.ironworks.overlay.ItemTips;
 import com.codex.ironworks.overlay.ShopPlaque;
 import com.codex.ironworks.ui.Arrivals;
 import com.codex.ironworks.ui.Format;
@@ -45,14 +47,19 @@ import net.runelite.api.GameState;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.MenuAction;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.Player;
 import net.runelite.api.ScriptID;
+import net.runelite.api.Scene;
 import net.runelite.api.Skill;
+import net.runelite.api.Tile;
+import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
+import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.StatChanged;
 import net.runelite.api.events.VarbitChanged;
@@ -87,8 +94,8 @@ import org.slf4j.LoggerFactory;
 
 @PluginDescriptor(
 	name = "Codex Ironworks",
-	description = "An ironman's economy: how long each store lasts at your pace, where everything came from, and the shops you restock at",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "self-sufficient", "codex"}
+	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources and shops",
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -154,6 +161,9 @@ public class CodexIronworksPlugin extends Plugin
 	@Inject
 	private CodexIronworksConfig config;
 
+	@Inject
+	private ItemTips tips;
+
 	private final ShopPlaque plaque = new ShopPlaque();
 	private final Settle settle = new Settle();
 	private final Map<Integer, String> names = new HashMap<>();
@@ -191,6 +201,12 @@ public class CodexIronworksPlugin extends Plugin
 	private long lastTickMs;
 	private boolean dirty;
 	private boolean unsaved;
+	/** What was carried when the player died, to tell what the death took. */
+	private Map<Integer, Long> beforeDeath;
+	/** Each carried place as last held, to save a place only when it changes. */
+	private final Map<Spot, Map<Integer, Long>> held = new EnumMap<>(Spot.class);
+	/** The view last handed to the panel, for the tooltips. */
+	private volatile View view = new View();
 
 	@Provides
 	CodexIronworksConfig provideConfig(ConfigManager configManager)
@@ -208,7 +224,15 @@ public class CodexIronworksPlugin extends Plugin
 			arrivals.ask(image, onLoaded);
 			return image;
 		};
-		panel = new IronworksPanel(icons);
+		panel = new IronworksPanel(icons, () -> clientThread.invokeLater(() ->
+		{
+			if (works != null)
+			{
+				works.forgetDeath();
+				unsaved = true;
+				publish();
+			}
+		}));
 		navButton = NavigationButton.builder()
 			.tooltip("Codex Ironworks")
 			.icon(Sigil.icon(16))
@@ -217,6 +241,7 @@ public class CodexIronworksPlugin extends Plugin
 			.build();
 		clientToolbar.addNavigation(navButton);
 		overlayManager.add(plaque);
+		overlayManager.add(tips);
 		lookup = Catalogue.with(config.picked(), config.hidden());
 		clientThread.invokeLater(() ->
 		{
@@ -227,7 +252,9 @@ public class CodexIronworksPlugin extends Plugin
 				ItemContainer bank = client.getItemContainer(InventoryID.BANK);
 				if (bank != null)
 				{
-					works.place(Place.BANK, units(contents(bank)), System.currentTimeMillis());
+					Map<Integer, Long> items = contents(bank);
+					works.place(Place.BANK, units(items), System.currentTimeMillis());
+					works.hold(Spot.BANK, items, names(items.keySet()), System.currentTimeMillis());
 				}
 				settle.restart();
 			}
@@ -239,6 +266,7 @@ public class CodexIronworksPlugin extends Plugin
 	protected void shutDown()
 	{
 		overlayManager.remove(plaque);
+		overlayManager.remove(tips);
 		clientToolbar.removeNavigation(navButton);
 		clientThread.invokeLater(() ->
 		{
@@ -265,6 +293,8 @@ public class CodexIronworksPlugin extends Plugin
 		warnTicks = -1;
 		readStorage = false;
 		storageGrace = 0;
+		beforeDeath = null;
+		held.clear();
 		plaque.show(null, null, null);
 	}
 
@@ -408,6 +438,7 @@ public class CodexIronworksPlugin extends Plugin
 		if (event.getActor() == client.getLocalPlayer())
 		{
 			deathTick = ticks;
+			beforeDeath = lastItems == null ? null : new HashMap<>(lastItems);
 		}
 	}
 
@@ -420,26 +451,35 @@ public class CodexIronworksPlugin extends Plugin
 		}
 		int id = event.getContainerId();
 		long now = System.currentTimeMillis();
+		Place place;
+		Spot spot;
 		if (id == InventoryID.BANK)
 		{
-			works.place(Place.BANK, units(contents(event.getItemContainer())), now);
+			place = Place.BANK;
+			spot = Spot.BANK;
 		}
 		else if (id == InventoryID.SEED_VAULT)
 		{
-			works.place(Place.SEED_VAULT, units(contents(event.getItemContainer())), now);
+			place = Place.SEED_VAULT;
+			spot = Spot.SEED_VAULT;
 		}
 		else if (id == InventoryID.LOOTING_BAG)
 		{
-			works.place(Place.LOOTING_BAG, units(contents(event.getItemContainer())), now);
+			place = Place.LOOTING_BAG;
+			spot = Spot.LOOTING_BAG;
 		}
 		else if (id == InventoryID.INV_GROUP_TEMP && storageOpen.contains(InterfaceID.SHARED_BANK))
 		{
-			works.place(Place.GROUP_STORAGE, units(contents(event.getItemContainer())), now);
+			place = Place.GROUP_STORAGE;
+			spot = Spot.GROUP_STORAGE;
 		}
 		else
 		{
 			return;
 		}
+		Map<Integer, Long> items = contents(event.getItemContainer());
+		works.place(place, units(items), now);
+		works.hold(spot, items, names(items.keySet()), now);
 		unsaved = true;
 		dirty = true;
 	}
@@ -572,8 +612,12 @@ public class CodexIronworksPlugin extends Plugin
 			storageGrace--;
 		}
 
-		Map<Integer, Long> items = readCarried();
+		Map<Integer, Long> items = readCarried(nowMs);
 		Map<String, Long> carriedUnits = units(items);
+		if (lastItems != null)
+		{
+			deaths(lastItems, items, nowMs);
+		}
 		Classify.Context ctx = context();
 		if (shopOpen)
 		{
@@ -588,6 +632,7 @@ public class CodexIronworksPlugin extends Plugin
 			learnPacks(lastItems, items, lastUnits, carriedUnits);
 		}
 		List<Flow> flows = tracker.tick(carriedUnits, ctx, today, nowMs);
+		works.rate(flows, nowMs);
 		if (!flows.isEmpty())
 		{
 			unsaved = true;
@@ -770,7 +815,7 @@ public class CodexIronworksPlugin extends Plugin
 			Map<String, Long> share = new HashMap<>();
 			double part = e.getValue() / (double) total;
 			paid.forEach((k, v) -> share.put(k, Math.round(v * part)));
-			works.purchase(shop, e.getKey(), name(e.getKey()), e.getValue(), share, now);
+			works.purchase(shop, e.getKey(), name(e.getKey()), e.getValue(), share, client.getWorld(), now);
 		}
 		unsaved = true;
 		dirty = true;
@@ -904,11 +949,14 @@ public class CodexIronworksPlugin extends Plugin
 		return items;
 	}
 
-	/** The inventory, worn gear and the runes in a carried rune pouch. */
-	private Map<Integer, Long> readCarried()
+	/** The inventory, worn gear and the runes in a carried rune pouch; each is kept as it changes. */
+	private Map<Integer, Long> readCarried(long now)
 	{
-		Map<Integer, Long> items = contents(client.getItemContainer(InventoryID.INV));
-		contents(client.getItemContainer(InventoryID.WORN)).forEach((id, q) -> items.merge(id, q, Long::sum));
+		Map<Integer, Long> inventory = contents(client.getItemContainer(InventoryID.INV));
+		Map<Integer, Long> worn = contents(client.getItemContainer(InventoryID.WORN));
+		Map<Integer, Long> pouchRunes = new HashMap<>();
+		Map<Integer, Long> items = new HashMap<>(inventory);
+		worn.forEach((id, q) -> items.merge(id, q, Long::sum));
 		boolean pouch = false;
 		for (int id : POUCHES)
 		{
@@ -925,10 +973,83 @@ public class CodexIronworksPlugin extends Plugin
 				if (itemId > 0 && amount > 0)
 				{
 					items.merge(itemId, (long) amount, Long::sum);
+					pouchRunes.merge(itemId, (long) amount, Long::sum);
 				}
 			}
 		}
+		keep(Spot.INVENTORY, inventory, now);
+		keep(Spot.WORN, worn, now);
+		keep(Spot.RUNE_POUCH, pouchRunes, now);
 		return items;
+	}
+
+	/** Saves a carried place item by item when it has changed. */
+	private void keep(Spot spot, Map<Integer, Long> items, long now)
+	{
+		if (!items.equals(held.get(spot)))
+		{
+			held.put(spot, items);
+			works.hold(spot, items, names(items.keySet()), now);
+			unsaved = true;
+			dirty = true;
+		}
+	}
+
+	/** Names for item ids, for finding them while logged out. */
+	private Map<Integer, String> names(Iterable<Integer> ids)
+	{
+		Map<Integer, String> out = new HashMap<>();
+		for (int id : ids)
+		{
+			out.put(id, name(id));
+		}
+		return out;
+	}
+
+	/**
+	 * Works out what a death took, once the player is back on their feet, and watches for those
+	 * items coming back from the grave or Death's Office.
+	 */
+	private void deaths(Map<Integer, Long> was, Map<Integer, Long> is, long now)
+	{
+		if (beforeDeath != null && ticks - deathTick >= DEATH_TICKS)
+		{
+			Map<Integer, Long> lost = new HashMap<>();
+			beforeDeath.forEach((id, q) ->
+			{
+				long gone = q - is.getOrDefault(id, 0L);
+				if (gone > 0)
+				{
+					lost.put(id, gone);
+				}
+			});
+			beforeDeath = null;
+			if (!lost.isEmpty())
+			{
+				works.died(lost, names(lost.keySet()), client.getWorld(), now);
+				unsaved = true;
+				dirty = true;
+			}
+			return;
+		}
+		if (beforeDeath != null || works.getDeath() == null)
+		{
+			return;
+		}
+		Map<Integer, Long> gains = new HashMap<>();
+		is.forEach((id, q) ->
+		{
+			long more = q - was.getOrDefault(id, 0L);
+			if (more > 0)
+			{
+				gains.put(id, more);
+			}
+		});
+		if (works.regained(gains))
+		{
+			unsaved = true;
+			dirty = true;
+		}
 	}
 
 	/**
@@ -976,6 +1097,7 @@ public class CodexIronworksPlugin extends Plugin
 		if (!units.equals(works.place(Place.POTION_STORAGE)))
 		{
 			works.place(Place.POTION_STORAGE, units, now);
+			works.hold(Spot.POTION_STORAGE, doses, names(doses.keySet()), now);
 			unsaved = true;
 			dirty = true;
 		}
@@ -1056,6 +1178,10 @@ public class CodexIronworksPlugin extends Plugin
 		if (shared != null)
 		{
 			works.place(Place.BANK, units(shared.getItems()), shared.getSavedAt());
+			if (works.holding(Spot.BANK) == null)
+			{
+				works.hold(Spot.BANK, shared.getItems(), names(shared.getItems().keySet()), shared.getSavedAt());
+			}
 			unsaved = true;
 		}
 	}
@@ -1082,10 +1208,96 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			return;
 		}
-		View view = works == null ? new View()
-			: Views.build(works, lookup, config.target(), config.warn(), System.currentTimeMillis(), LocalDate.now(), this::unitWorth);
-		view.loggedIn = works != null && client.getGameState() == GameState.LOGGED_IN;
-		SwingUtilities.invokeLater(() -> target.show(view));
+		boolean loggedIn = works != null && client.getGameState() == GameState.LOGGED_IN;
+		Map<Skill, Integer> levels = new EnumMap<>(Skill.class);
+		Map<Skill, Integer> xp = new EnumMap<>(Skill.class);
+		if (loggedIn)
+		{
+			for (Skill skill : Skill.values())
+			{
+				int level = client.getRealSkillLevel(skill);
+				if (level > 0)
+				{
+					levels.put(skill, level);
+					xp.put(skill, client.getSkillExperience(skill));
+				}
+			}
+		}
+		View built = works == null ? new View()
+			: Views.build(works, lookup, config.target(), config.warn(), System.currentTimeMillis(), LocalDate.now(), this::unitWorth,
+			levels, xp, config.altar(), itemManager::getItemPrice);
+		built.loggedIn = loggedIn;
+		view = built;
+		SwingUtilities.invokeLater(() -> target.show(built));
+	}
+
+	/** The view the panel shows now, for the tooltips. */
+	public View view()
+	{
+		return view;
+	}
+
+	public Catalogue.Lookup lookup()
+	{
+		return lookup;
+	}
+
+	/**
+	 * On an ironman, a ground item that belongs to another player cannot be taken, so its Take sits
+	 * below Walk here and a misclick does not walk the player over to it.
+	 */
+	@Subscribe
+	public void onMenuEntryAdded(MenuEntryAdded event)
+	{
+		if (!config.othersLoot() || works == null || works.getAccount() <= 0)
+		{
+			return;
+		}
+		MenuEntry entry = event.getMenuEntry();
+		MenuAction type = entry.getType();
+		boolean ground = type == MenuAction.GROUND_ITEM_FIRST_OPTION || type == MenuAction.GROUND_ITEM_SECOND_OPTION
+			|| type == MenuAction.GROUND_ITEM_THIRD_OPTION || type == MenuAction.GROUND_ITEM_FOURTH_OPTION
+			|| type == MenuAction.GROUND_ITEM_FIFTH_OPTION;
+		if (!ground || !"Take".equals(entry.getOption()))
+		{
+			return;
+		}
+		Scene scene = client.getTopLevelWorldView().getScene();
+		int x = entry.getParam0();
+		int y = entry.getParam1();
+		int plane = client.getTopLevelWorldView().getPlane();
+		Tile[][][] tiles = scene.getTiles();
+		if (x < 0 || y < 0 || plane < 0 || plane >= tiles.length || x >= tiles[plane].length || y >= tiles[plane][x].length)
+		{
+			return;
+		}
+		Tile tile = tiles[plane][x][y];
+		List<TileItem> onTile = tile == null ? null : tile.getGroundItems();
+		if (onTile == null)
+		{
+			return;
+		}
+		boolean others = false;
+		for (TileItem item : onTile)
+		{
+			if (item.getId() != entry.getIdentifier())
+			{
+				continue;
+			}
+			if (item.getOwnership() == TileItem.OWNERSHIP_OTHER)
+			{
+				others = true;
+			}
+			else
+			{
+				// One of this kind on the tile is the player's to take.
+				return;
+			}
+		}
+		if (others)
+		{
+			entry.setDeprioritized(true);
+		}
 	}
 
 	/** What one unit of a store is worth: a dose of a potion is a quarter of the four-dose price. */

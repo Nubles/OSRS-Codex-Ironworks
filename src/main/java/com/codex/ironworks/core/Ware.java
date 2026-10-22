@@ -17,6 +17,8 @@ public final class Ware
 	static final long LONGEST = 3 * 60 * 60_000L;
 	/** Readings closer than this are too coarse to time a restock by. */
 	static final long SHORTEST = 3_000L;
+	/** Purchases kept to learn the price by. */
+	static final int PRICES = 16;
 
 	int item;
 	String name;
@@ -30,6 +32,8 @@ public final class Ware
 	int samples;
 	/** The last stock seen on each world. */
 	Map<String, Seen> worlds = new HashMap<>();
+	/** Purchases with coins: the stock before, how many, and the coins paid, newest last. */
+	java.util.List<long[]> prices = new java.util.ArrayList<>();
 
 	/** A stock reading. */
 	public static final class Seen
@@ -118,6 +122,26 @@ public final class Ware
 		paid.forEach((k, v) -> spent.merge(k, v, Long::sum));
 	}
 
+	/** A purchase with coins, for learning how the price climbs as the stock falls. */
+	void price(int stockBefore, long qty, long coins)
+	{
+		if (qty <= 0 || coins <= 0 || stockBefore <= 0)
+		{
+			return;
+		}
+		prices.add(new long[]{stockBefore, qty, coins});
+		while (prices.size() > PRICES)
+		{
+			prices.remove(0);
+		}
+	}
+
+	/** How the price climbs, as learned from purchases, or null before any. */
+	public Price price()
+	{
+		return Price.fit(prices, base);
+	}
+
 	/** The stock expected on a world now, or -1 when that world was never seen. */
 	public int expected(int world, long now)
 	{
@@ -199,6 +223,8 @@ public final class Ware
 		spent.keySet().removeIf(k -> k == null);
 		worlds = worlds == null ? new HashMap<>() : worlds;
 		worlds.entrySet().removeIf(e -> e.getKey() == null || e.getValue() == null || e.getValue().stock < 0);
+		prices = prices == null ? new java.util.ArrayList<>() : prices;
+		prices.removeIf(p -> p == null || p.length != 3 || p[0] <= 0 || p[1] <= 0 || p[2] <= 0);
 		return this;
 	}
 }

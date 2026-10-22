@@ -42,6 +42,20 @@ class WantRow extends Card
 		return "No source seen yet";
 	}
 
+	/** The cost in coins, or the player's own pace of getting it, when either is known. */
+	static String extra(View.Want w)
+	{
+		if (w.shop != null && w.coins > 0)
+		{
+			return Format.coins(w.coins) + " coins" + (w.perWorld > 0 && w.perWorld * w.units < w.need ? ", " + Format.amount(w.perWorld) + " a world" : "");
+		}
+		if (w.perHour > 0 && w.how != null)
+		{
+			return "About " + Format.estimate((long) (w.need / w.perHour * 3_600_000)) + " at your " + w.how + " pace";
+		}
+		return null;
+	}
+
 	private static final class Head extends JComponent
 	{
 		private final View.Want w;
@@ -52,7 +66,7 @@ class WantRow extends Card
 			this.w = w;
 			this.icons = icons;
 			setOpaque(false);
-			setPreferredSize(new Dimension(10, w.shop != null ? 50 : 40));
+			setPreferredSize(new Dimension(10, 40 + (w.shop != null ? 11 : 0) + (extra(w) != null ? 11 : 0)));
 		}
 
 		@Override
@@ -78,9 +92,16 @@ class WantRow extends Card
 			String when = w.status == Runway.Status.OUT ? "Out now" : "Lasts " + Format.estimate((long) (w.hours * 3_600_000));
 			Ui.shadowed(g, Ui.clip(when, small, room), x, 26, color);
 			Ui.shadowed(g, Ui.clip(how(w), small, room), x, 37, Theme.TEXT_MUTED);
+			int y = 48;
 			if (w.shop != null)
 			{
-				Ui.shadowed(g, Ui.clip("at " + w.shop, small, room), x, 48, Theme.TEXT_FAINT);
+				Ui.shadowed(g, Ui.clip("at " + w.shop, small, room), x, y, Theme.TEXT_FAINT);
+				y += 11;
+			}
+			String extra = extra(w);
+			if (extra != null)
+			{
+				Ui.shadowed(g, Ui.clip(extra, small, room), x, y, Theme.TEAL);
 			}
 			g.dispose();
 		}

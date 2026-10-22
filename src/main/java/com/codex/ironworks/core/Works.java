@@ -52,6 +52,14 @@ public final class Works
 	List<Run> runs = new ArrayList<>();
 	/** Units in one pack, by the pack's name, as counted when one was opened. */
 	Map<String, Integer> packs = new HashMap<>();
+	/** How fast each store comes in one way, by "store|SOURCE". */
+	Map<String, Rate> rates = new HashMap<>();
+	/** Every item in each place, by spot name, for finding anything the account owns. */
+	Map<String, Holding> holdings = new HashMap<>();
+	/** Names of the items held and lost, so they can be found while logged out. */
+	Map<Integer, String> names = new HashMap<>();
+	/** The last death's items not yet taken back, or null. */
+	Death death;
 
 	public Works()
 	{
@@ -118,6 +126,110 @@ public final class Works
 		Set<String> all = new HashSet<>(stocks().keySet());
 		all.addAll(totals.keySet());
 		return all;
+	}
+
+	// ---- holdings ----
+
+	/** Everything in one place, item by item, as seen now. */
+	public void hold(Spot spot, Map<Integer, Long> items, Map<Integer, String> itemNames, long now)
+	{
+		holdings.put(spot.name(), new Holding(items, now));
+		name(items.keySet(), itemNames);
+	}
+
+	private void name(Iterable<Integer> ids, Map<Integer, String> itemNames)
+	{
+		for (Integer id : ids)
+		{
+			String n = itemNames.get(id);
+			if (n != null && !n.isEmpty())
+			{
+				names.put(id, n);
+			}
+		}
+	}
+
+	/** One place as last seen, or null when never seen. */
+	public Holding holding(Spot spot)
+	{
+		return holdings.get(spot.name());
+	}
+
+	public String itemName(int id)
+	{
+		return names.get(id);
+	}
+
+	// ---- death ----
+
+	/** The player died and lost these items; a death not yet reclaimed before it is gone for good. */
+	public void died(Map<Integer, Long> items, Map<Integer, String> itemNames, int world, long now)
+	{
+		if (items.isEmpty())
+		{
+			return;
+		}
+		death = new Death(items, now, played, world);
+		name(items.keySet(), itemNames);
+	}
+
+	/**
+	 * Items came into the inventory; those the last death lost are taken back.
+	 *
+	 * @return true when the death changed
+	 */
+	public boolean regained(Map<Integer, Long> gains)
+	{
+		if (death == null || gains.isEmpty())
+		{
+			return false;
+		}
+		boolean changed = false;
+		boolean settled = false;
+		for (Map.Entry<Integer, Long> e : gains.entrySet())
+		{
+			if (e.getValue() > 0 && death.items.containsKey(e.getKey()))
+			{
+				changed = true;
+				settled = death.back(e.getKey(), e.getValue());
+			}
+		}
+		if (settled)
+		{
+			death = null;
+		}
+		return changed;
+	}
+
+	public Death getDeath()
+	{
+		return death;
+	}
+
+	public void forgetDeath()
+	{
+		death = null;
+	}
+
+	// ---- rates ----
+
+	/** Times the gains that come from the player's own work or loot, store by store. */
+	public void rate(List<Flow> flows, long now)
+	{
+		for (Flow f : flows)
+		{
+			if (f.isGain() && (f.source == Source.GATHERED || f.source == Source.FARMED || f.source == Source.MADE
+				|| f.source == Source.LOOTED))
+			{
+				rates.computeIfAbsent(f.store + "|" + f.source.name(), k -> new Rate()).add(f.units, now);
+			}
+		}
+	}
+
+	/** The pace a store comes in one way, or null when never seen. */
+	public Rate rate(String store, Source source)
+	{
+		return rates.get(store + "|" + source.name());
 	}
 
 	// ---- pictures ----
@@ -290,13 +402,20 @@ public final class Works
 	}
 
 	/** Items bought at a shop, and what was paid, by currency store. */
-	public void purchase(Shop shop, int item, String name, long qty, Map<String, Long> paid, long now)
+	public void purchase(Shop shop, int item, String name, long qty, Map<String, Long> paid, int world, long now)
 	{
 		if (qty <= 0)
 		{
 			return;
 		}
-		shop.ware(item, name).bought(qty, paid);
+		Ware ware = shop.ware(item, name);
+		ware.bought(qty, paid);
+		long coins = paid.getOrDefault("Coins", 0L);
+		int after = ware.expected(world, now);
+		if (coins > 0 && after >= 0)
+		{
+			ware.price(after + (int) Math.min(Integer.MAX_VALUE / 2, qty), qty, coins);
+		}
 		shop.last = now;
 		Run run = run(now);
 		run.bought.merge(name == null ? String.valueOf(item) : name, qty, Long::sum);
@@ -431,6 +550,15 @@ public final class Works
 	private static final Type TALLIES = new TypeToken<Map<String, Tally>>()
 	{
 	}.getType();
+	private static final Type RATES = new TypeToken<Map<String, Rate>>()
+	{
+	}.getType();
+	private static final Type HOLDINGS = new TypeToken<Map<String, Holding>>()
+	{
+	}.getType();
+	private static final Type NAMES = new TypeToken<Map<Integer, String>>()
+	{
+	}.getType();
 	private static final Type DAYS_TYPE = new TypeToken<Map<String, Day>>()
 	{
 	}.getType();
@@ -480,6 +608,18 @@ public final class Works
 					break;
 				case "packs":
 					packs = gson.fromJson(value, ICONS);
+					break;
+				case "rates":
+					rates = gson.fromJson(value, RATES);
+					break;
+				case "holdings":
+					holdings = gson.fromJson(value, HOLDINGS);
+					break;
+				case "names":
+					names = gson.fromJson(value, NAMES);
+					break;
+				case "death":
+					death = gson.fromJson(value, Death.class);
 					break;
 				default:
 					break;
@@ -628,6 +768,62 @@ public final class Works
 			}
 		}
 		runs = r;
+		Map<String, Rate> rt = new HashMap<>();
+		if (rates != null)
+		{
+			rates.forEach((k, v) ->
+			{
+				if (k != null && v != null)
+				{
+					rt.put(k, v.repair());
+				}
+			});
+		}
+		rates = rt;
+		Map<String, Holding> h = new HashMap<>();
+		if (holdings != null)
+		{
+			holdings.forEach((k, v) ->
+			{
+				if (k != null && v != null)
+				{
+					try
+					{
+						Spot.valueOf(k);
+						h.put(k, v.repair());
+					}
+					catch (IllegalArgumentException ignored)
+					{
+						// A place this version does not know.
+					}
+				}
+			});
+		}
+		holdings = h;
+		death = death == null ? null : death.repair();
+		if (death != null && death.items.isEmpty())
+		{
+			death = null;
+		}
+		// Only names of items still held or lost are kept.
+		Set<Integer> used = new HashSet<>();
+		holdings.values().forEach(x -> used.addAll(x.items.keySet()));
+		if (death != null)
+		{
+			used.addAll(death.items.keySet());
+		}
+		Map<Integer, String> n = new HashMap<>();
+		if (names != null)
+		{
+			names.forEach((k, v) ->
+			{
+				if (k != null && v != null && used.contains(k))
+				{
+					n.put(k, v);
+				}
+			});
+		}
+		names = n;
 		return this;
 	}
 

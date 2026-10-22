@@ -1,10 +1,14 @@
 package com.codex.ironworks.ui;
 
+import com.codex.ironworks.core.Death;
 import com.codex.ironworks.core.Family;
 import com.codex.ironworks.core.Runway;
 import com.codex.ironworks.core.Source;
+import com.codex.ironworks.core.Spot;
 import com.codex.ironworks.core.Summary;
 import com.codex.ironworks.core.Use;
+import com.codex.ironworks.core.Ways;
+import com.codex.ironworks.core.Workshop;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -24,39 +28,55 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import net.runelite.api.Experience;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import net.runelite.client.ui.PluginPanel;
 
 /**
- * The Ironworks side panel: the crest, then three pages. Stores is every store with how long it
- * lasts at the player's own pace, Sources is where everything came from and went, and Shops is the
- * shopping list, the shops the player uses with their restock times, and past shop runs.
+ * The Ironworks side panel: the crest, then five pages. Stores is every store with how long it
+ * lasts at the player's own pace; Make is what the stores could become and the experience in them;
+ * Find is everything the account owns, wherever it is kept, and the last death's items; Sources is
+ * where everything came from and the ways to get more; Shops is the shopping list, the shops the
+ * player uses with their restock times and prices, and past shop runs.
  */
 public class IronworksPanel extends PluginPanel
 {
 	static final int WIDTH = 200;
-	private static final String[] TABS = {"stores", "sources", "shops"};
+	private static final String[] TABS = {"stores", "make", "find", "sources", "shops"};
+	private static final int STORES = 0;
+	private static final int MAKE = 1;
+	private static final int FIND = 2;
+	private static final int SOURCES = 3;
+	private static final int SHOPS = 4;
+	/** Things found shown before the list is cut short. */
+	private static final int FOUND = 60;
 	/** Stores shown per shelf before "Show all". */
 	private static final int SHELF = 6;
 
 	private final ItemIcons icons;
 	private final Crest crest = new Crest();
-	private final Segmented tabs = new Segmented(true, "Stores", "Sources", "Shops");
+	private final Segmented tabs = new Segmented(false, "Stores", "Make", "Find", "Sources", "Shops");
 	private final Segmented period = new Segmented(false, "Today", "7 days", "All time");
 	private final CardLayout cards = new CardLayout();
 	private final JPanel content = new JPanel(cards);
-	private final JScrollPane[] pages = {scroller(), scroller(), scroller()};
-	private final boolean[] stale = {true, true, true};
+	private final JScrollPane[] pages = {scroller(), scroller(), scroller(), scroller(), scroller()};
+	private final boolean[] stale = {true, true, true, true, true};
+	private final JTextField search = new SearchField();
+	private final Runnable forgetDeath;
 	private final Set<String> open = new HashSet<>();
 	private final Set<Family> shelvesOpen = new HashSet<>();
 
 	private View view = new View();
 
-	public IronworksPanel(ItemIcons icons)
+	public IronworksPanel(ItemIcons icons, Runnable forgetDeath)
 	{
 		super(false);
 		this.icons = icons;
+		this.forgetDeath = forgetDeath;
 		setLayout(new BorderLayout());
 		setBackground(Theme.INK);
 
@@ -73,14 +93,49 @@ public class IronworksPanel extends PluginPanel
 		content.setOpaque(false);
 		for (int i = 0; i < TABS.length; i++)
 		{
-			content.add(pages[i], TABS[i]);
+			if (i == FIND)
+			{
+				JPanel find = new JPanel(new BorderLayout());
+				find.setOpaque(false);
+				JPanel holder = new JPanel(new BorderLayout());
+				holder.setOpaque(false);
+				holder.setBorder(new EmptyBorder(6, 8, 0, 8));
+				holder.add(search, BorderLayout.CENTER);
+				find.add(holder, BorderLayout.NORTH);
+				find.add(pages[i], BorderLayout.CENTER);
+				content.add(find, TABS[i]);
+			}
+			else
+			{
+				content.add(pages[i], TABS[i]);
+			}
 		}
+		search.getDocument().addDocumentListener(new DocumentListener()
+		{
+			@Override
+			public void insertUpdate(DocumentEvent e)
+			{
+				rebuild(FIND);
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e)
+			{
+				rebuild(FIND);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e)
+			{
+				rebuild(FIND);
+			}
+		});
 		add(content, BorderLayout.CENTER);
 		tabs.onChange(this::showTab);
 		period.setSelected(1, false);
 		period.onChange(i ->
 		{
-			stale[1] = true;
+			stale[SOURCES] = true;
 			refresh(true);
 		});
 		updateCrest();
@@ -115,6 +170,12 @@ public class IronworksPanel extends PluginPanel
 		refresh(true);
 	}
 
+	/** For the screenshot harness: types into Find. */
+	public void find(String text)
+	{
+		search.setText(text);
+	}
+
 	/** For the screenshot harness: picks the Sources period. */
 	public void showPeriod(int index)
 	{
@@ -140,7 +201,8 @@ public class IronworksPanel extends PluginPanel
 			return;
 		}
 		stale[page] = false;
-		JComponent body = page == 0 ? stores() : page == 1 ? sources() : shops();
+		JComponent body = page == STORES ? stores() : page == MAKE ? workshop() : page == FIND ? find()
+			: page == SOURCES ? sources() : shops();
 		JScrollPane scroll = pages[page];
 		int y = scroll.getVerticalScrollBar().getValue();
 		scroll.setViewportView(body);
@@ -270,7 +332,7 @@ public class IronworksPanel extends PluginPanel
 					{
 						shelvesOpen.add(f);
 					}
-					rebuild(0);
+					rebuild(STORES);
 				}));
 				p.add(holder);
 			}
@@ -287,7 +349,7 @@ public class IronworksPanel extends PluginPanel
 			{
 				open.add(s.store);
 			}
-			rebuild(0);
+			rebuild(STORES);
 		});
 	}
 
@@ -305,12 +367,14 @@ public class IronworksPanel extends PluginPanel
 				? "Nothing has come in or gone out " + (period.getSelected() == 0 ? "today" : period.getSelected() == 1 ? "this week" : "yet")
 				+ ". Gather, make, loot or buy something and it shows here."
 				: "Log in to see where your supplies come from."));
+			getMore(p);
 			return p;
 		}
 		if (s.gained > 0)
 		{
 			p.add(selfCard(s));
 		}
+		getMore(p);
 		if (!s.skills.isEmpty())
 		{
 			Card hands = new Card(new BorderLayout());
@@ -458,7 +522,12 @@ public class IronworksPanel extends PluginPanel
 		{
 			wants.add(w);
 		}
-		p.add(new SectionHeader("Shopping list", wants.isEmpty() ? "" : wants.size() + (wants.size() == 1 ? " store" : " stores")));
+		p.add(new SectionHeader("Shopping list", wants.isEmpty() ? ""
+			: v.listCoins > 0 ? Format.coins(v.listCoins) + " coins" : wants.size() + (wants.size() == 1 ? " store" : " stores")));
+		if (v.listCoins > 0 && v.coins < v.listCoins)
+		{
+			p.add(note("The list costs " + Format.coins(v.listCoins) + " coins and you hold " + Format.coins(v.coins) + "."));
+		}
 		if (wants.isEmpty())
 		{
 			p.add(note(v.playedWeek < Runway.LEARN_MS
@@ -517,6 +586,14 @@ public class IronworksPanel extends PluginPanel
 					note.append(" · full in ").append(Format.estimate(w.refillMs));
 				}
 			}
+			if (w.price > 0)
+			{
+				long top = Math.round(w.price + w.climb * Math.max(0, w.base - 1));
+				String price = w.climb > 0 && top > Math.round(w.price)
+					? Format.amount(Math.round(w.price)) + " to " + Format.amount(top) + " coins each"
+					: Format.amount(Math.round(w.price)) + " coins each";
+				note.insert(0, price + (note.length() > 0 ? " · " : ""));
+			}
 			if (note.length() > 0)
 			{
 				in.add(new Line("   " + note, null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
@@ -567,6 +644,278 @@ public class IronworksPanel extends PluginPanel
 		List<String> parts = new ArrayList<>();
 		spent.forEach((k, v) -> parts.add(Format.amount(v) + ("Coins".equals(k) ? " coins" : " " + k.toLowerCase(Locale.ENGLISH))));
 		return String.join(", ", parts);
+	}
+
+	// ---- getting more ----
+
+	/** The ways to get more of what is short, or of what is used most when nothing is. */
+	private void getMore(StackPanel p)
+	{
+		View v = view;
+		List<String> stores = new ArrayList<>();
+		for (View.Want w : v.wants)
+		{
+			stores.add(w.store);
+		}
+		// What is short first, then the stores used fastest.
+		List<View.StoreView> used = new ArrayList<>(v.stores);
+		used.removeIf(sv -> sv.runway.burn <= 0 || com.codex.ironworks.core.Catalogue.money(sv.store));
+		used.sort((a, b) -> Double.compare(b.runway.burn * worthOf(b), a.runway.burn * worthOf(a)));
+		for (View.StoreView sv : used)
+		{
+			if (stores.size() >= 4)
+			{
+				break;
+			}
+			if (!stores.contains(sv.store))
+			{
+				stores.add(sv.store);
+			}
+		}
+		String title = "Getting more";
+		List<View.Getting> list = new ArrayList<>();
+		for (String store : stores)
+		{
+			View.Getting g = v.getting.get(store);
+			if (g != null && !g.ways.isEmpty())
+			{
+				list.add(g);
+			}
+		}
+		if (list.isEmpty())
+		{
+			return;
+		}
+		p.add(new SectionHeader(title, "ways to get more"));
+		for (View.Getting g : list.subList(0, Math.min(6, list.size())))
+		{
+			Card card = new Card(new BorderLayout());
+			StackPanel in = new StackPanel(2, 0);
+			in.add(new IconLine(g.icon, g.store, null, icons, Theme.GOLD_BRIGHT, Theme.TEXT_MUTED));
+			int shown = 0;
+			for (View.WayView w : g.ways)
+			{
+				if (shown++ == 3)
+				{
+					break;
+				}
+				Color tint = w.open ? Palette.of(w.kind.getSource()) : Theme.TEXT_FAINT;
+				String figure = w.perHour > 0 ? Words.rate(w.perHour) + "/h"
+					: !w.open && w.skill != null ? Ui.skill(w.skill) + " " + w.level : null;
+				in.add(new Wrapped(w.text, figure, tint, w.open ? Theme.TEXT : Theme.TEXT_FAINT, w.perHour > 0 ? Theme.TEAL : Theme.TEXT_FAINT));
+			}
+			card.add(in, BorderLayout.CENTER);
+			p.add(card);
+		}
+		p.add(foot("A pace per hour is your own, timed while you were at it."));
+	}
+
+	/** Ranks busy stores by how much of the player's play they eat, so feathers do not crowd out food. */
+	private static double worthOf(View.StoreView sv)
+	{
+		return sv.family == Family.FOOD || sv.family == Family.POTIONS ? 50 : sv.family == Family.RUNES || sv.family == Family.AMMO ? 5 : 1;
+	}
+
+	// ---- make ----
+
+	private JComponent workshop()
+	{
+		StackPanel p = new StackPanel(6, 8);
+		View v = view;
+		Workshop w = v.workshop;
+		if (w.plans().isEmpty())
+		{
+			p.add(note(v.stores.isEmpty()
+				? "Log in and open your bank, and Ironworks works out the experience waiting in your stores."
+				: "Nothing in your stores makes experience yet. Herbs, bones, logs, hides, ores and raw fish all show here."));
+			return p;
+		}
+		Card hero = new Card(new BorderLayout());
+		hero.highlighted(true);
+		StackPanel top = new StackPanel(3, 0);
+		top.add(new Figure(Format.amount(Math.round(w.total())), "xp in your stores", Theme.GOLD_BRIGHT));
+		if (w.lockedTotal() > 0)
+		{
+			top.add(new Line("More above your levels", "+" + Format.amount(Math.round(w.lockedTotal())), null, Theme.TEXT_MUTED, Theme.TEXT_FAINT));
+		}
+		top.add(new Line("Bones counted at", v.altar.toString(), null, Theme.TEXT_MUTED, Theme.TEXT_FAINT));
+		hero.add(top, BorderLayout.CENTER);
+		p.add(hero);
+		for (Workshop.Plan plan : w.plans())
+		{
+			p.add(skillCard(plan));
+		}
+		p.add(foot("Each store goes to its best use first, and unfinished potions and bars count toward what they make. Choose where bones go in the settings."));
+		return p;
+	}
+
+	private JComponent skillCard(Workshop.Plan plan)
+	{
+		View v = view;
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.GOLD_DIM);
+		StackPanel in = new StackPanel(2, 0);
+		String name = Ui.skill(plan.skill);
+		String total = plan.xp > 0 ? Format.amount(Math.round(plan.xp)) + " xp" : "+" + Format.amount(Math.round(plan.lockedXp)) + " later";
+		in.add(new Line(name, total, null, Theme.GOLD_BRIGHT, plan.xp > 0 ? Theme.GOLD : Theme.TEXT_FAINT));
+		Integer xpNow = v.xp.get(plan.skill);
+		if (xpNow != null && plan.xp > 0)
+		{
+			int from = Experience.getLevelForXp(xpNow);
+			int to = Experience.getLevelForXp((int) Math.min(Experience.MAX_SKILL_XP, xpNow + Math.round(plan.xp)));
+			in.add(new Line(to > from ? "Level " + from + " to " + to : "Level " + from + ", toward " + Math.min(99, from + 1), null, null,
+				Theme.TEXT_MUTED, Theme.TEXT_MUTED));
+		}
+		int shown = 0;
+		for (Workshop.Make m : plan.makes)
+		{
+			if (shown++ == 4)
+			{
+				break;
+			}
+			String label = Format.amount(m.times) + " × " + m.recipe.product;
+			String figure = m.locked ? "needs " + m.recipe.level : Format.amount(Math.round(m.xp));
+			in.add(new IconLine(m.recipe.productItem, label, figure, icons, m.locked ? Theme.TEXT_FAINT : Theme.TEXT,
+				m.locked ? Theme.TEXT_FAINT : Theme.TEXT_MUTED));
+		}
+		if (plan.makes.size() > 4)
+		{
+			in.add(new Line("and " + (plan.makes.size() - 4) + " more", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+		}
+		for (Workshop.Short s : plan.shorts.subList(0, Math.min(2, plan.shorts.size())))
+		{
+			in.add(new Line("Short " + Format.amount(s.need) + " " + s.input.toLowerCase(Locale.ENGLISH),
+				"+" + Format.amount(Math.round(s.xp)), Theme.EMBER, Theme.EMBER, Theme.EMBER));
+		}
+		card.add(in, BorderLayout.CENTER);
+		return card;
+	}
+
+	// ---- find ----
+
+	private JComponent find()
+	{
+		StackPanel p = new StackPanel(6, 8);
+		View v = view;
+		String query = search.getText().trim().toLowerCase(Locale.ENGLISH);
+		if (!query.isEmpty())
+		{
+			List<View.Found> hits = new ArrayList<>();
+			for (View.Found f : v.found)
+			{
+				if (f.name.toLowerCase(Locale.ENGLISH).contains(query))
+				{
+					hits.add(f);
+				}
+			}
+			hits.sort((a, b) ->
+			{
+				boolean as = a.name.toLowerCase(Locale.ENGLISH).startsWith(query);
+				boolean bs = b.name.toLowerCase(Locale.ENGLISH).startsWith(query);
+				return as != bs ? (as ? -1 : 1) : a.name.compareToIgnoreCase(b.name);
+			});
+			p.add(new SectionHeader(hits.isEmpty() ? "Nothing found" : "Found", hits.isEmpty() ? "" : String.valueOf(hits.size())));
+			if (hits.isEmpty())
+			{
+				p.add(note("Nothing called \"" + search.getText().trim() + "\" in the places Ironworks has seen. Open a storage once and it is counted."));
+			}
+			for (View.Found f : hits.subList(0, Math.min(FOUND, hits.size())))
+			{
+				p.add(foundRow(f));
+			}
+			return p;
+		}
+		if (v.death != null)
+		{
+			p.add(deathCard(v.death));
+		}
+		if (v.spots.isEmpty())
+		{
+			p.add(note(v.loggedIn
+				? "Open your bank, seed vault and looting bag once, and you can find anything you own from here."
+				: "Log in to find anything you own: bank, seed vault, looting bag, potion storage and more."));
+			return p;
+		}
+		p.add(new SectionHeader("Where things are", v.found.size() + " kinds"));
+		for (View.SpotView sv : v.spots)
+		{
+			if (sv.kinds == 0)
+			{
+				continue;
+			}
+			Card card = new Card(new BorderLayout());
+			StackPanel in = new StackPanel(2, 0);
+			in.add(new Line(sv.spot.getLabel(), sv.worth > 0 ? Format.coins(sv.worth) : null, null, Theme.GOLD_BRIGHT, Theme.GOLD));
+			in.add(new Line(sv.kinds + (sv.kinds == 1 ? " kind of item" : " kinds of items"), "seen " + Format.ago(v.now - sv.at), null,
+				Theme.TEXT_MUTED, Theme.TEXT_FAINT));
+			if (!sv.top.isEmpty())
+			{
+				in.add(wells(sv.top));
+			}
+			card.add(in, BorderLayout.CENTER);
+			p.add(card);
+		}
+		p.add(foot("Type above to find anything. Each place is as you last had it open."));
+		return p;
+	}
+
+	private JComponent foundRow(View.Found f)
+	{
+		Card card = new Card(new BorderLayout());
+		StackPanel in = new StackPanel(1, 0);
+		in.add(new IconLine(f.icon, f.name, Format.amount(f.total) + (f.doses ? " doses" : ""), icons, Theme.TEXT, Theme.GOLD));
+		List<String> where = new ArrayList<>();
+		f.where.forEach((spot, n) -> where.add(spot.getLabel() + " " + Format.amount(n)));
+		in.add(new Wrapped(String.join(" · ", where), null, null, Theme.TEXT_MUTED, Theme.TEXT_MUTED));
+		card.add(in, BorderLayout.CENTER);
+		return card;
+	}
+
+	private JComponent deathCard(View.DeathView d)
+	{
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.BLOOD);
+		card.highlighted(true);
+		StackPanel in = new StackPanel(2, 0);
+		boolean grave = d.graveLeft > 0;
+		in.add(new Line(grave ? "At your grave" : "At Death's Office", d.worth > 0 ? Format.coins(d.worth) : null, Theme.BLOOD, Theme.TEXT, Theme.EMBER));
+		in.add(new Wrapped(grave ? Format.estimate(d.graveLeft) + " of play left, world " + d.world
+			: "Reclaim it before you die again, or it is lost", null, null, grave ? Theme.EMBER : Theme.TEXT_MUTED, null));
+		in.add(wells(d.items));
+		if (d.items.size() > 4)
+		{
+			in.add(new Line("and " + (d.items.size() - 4) + " more items", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+		}
+		JPanel holder = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		holder.setOpaque(false);
+		holder.add(new CodexButton("Taken back", false, forgetDeath));
+		in.add(holder);
+		card.add(in, BorderLayout.CENTER);
+		return card;
+	}
+
+	/** Up to four items in their slots, from item id and quantity pairs. */
+	private JComponent wells(List<long[]> items)
+	{
+		JPanel wells = new JPanel(new java.awt.GridLayout(1, 4, 4, 0));
+		wells.setOpaque(false);
+		int shown = 0;
+		for (long[] it : items)
+		{
+			if (shown == 4)
+			{
+				break;
+			}
+			wells.add(new Slot((int) it[0], it[1], "", icons));
+			shown++;
+		}
+		while (shown++ < 4)
+		{
+			JPanel blank = new JPanel();
+			blank.setOpaque(false);
+			wells.add(blank);
+		}
+		return wells;
 	}
 
 	// ---- small pieces ----
@@ -652,6 +1001,159 @@ public class IronworksPanel extends PluginPanel
 		}
 	}
 
+	/** A line like {@link Line} whose label wraps onto further lines rather than being cut short. */
+	private static final class Wrapped extends JComponent
+	{
+		private static final int ROW = 13;
+		private final List<String> rows = new ArrayList<>();
+		private final String figure;
+		private final Color dot;
+		private final Color labelColor;
+		private final Color figureColor;
+
+		Wrapped(String label, String figure, Color dot, Color labelColor, Color figureColor)
+		{
+			this.figure = figure;
+			this.dot = dot;
+			this.labelColor = labelColor;
+			this.figureColor = figureColor;
+			setOpaque(false);
+			FontMetrics fm = getFontMetrics(Theme.small());
+			int room = IronworksPanel.WIDTH - 26 - (dot != null ? 11 : 0) - (figure == null ? 0 : fm.stringWidth(figure) + 6);
+			StringBuilder row = new StringBuilder();
+			for (String word : label.split(" "))
+			{
+				String next = row.length() == 0 ? word : row + " " + word;
+				if (fm.stringWidth(next) > room && row.length() > 0)
+				{
+					rows.add(row.toString());
+					row = new StringBuilder(word);
+				}
+				else
+				{
+					row = new StringBuilder(next);
+				}
+			}
+			if (row.length() > 0)
+			{
+				rows.add(row.toString());
+			}
+			setPreferredSize(new Dimension(10, Math.max(15, rows.size() * ROW + 2)));
+			setToolTipText(label);
+		}
+
+		@Override
+		protected void paintComponent(Graphics graphics)
+		{
+			Graphics2D g = (Graphics2D) graphics.create();
+			Theme.smooth(g);
+			g.setFont(Theme.small());
+			FontMetrics fm = g.getFontMetrics();
+			int x = 0;
+			int base = fm.getAscent();
+			if (dot != null)
+			{
+				g.setColor(dot);
+				g.fill(new java.awt.geom.Ellipse2D.Float(1, base / 2f - 2, 6, 6));
+				x = 11;
+			}
+			if (figure != null)
+			{
+				Ui.shadowed(g, figure, getWidth() - fm.stringWidth(figure), base, figureColor);
+			}
+			for (int i = 0; i < rows.size(); i++)
+			{
+				Ui.shadowed(g, rows.get(i), x, base + i * ROW, labelColor);
+			}
+			g.dispose();
+		}
+	}
+
+	/** A small item picture, a label and a figure on one line. */
+	private static final class IconLine extends JComponent
+	{
+		private static final int ICON = 18;
+		private final int item;
+		private final String label;
+		private final String figure;
+		private final ItemIcons icons;
+		private final Color labelColor;
+		private final Color figureColor;
+
+		IconLine(int item, String label, String figure, ItemIcons icons, Color labelColor, Color figureColor)
+		{
+			this.item = item;
+			this.label = label;
+			this.figure = figure;
+			this.icons = icons;
+			this.labelColor = labelColor;
+			this.figureColor = figureColor;
+			setOpaque(false);
+			setPreferredSize(new Dimension(10, ICON + 2));
+			setToolTipText(figure == null ? label : label + ": " + figure);
+		}
+
+		@Override
+		protected void paintComponent(Graphics graphics)
+		{
+			Graphics2D g = (Graphics2D) graphics.create();
+			Theme.smooth(g);
+			BufferedImage icon = icons == null || item < 0 ? null : icons.icon(item, this::repaint);
+			if (icon != null)
+			{
+				double scale = Math.min(ICON / (double) icon.getWidth(), ICON / (double) icon.getHeight());
+				int w = (int) Math.round(icon.getWidth() * scale);
+				int h = (int) Math.round(icon.getHeight() * scale);
+				g.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+				g.drawImage(icon, (ICON - w) / 2, (ICON - h) / 2 + 1, w, h, null);
+			}
+			g.setFont(Theme.small());
+			FontMetrics fm = g.getFontMetrics();
+			int x = ICON + 5;
+			int fw = figure == null ? 0 : fm.stringWidth(figure);
+			int base = (getHeight() + fm.getAscent()) / 2 - 1;
+			if (figure != null)
+			{
+				Ui.shadowed(g, figure, getWidth() - fw, base, figureColor);
+			}
+			Ui.shadowed(g, Ui.clip(label, fm, getWidth() - x - fw - 6), x, base, labelColor);
+			g.dispose();
+		}
+	}
+
+	/** The search box on the Find page, drawn as an engraved well. */
+	private static final class SearchField extends JTextField
+	{
+		SearchField()
+		{
+			setOpaque(false);
+			setFont(Theme.body());
+			setForeground(Theme.TEXT);
+			setCaretColor(Theme.GOLD_BRIGHT);
+			setBorder(new EmptyBorder(4, 8, 4, 8));
+			setPreferredSize(new Dimension(10, 26));
+			setToolTipText("Find anything you own by name");
+		}
+
+		@Override
+		protected void paintComponent(Graphics graphics)
+		{
+			Graphics2D g = (Graphics2D) graphics.create();
+			Theme.smooth(g);
+			g.setColor(Theme.INK_DEEP);
+			g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
+			g.setColor(isFocusOwner() ? Theme.GOLD_DIM : Theme.STROKE_SOFT);
+			g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 8, 8);
+			if (getText().isEmpty())
+			{
+				g.setFont(Theme.body());
+				Ui.shadowed(g, "Find anything you own", 8, (getHeight() + g.getFontMetrics().getAscent()) / 2 - 2, Theme.TEXT_FAINT);
+			}
+			g.dispose();
+			super.paintComponent(graphics);
+		}
+	}
+
 	/** An item in its slot with the units counted, like a bank slot. */
 	private static final class Slot extends JComponent
 	{
@@ -666,7 +1168,7 @@ public class IronworksPanel extends PluginPanel
 			this.icons = icons;
 			setOpaque(false);
 			setPreferredSize(new Dimension(Well.SIZE + 5, Well.SIZE + 1));
-			setToolTipText(name + ": " + Format.amount(units));
+			setToolTipText(name.isEmpty() ? null : name + ": " + Format.amount(units));
 		}
 
 		@Override
