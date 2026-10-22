@@ -35,7 +35,7 @@ public class ViewsTest
 		w.place(Place.BANK, bank, NOW);
 		Shop s = w.visit("Gerrant's Fishy Business", 12082, 302, NOW - 60_000);
 		w.stock(s, 11881, "Feather pack", 302, 10, NOW - 60_000);
-		w.purchase(s, 11881, "Feather pack", 10, Collections.singletonMap("Coins", 20_000L), NOW - 60_000);
+		w.purchase(s, 11881, "Feather pack", 10, Collections.singletonMap("Coins", 20_000L), 301, NOW - 60_000);
 		w.pack("Feather pack", 100);
 		return w;
 	}

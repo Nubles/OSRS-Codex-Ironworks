@@ -30,7 +30,7 @@ public class SavesTest
 		w.record(Collections.singletonList(Flow.in("Prayer potion", 30, Source.MADE, "Herblore")), TODAY);
 		Shop s = w.visit("Gerrant's Fishy Business", 12082, 302, 10);
 		w.stock(s, 11881, "Feather pack", 302, 7, 10);
-		w.purchase(s, 11881, "Feather pack", 3, Collections.singletonMap("Coins", 6000L), 11);
+		w.purchase(s, 11881, "Feather pack", 3, Collections.singletonMap("Coins", 6000L), 301, 11);
 		w.pack("Feather pack", 100);
 		w.getSacks().put("Coal", 27L);
 		return w;

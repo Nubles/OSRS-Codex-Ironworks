@@ -34,18 +34,20 @@ public final class Catalogue
 			"Shark", "Manta ray", "Anglerfish", "Dark crab", "Cooked karambwan", "Monkfish", "Lobster", "Swordfish",
 			"Sea turtle", "Tuna potato", "Pineapple pizza", "Cooked moonlight antelope", "Cooked dashing kebbit",
 			"Cooked sunlight antelope", "Cooked pyre fox", "Raw shark", "Raw manta ray", "Raw anglerfish", "Raw dark crab",
-			"Raw karambwan", "Raw monkfish", "Raw lobster", "Raw swordfish", "Raw sea turtle");
+			"Raw karambwan", "Raw monkfish", "Raw lobster", "Raw swordfish", "Raw sea turtle", "Tuna", "Salmon", "Trout",
+			"Raw tuna", "Raw salmon", "Raw trout");
 		shelf(Family.POTIONS,
 			"Prayer potion", "Super restore", "Saradomin brew", "Super combat potion", "Divine super combat potion",
 			"Ranging potion", "Divine ranging potion", "Bastion potion", "Divine bastion potion", "Magic potion",
 			"Divine magic potion", "Stamina potion", "Super energy", "Antidote++", "Anti-venom+", "Anti-venom",
 			"Extended antifire", "Super antifire potion", "Extended super antifire", "Antifire potion", "Superantipoison",
 			"Sanfew serum", "Super attack", "Super strength", "Super defence", "Zamorak brew", "Menaphite remedy",
-			"Prayer regeneration potion", "Forgotten brew", "Ancient brew");
+			"Prayer regeneration potion", "Forgotten brew", "Ancient brew", "Attack potion", "Restore potion", "Energy potion",
+			"Combat potion");
 		shelf(Family.UNFINISHED,
 			"Ranarr potion (unf)", "Snapdragon potion (unf)", "Toadflax potion (unf)", "Torstol potion (unf)",
 			"Irit potion (unf)", "Kwuarm potion (unf)", "Cadantine potion (unf)", "Lantadyme potion (unf)",
-			"Dwarf weed potion (unf)", "Avantoe potion (unf)");
+			"Dwarf weed potion (unf)", "Avantoe potion (unf)", "Guam potion (unf)", "Harralander potion (unf)");
 		shelf(Family.HERBS,
 			"Guam leaf", "Marrentill", "Tarromin", "Harralander", "Ranarr weed", "Toadflax", "Irit leaf", "Avantoe", "Kwuarm",
 			"Huasca", "Snapdragon", "Cadantine", "Lantadyme", "Dwarf weed", "Torstol");
