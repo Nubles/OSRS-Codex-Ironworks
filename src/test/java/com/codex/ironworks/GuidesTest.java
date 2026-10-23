@@ -93,6 +93,29 @@ public class GuidesTest
 	}
 
 	@Test
+	public void aQuestStepNamesWhatItsQuestStillNeeds()
+	{
+		Route r = Route.parse(java.util.Collections.singletonList("A | Complete Regicide | quest:Regicide"));
+		java.util.List<View.CheckView> checks = new java.util.ArrayList<>();
+		Guides.requirements(r.steps().get(0), account(new HashSet<>(), 40), checks);
+		java.util.List<String> labels = new java.util.ArrayList<>();
+		checks.forEach(c -> labels.add(c.label));
+		assertTrue(labels.toString(), labels.contains("Underground Pass"));
+		assertTrue(labels.toString(), labels.contains("Agility for the quest"));
+		assertTrue(labels.indexOf("Biohazard") < labels.indexOf("Underground Pass"));
+
+		checks.clear();
+		Set<String> all = new HashSet<>();
+		for (Quest q : Quest.values())
+		{
+			all.add(q.getName());
+		}
+		all.remove("Regicide");
+		Guides.requirements(r.steps().get(0), account(all, 99), checks);
+		assertTrue(checks.isEmpty());
+	}
+
+	@Test
 	public void bankedExperienceIsNamedTowardALevel()
 	{
 		Set<String> quests = new HashSet<>();

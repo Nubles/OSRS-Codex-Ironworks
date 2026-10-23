@@ -1,0 +1,168 @@
+# Quest requirements: name | skill levels | quests to finish first | quest points.
+# From the Fate Locked dataset (github.com/Nubles/OSRS-Fate-Locked), names as RuneLite's Quest enum has them.
+# Levels are the ones the quest asks for; some may be boosted in game.
+Black Knights' Fortress|||12
+The Knight's Sword|Mining 10||
+Dragon Slayer I|||32
+Below Ice Mountain|||16
+Lost City|Crafting 31,Woodcutting 36||
+Heroes' Quest|Cooking 53,Fishing 53,Herblore 25,Mining 50|Shield of Arrav;Lost City;Merlin's Crystal;Dragon Slayer I|55
+Scorpion Catcher|Prayer 31|Alfred Grimhand's Barcrawl|
+Family Crest|Mining 40,Smithing 40,Magic 59,Crafting 40||
+Tribal Totem|Thieving 21||
+Fishing Contest|Fishing 10||
+Temple of Ikov|Thieving 42||
+Holy Grail|Attack 20|Merlin's Crystal|
+Sea Slug|Firemaking 30||
+Biohazard||Plague City|
+Jungle Potion|Herblore 3|Druidic Ritual|
+The Grand Tree|Agility 25||
+Shilo Village|Crafting 20,Agility 32|Jungle Potion|
+Underground Pass|Ranged 25|Biohazard|
+The Tourist Trap|Fletching 10,Smithing 20||
+Watchtower|Magic 14,Thieving 15,Agility 25,Herblore 14,Mining 40||
+The Dig Site|Agility 10,Herblore 10,Thieving 25||
+Legends' Quest|Herblore 45,Prayer 42,Strength 50,Agility 50,Thieving 50,Crafting 50,Smithing 50,Mining 52,Woodcutting 50,Magic 56|Family Crest;Heroes' Quest;Shilo Village;Underground Pass;Waterfall Quest|107
+Big Chompy Bird Hunting|Fletching 5,Cooking 30,Ranged 30||
+Elemental Workshop I|Mining 20,Smithing 20,Crafting 20||
+Nature Spirit||Priest in Peril;The Restless Ghost|
+Troll Stronghold|Agility 15|Death Plateau|
+Tai Bwo Wannai Trio|Agility 15,Cooking 30,Fishing 5|Jungle Potion|
+Regicide|Agility 56,Crafting 10|Underground Pass|
+Eadgar's Ruse|Herblore 31|Druidic Ritual;Troll Stronghold|
+Shades of Mort'ton|Crafting 20,Firemaking 5,Herblore 15|Priest in Peril|
+Horror from the Deep|Agility 35|Alfred Grimhand's Barcrawl|
+Throne of Miscellania||The Fremennik Trials;Heroes' Quest|
+Monkey Madness I||The Grand Tree;Tree Gnome Village|
+Haunted Mine|Crafting 35|Priest in Peril|
+Troll Romance|Agility 28|Troll Stronghold|
+In Search of the Myreque|Agility 25|Nature Spirit|
+Creature of Fenkenstrain|Crafting 20,Thieving 25|Priest in Peril|
+Roving Elves||Regicide;Waterfall Quest|
+Ghosts Ahoy|Agility 25,Cooking 20|Priest in Peril;The Restless Ghost|
+One Small Favour|Agility 36,Crafting 25,Herblore 18,Smithing 30|Rune Mysteries;Shilo Village|
+Mountain Daughter|Agility 20||
+Between a Rock...|Defence 30,Mining 40,Smithing 50|Dwarf Cannon;Fishing Contest|
+The Feud|Thieving 30||
+The Golem|Crafting 20,Thieving 25||
+Desert Treasure I|Thieving 53,Firemaking 50,Slayer 10,Magic 50|The Dig Site;Temple of Ikov;The Tourist Trap;Troll Stronghold;Priest in Peril;Waterfall Quest|
+Icthlarin's Little Helper||Gertrude's Cat|
+Tears of Guthix|Firemaking 49,Crafting 20,Mining 20||43
+Zogre Flesh Eaters|Smithing 4,Herblore 8,Ranged 30|Big Chompy Bird Hunting;Jungle Potion|
+The Lost Tribe|Agility 13,Mining 17,Thieving 13|Goblin Diplomacy;Rune Mysteries|
+The Giant Dwarf|Crafting 12,Firemaking 16,Magic 33,Thieving 14||
+Recruitment Drive||Black Knights' Fortress;Druidic Ritual|
+Mourning's End Part I|Ranged 60,Thieving 50|Roving Elves;Big Chompy Bird Hunting;Sheep Herder|
+Forgettable Tale...|Cooking 22,Farming 17|The Giant Dwarf;Fishing Contest|
+Garden of Tranquillity|Farming 25|Creature of Fenkenstrain|
+A Tail of Two Cats||Icthlarin's Little Helper|
+Wanted!||Recruitment Drive;The Lost Tribe;Priest in Peril;Enter the Abyss|32
+Mourning's End Part II||Mourning's End Part I|
+Rum Deal|Farming 40,Prayer 47,Slayer 42,Crafting 42,Fishing 50|Zogre Flesh Eaters;Priest in Peril|
+Shadow of the Storm|Crafting 30|Demon Slayer;The Golem|
+Making History||Priest in Peril;The Restless Ghost|
+Ratcatchers||Icthlarin's Little Helper|
+Spirits of the Elid|Magic 33,Ranged 37,Mining 37,Thieving 37||
+Devious Minds|Smithing 65,Runecraft 50,Fletching 50|Wanted!;Troll Stronghold;Doric's Quest|
+The Hand in the Sand|Thieving 17,Crafting 49||
+Enakhra's Lament|Crafting 50,Firemaking 45,Magic 39,Prayer 43||
+Cabin Fever|Ranged 40,Smithing 50,Crafting 45,Agility 42|Pirate's Treasure;Rum Deal|
+Fairytale I - Growing Pains||Lost City;Nature Spirit|
+Recipe for Disaster - Another Cook's Quest|Cooking 10|Cook's Assistant|
+Recipe for Disaster - Mountain Dwarf||Recipe for Disaster - Another Cook's Quest;Fishing Contest|
+Recipe for Disaster - Wartface & Bentnoze||Recipe for Disaster - Another Cook's Quest;Goblin Diplomacy|
+Recipe for Disaster - Pirate Pete|Cooking 31|Recipe for Disaster - Another Cook's Quest|
+Recipe for Disaster - Lumbridge Guide|Cooking 40|Recipe for Disaster - Another Cook's Quest;Big Chompy Bird Hunting;Biohazard;Demon Slayer;Murder Mystery;Nature Spirit;Priest in Peril;The Restless Ghost;Witch's House|
+Recipe for Disaster - Evil Dave||Recipe for Disaster - Another Cook's Quest;Gertrude's Cat;Shadow of the Storm|
+Recipe for Disaster - Skrach Uglogwee|Cooking 41,Firemaking 20|Recipe for Disaster - Another Cook's Quest;Big Chompy Bird Hunting|
+Recipe for Disaster - Sir Amik Varze||Recipe for Disaster - Another Cook's Quest;Family Crest;Heroes' Quest;Shilo Village;Underground Pass;Waterfall Quest|107
+Recipe for Disaster - King Awowogei|Cooking 70,Agility 48|Recipe for Disaster - Another Cook's Quest;Monkey Madness I|
+Recipe for Disaster - Culinaromancer||Recipe for Disaster - Another Cook's Quest;Recipe for Disaster - Mountain Dwarf;Recipe for Disaster - Wartface & Bentnoze;Recipe for Disaster - Pirate Pete;Recipe for Disaster - Lumbridge Guide;Recipe for Disaster - Evil Dave;Recipe for Disaster - Skrach Uglogwee;Recipe for Disaster - Sir Amik Varze;Recipe for Disaster - King Awowogei;Desert Treasure I;Horror from the Deep|175
+In Aid of the Myreque|Agility 25,Crafting 25,Magic 7,Mining 15|In Search of the Myreque|
+Swan Song|Magic 66,Cooking 62,Fishing 62,Smithing 45,Firemaking 42,Crafting 40|One Small Favour;Garden of Tranquillity|100
+Royal Trouble|Agility 40,Slayer 40|Throne of Miscellania|
+Death to the Dorgeshuun|Thieving 23,Agility 23|The Lost Tribe|
+Fairytale II - Cure a Queen|Thieving 40,Farming 49,Herblore 57|Fairytale I - Growing Pains|
+Lunar Diplomacy|Herblore 5,Crafting 61,Defence 40,Firemaking 49,Magic 65,Mining 60,Woodcutting 55|The Fremennik Trials;Lost City;Rune Mysteries;Shilo Village|
+The Eyes of Glouphrie|Construction 5,Magic 46|The Grand Tree|
+Darkness of Hallowvale|Construction 5,Mining 20,Thieving 22,Agility 26,Crafting 32,Magic 33,Strength 40|In Aid of the Myreque|
+The Slug Menace|Crafting 30,Runecraft 30,Slayer 30,Thieving 30|Sea Slug;Wanted!|
+Elemental Workshop II|Magic 20,Smithing 30|Elemental Workshop I|
+My Arm's Big Adventure|Woodcutting 10,Farming 29|Eadgar's Ruse;The Feud;Jungle Potion|
+Enlightened Journey|Firemaking 20,Farming 30,Crafting 36||20
+Eagles' Peak|Hunter 27||
+Animal Magnetism|Slayer 18,Crafting 19,Ranged 30,Woodcutting 35|The Restless Ghost;Ernest the Chicken;Priest in Peril|
+Contact!||Prince Ali Rescue;Icthlarin's Little Helper|
+Cold War|Hunter 10,Agility 30,Crafting 30,Construction 34,Thieving 15||
+The Fremennik Isles|Construction 20|The Fremennik Trials|
+Tower of Life|Construction 10||
+The Great Brain Robbery|Crafting 16,Construction 30,Prayer 50|Creature of Fenkenstrain;Cabin Fever;Recipe for Disaster - Pirate Pete|
+What Lies Below|Runecraft 35|Rune Mysteries|
+Olaf's Quest|Firemaking 40,Woodcutting 50|The Fremennik Trials|
+Another Slice of H.A.M.|Attack 15,Prayer 25|Death to the Dorgeshuun;The Dig Site;The Giant Dwarf|
+Dream Mentor||Lunar Diplomacy;Eadgar's Ruse|
+Grim Tales|Farming 45,Herblore 52,Thieving 58,Agility 59,Woodcutting 71|Witch's House|
+King's Ransom|Magic 45,Defence 65|Black Knights' Fortress;Holy Grail;Murder Mystery;One Small Favour|
+Monkey Madness II|Slayer 69,Crafting 70,Hunter 60,Agility 55,Thieving 55,Firemaking 60|Monkey Madness I;Enlightened Journey;The Eyes of Glouphrie;Troll Stronghold;Watchtower;Recipe for Disaster - King Awowogei|
+Client of Kourend||X Marks the Spot|
+Rag and Bone Man II|Slayer 40|Rag and Bone Man I;Skippy and the Mogres|
+Bone Voyage||The Dig Site|
+The Queen of Thieves|Thieving 20|Client of Kourend|
+The Depths of Despair|Agility 18|Client of Kourend|
+Dragon Slayer II|Magic 75,Smithing 70,Mining 68,Crafting 62,Agility 60,Thieving 60,Construction 50,Hitpoints 50|Legends' Quest;Dream Mentor;A Tail of Two Cats;Animal Magnetism;Ghosts Ahoy;Bone Voyage;Client of Kourend|200
+Tale of the Righteous|Strength 16,Mining 10|Client of Kourend|
+A Taste of Hope|Crafting 48,Agility 45,Attack 40,Herblore 40,Slayer 38|Darkness of Hallowvale|
+Making Friends with My Arm|Firemaking 66,Mining 72,Construction 35,Agility 68|My Arm's Big Adventure;Swan Song;Cold War;Romeo & Juliet|
+The Forsaken Tower||Client of Kourend|
+The Ascent of Arceuus|Hunter 12|Client of Kourend|
+Song of the Elves|Agility 70,Construction 70,Farming 70,Herblore 70,Hunter 70,Mining 70,Smithing 70,Woodcutting 70|Mourning's End Part II;Making History;Druidic Ritual|
+The Fremennik Exiles|Crafting 65,Slayer 60,Smithing 60,Fishing 60,Mining 60,Runecraft 55|The Fremennik Isles;Lunar Diplomacy;Mountain Daughter;Heroes' Quest|
+Sins of the Father|Agility 52,Attack 50,Crafting 56,Fletching 60,Magic 49,Slayer 50,Woodcutting 62|A Taste of Hope;Vampyre Slayer|
+Getting Ahead|Construction 26,Crafting 30||
+A Night at the Theatre||A Taste of Hope|
+The Blood Moon Rises|Slayer 74,Woodcutting 74,Smithing 72,Cooking 72,Fletching 70,Mining 66,Hunter 65,Crafting 64,Herblore 64,Magic 57|A Night at the Theatre;Sins of the Father|
+A Kingdom Divided|Agility 54,Thieving 52,Woodcutting 52,Herblore 50,Mining 42,Crafting 38,Magic 35|The Depths of Despair;The Queen of Thieves;Tale of the Righteous;The Forsaken Tower;The Ascent of Arceuus|
+Land of the Goblins|Agility 38,Thieving 45,Fishing 40,Herblore 48|Another Slice of H.A.M.;Fishing Contest|
+Temple of the Eye|Runecraft 10|Enter the Abyss|
+Beneath Cursed Sands|Agility 62,Crafting 55,Firemaking 55|Contact!|
+Sleeping Giants|Smithing 15||
+The Garden of Death|Farming 20||
+Secrets of the North|Agility 69,Thieving 64,Hunter 56|Hazeel Cult;The General's Shadow;Making Friends with My Arm;Devious Minds|
+Desert Treasure II - The Fallen Empire|Magic 75,Firemaking 75,Thieving 70,Herblore 62,Runecraft 60,Construction 60|Desert Treasure I;Secrets of the North;Enakhra's Lament;Temple of the Eye;The Garden of Death;Below Ice Mountain;His Faithful Servants|
+The Path of Glouphrie|Strength 60,Slayer 56,Thieving 56,Ranged 47,Agility 45|The Eyes of Glouphrie;Waterfall Quest;Tree Gnome Village|
+Defender of Varrock|Smithing 55,Hunter 52|Shield of Arrav;Romeo & Juliet;Demon Slayer;Temple of Ikov;Below Ice Mountain;Family Crest;Garden of Tranquillity;What Lies Below|
+Twilight's Promise||Children of the Sun|
+At First Light|Hunter 46,Herblore 30,Construction 27|Children of the Sun;Eagles' Peak|
+Perilous Moons|Slayer 48,Hunter 20,Fishing 20,Runecraft 20,Construction 10|Twilight's Promise|
+The Ribbiting Tale of a Lily Pad Labour Dispute|Woodcutting 15|Children of the Sun|
+While Guthix Sleeps|Thieving 72,Magic 67,Agility 66,Farming 65,Herblore 65,Hunter 62|Defender of Varrock;The Path of Glouphrie;Fight Arena;Dream Mentor;The Hand in the Sand;Wanted!;Temple of the Eye;Tears of Guthix;Nature Spirit;A Tail of Two Cats|180
+The Heart of Darkness|Mining 55,Thieving 48,Slayer 48,Agility 46|Twilight's Promise|
+Death on the Isle|Thieving 34,Agility 32|Children of the Sun|
+Meat and Greet||Children of the Sun|
+Ethically Acquired Antiquities|Thieving 25|Children of the Sun;Shield of Arrav|
+The Curse of Arrav|Agility 61,Ranged 62,Strength 58,Thieving 62,Mining 64,Slayer 37|Defender of Varrock;Troll Romance|
+The Final Dawn|Thieving 66,Fletching 52,Runecraft 52|The Heart of Darkness;Perilous Moons|
+Shadows of Custodia|Slayer 54,Fishing 45,Construction 41,Hunter 36|Children of the Sun|
+Scrambled!|Construction 38,Cooking 36,Smithing 35|Children of the Sun|
+A Ruff Situation|Crafting 15||
+Crab Quest|Sailing 40,Fishing 30|Pandemonium|
+Prying Times|Smithing 30,Sailing 12|Pandemonium;The Knight's Sword|
+Current Affairs|Sailing 22,Fishing 10|Pandemonium|
+Troubled Tortugans|Slayer 51,Construction 48,Sailing 45,Hunter 45,Woodcutting 40,Crafting 34|Pandemonium|
+The Red Reef|Sailing 52,Smithing 48|Troubled Tortugans|
+Fallen From Grace|Sailing 62,Crafting 60,Runecraft 47,Mining 53|Pandemonium|
+Barbarian Training|Fishing 55,Firemaking 35,Strength 35,Agility 15,Farming 15,Crafting 11,Smithing 5,Herblore 4|Tai Bwo Wannai Trio|
+Curse of the Empty Lord|Thieving 53||
+The Enchanted Key||Making History|
+Enter the Abyss||Rune Mysteries|
+Family Pest||Family Crest|
+The Frozen Door|Agility 70,Strength 70,Ranged 70,Hitpoints 70|Desert Treasure I|
+The General's Shadow||Fight Arena;Curse of the Empty Lord|
+His Faithful Servants||Priest in Peril|
+Hopespear's Will|Prayer 50|Desert Treasure I;Fairytale II - Cure a Queen;Land of the Goblins|
+Into the Tombs||Beneath Cursed Sands|
+Lair of Tarn Razorlor|Slayer 40|Haunted Mine|
+Mage Arena I|Magic 60||
+Mage Arena II|Magic 75|Mage Arena I|
+Skippy and the Mogres|Cooking 20||
+Vale Totems|Fletching 20|Children of the Sun|

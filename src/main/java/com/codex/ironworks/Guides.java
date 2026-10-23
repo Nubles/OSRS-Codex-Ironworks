@@ -1,5 +1,6 @@
 package com.codex.ironworks;
 
+import com.codex.ironworks.core.QuestReqs;
 import com.codex.ironworks.core.Route;
 import com.codex.ironworks.core.Workshop;
 import com.codex.ironworks.ui.Format;
@@ -7,6 +8,7 @@ import com.codex.ironworks.ui.View;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -21,6 +23,10 @@ final class Guides
 	static final int NEXT = 4;
 	/** Steps ahead whose supplies are counted. */
 	static final int AHEAD = 12;
+	/** Unfinished quests named as needed first, at most. */
+	static final int FIRST = 5;
+
+	private static final QuestReqs REQS = QuestReqs.load();
 
 	private Guides()
 	{
@@ -94,6 +100,24 @@ final class Guides
 			g.next = next;
 			g.needs = new ArrayList<>(needs.values());
 		}
+
+		List<View.UseView> uses = new ArrayList<>();
+		for (Route.Step s : route.steps())
+		{
+			if (s.needs.isEmpty() || route.done(s, ticked, a))
+			{
+				continue;
+			}
+			for (Map.Entry<String, Long> e : s.needs.entrySet())
+			{
+				View.UseView u = new View.UseView();
+				u.item = e.getKey();
+				u.qty = e.getValue();
+				u.step = s.text;
+				uses.add(u);
+			}
+		}
+		g.uses = uses;
 
 		List<View.SectionView> sections = new ArrayList<>();
 		for (String name : route.sections())
@@ -174,6 +198,7 @@ final class Guides
 				}
 			}
 		}
+		requirements(s, a, checks);
 		for (Route.Var var : s.varbits)
 		{
 			boolean ok = var.exact ? a.varbit(var.id) == var.value : a.varbit(var.id) >= var.value;
@@ -211,6 +236,73 @@ final class Guides
 		v.checks = checks;
 		v.hints = hints;
 		return v;
+	}
+
+	/**
+	 * What the step's quests ask that the account lacks: quests to finish first, down the whole chain,
+	 * and the highest level any quest on the way asks.
+	 */
+	static void requirements(Route.Step s, Route.Account a, List<View.CheckView> checks)
+	{
+		Set<String> first = new LinkedHashSet<>();
+		Map<String, Integer> levels = new LinkedHashMap<>();
+		int[] qp = {0};
+		Set<String> seen = new java.util.HashSet<>();
+		List<String> quests = new ArrayList<>(s.quests);
+		quests.addAll(s.started);
+		for (String q : quests)
+		{
+			if (!a.questDone(q))
+			{
+				chain(q, a, seen, first, levels, qp);
+			}
+		}
+		first.removeAll(quests);
+		List<String> named = new ArrayList<>(first);
+		for (String q : named.subList(0, Math.min(FIRST, named.size())))
+		{
+			checks.add(new View.CheckView(q, a.questStarted(q) ? "Started" : "Needed first", false));
+		}
+		if (named.size() > FIRST)
+		{
+			checks.add(new View.CheckView("and " + (named.size() - FIRST) + " more quests first", "", false));
+		}
+		for (Map.Entry<String, Integer> e : levels.entrySet())
+		{
+			int level = a.level(e.getKey());
+			Integer asked = s.skills.get(e.getKey());
+			if (level < e.getValue() && (asked == null || asked < e.getValue()))
+			{
+				checks.add(new View.CheckView(e.getKey() + " for the quest", level + " / " + e.getValue(), false));
+			}
+		}
+		if (qp[0] > Math.max(s.questPoints, a.questPoints()))
+		{
+			checks.add(new View.CheckView("Quest points for the quest", a.questPoints() + " / " + qp[0], false));
+		}
+	}
+
+	/** Walks a quest's unfinished prerequisites, the deepest first. */
+	private static void chain(String quest, Route.Account a, Set<String> seen, Set<String> first, Map<String, Integer> levels, int[] qp)
+	{
+		if (!seen.add(quest))
+		{
+			return;
+		}
+		QuestReqs.Req req = REQS.of(quest);
+		for (String q : req.quests)
+		{
+			if (!a.questDone(q))
+			{
+				chain(q, a, seen, first, levels, qp);
+			}
+		}
+		for (Map.Entry<String, Integer> e : req.skills.entrySet())
+		{
+			levels.merge(e.getKey(), e.getValue(), Math::max);
+		}
+		qp[0] = Math.max(qp[0], req.questPoints);
+		first.add(quest);
 	}
 
 	/** The owned entry for a name, or for a charged or dosed form of it. */

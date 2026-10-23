@@ -289,7 +289,7 @@ public final class Route
 		return out;
 	}
 
-	static Route parse(List<String> lines)
+	public static Route parse(List<String> lines)
 	{
 		return parse(lines, Collections.emptyMap());
 	}

@@ -55,6 +55,8 @@ public class IronworksPanel extends PluginPanel
 	private static final int GUIDE = 5;
 	/** Things found shown before the list is cut short. */
 	private static final int FOUND = 60;
+	/** Route steps shown under a search, at most. */
+	private static final int USES = 5;
 	/** Stores shown per shelf before "Show all". */
 	private static final int SHELF = 6;
 
@@ -1034,6 +1036,31 @@ public class IronworksPanel extends PluginPanel
 			for (View.Found f : hits.subList(0, Math.min(FOUND, hits.size())))
 			{
 				p.add(foundRow(f));
+			}
+			List<View.UseView> uses = new ArrayList<>();
+			for (View.UseView u : v.guide.uses)
+			{
+				if (u.item.toLowerCase(Locale.ENGLISH).contains(query))
+				{
+					uses.add(u);
+				}
+			}
+			if (!uses.isEmpty())
+			{
+				p.add(new SectionHeader("The route asks for it", uses.size() == 1 ? "1 step" : uses.size() + " steps"));
+				Card card = new Card(new BorderLayout());
+				StackPanel in = new StackPanel(3, 0);
+				for (View.UseView u : uses.subList(0, Math.min(USES, uses.size())))
+				{
+					in.add(new Line(u.item, Format.amount(u.qty), Theme.GOLD_DIM, Theme.TEXT, Theme.GOLD));
+					in.add(new Line("   " + u.step, null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+				}
+				if (uses.size() > USES)
+				{
+					in.add(new Line("and " + (uses.size() - USES) + " more steps", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+				}
+				card.add(in, BorderLayout.CENTER);
+				p.add(card);
 			}
 			return p;
 		}
