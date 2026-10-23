@@ -88,7 +88,7 @@ public class RouteTest
 		assertFalse(first.checkable());
 		assertTrue(route.passed(first, a));
 		Route.Step current = route.current(new HashSet<>(), a);
-		assertEquals("Complete X Marks the Spot", current.text);
+		assertEquals("Complete Misthalin Mystery", current.text);
 	}
 
 	@Test

@@ -26,7 +26,7 @@ Karamja Hard|Agility 53,Cooking 30,Magic 59,Mining 52,Ranged 42,Runecraft 44,Sla
 Karamja Elite|Agility 15,Cooking 22,Farming 72,Herblore 87,Runecraft 91,Slayer 87||
 Kourend Easy|Construction 25,Fishing 20,Herblore 12,Mining 15,Thieving 25|Client of Kourend|
 Kourend Medium|Agility 49,Crafting 30,Farming 45,Firemaking 50,Fishing 43,Hunter 35,Magic 25,Mining 42,Slayer 50,Woodcutting 50|The Depths of Despair;The Queen of Thieves;Tale of the Righteous;The Forsaken Tower;The Ascent of Arceuus|
-Kourend Hard|Agility 49,Construction 50,Crafting 38,Farming 74,Magic 66,Mining 65,Slayer 62,Smithing 70,Thieving 49,Woodcutting 60|Dream Mentor;Architectural Alliance|
+Kourend Hard|Agility 49,Construction 50,Crafting 38,Farming 74,Magic 66,Mining 65,Slayer 62,Smithing 70,Thieving 49,Woodcutting 60|Dream Mentor|
 Kourend Elite|Cooking 84,Crafting 38,Farming 85,Firemaking 85,Fishing 82,Fletching 40,Herblore 90,Magic 95,Mining 38,Prayer 85,Runecraft 77,Slayer 95,Smithing 40,Woodcutting 90|Dragon Slayer II;A Kingdom Divided|
 Lumbridge Easy|Agility 10,Firemaking 15,Fishing 15,Mining 15,Runecraft 5,Slayer 7,Woodcutting 15|Cook's Assistant;Rune Mysteries;The Restless Ghost|
 Lumbridge Medium|Agility 20,Crafting 38,Fishing 30,Hunter 15,Magic 31,Prayer 40,Ranged 30,Runecraft 23,Strength 30,Thieving 30,Woodcutting 36|Lost City|

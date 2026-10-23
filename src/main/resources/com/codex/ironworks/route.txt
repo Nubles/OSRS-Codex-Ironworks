@@ -1,6 +1,7 @@
 # The Ironworks route: an ironman's way from a fresh account through the early game, the mid game
 # and on toward the late game. Written for Codex Ironworks; its order, milestones and tips draw on the
-# OSRS Wiki's "Ironman guide" (https://oldschool.runescape.wiki/w/Ironman_guide), CC BY-NC-SA 3.0.
+# OSRS Wiki's "Ironman guide" (https://oldschool.runescape.wiki/w/Ironman_guide), CC BY-NC-SA 3.0. Quests, miniquests and
+# diaries follow the wiki's "Optimal quest guide/Ironman" order as the Quest Helper plugin carries it (BSD 2-Clause).
 # Format: section | step | tags, tags optional, separated by ";".
 # Lasting tags (read from the game at any time): quest:, started:, skill:Name level, qp:, combat:,
 # varbit:id>=value, varp:, ca:tier. diary:Area Tier names the diary, so its levels and quests show as needs. Diary rewards claimed are varbits: ARDOUGNE_EASY_REWARD 4499,
@@ -19,93 +20,111 @@ First steps | Finish the tutorial and claim your ironman armour from Paul in Lum
 ~ Ironman armour is free to reclaim and sells for nothing: wear it, don't bank it
 First steps | Complete Cook's Assistant | quest:Cook's Assistant
 First steps | Complete Sheep Shearer, spinning the wool in Lumbridge castle | quest:Sheep Shearer
+First steps | Complete Misthalin Mystery | quest:Misthalin Mystery
+First steps | Complete The Restless Ghost | quest:The Restless Ghost
 First steps | Complete X Marks the Spot | quest:X Marks the Spot
 ~ Keep the antique lamp for later: Herblore or Hitpoints are the usual picks
-First steps | Complete Rune Mysteries | quest:Rune Mysteries
-First steps | Complete The Restless Ghost | quest:The Restless Ghost
-First steps | Complete Misthalin Mystery | quest:Misthalin Mystery
-First steps | Complete Ernest the Chicken | quest:Ernest the Chicken
-First steps | Complete Romeo & Juliet | quest:Romeo & Juliet
 First steps | Complete Witch's Potion | quest:Witch's Potion
-First steps | Complete Imp Catcher | quest:Imp Catcher
-~ Kill imps around Draynor and Falador for the four beads; it gives an amulet of accuracy
-First steps | Complete Doric's Quest | quest:Doric's Quest
-~ Mine the clay, copper and iron yourself at the Rimmington mine
-First steps | Complete Goblin Diplomacy | quest:Goblin Diplomacy
-First steps | Complete Vampyre Slayer | quest:Vampyre Slayer
-First steps | Complete Below Ice Mountain | quest:Below Ice Mountain
+First steps | Complete Client of Kourend | quest:Client of Kourend
+First steps | Complete Pandemonium | quest:Pandemonium
+First steps | Clear the Stronghold of Security for its boots and 10,000 coins | varbit:2312>=1; go:3081,3421,0
 First steps | Complete Children of the Sun | quest:Children of the Sun
-First steps | Complete Pirate's Treasure | quest:Pirate's Treasure
-First steps | Complete Prince Ali Rescue | quest:Prince Ali Rescue
-First steps | Complete Black Knights' Fortress | quest:Black Knights' Fortress
-First steps | Complete Demon Slayer | quest:Demon Slayer
-First steps | Buy a chronicle from Diango in Draynor Village | owned:Chronicle; go:3081,3250,0; npc:Diango
+First steps | Complete Romeo & Juliet | quest:Romeo & Juliet
+First steps | Complete Gertrude's Cat | quest:Gertrude's Cat
+First steps | Complete Daddy's Home | quest:Daddy's Home
+First steps | Complete Rune Mysteries | quest:Rune Mysteries
+Early members' quests | Complete Tree Gnome Village | quest:Tree Gnome Village; need:Logs 6
+Early members' quests | Complete Hazeel Cult | quest:Hazeel Cult
+Early members' quests | Complete Clock Tower | quest:Clock Tower
+Early members' quests | Complete Monk's Friend | quest:Monk's Friend; need:Logs 1
+Early members' quests | Complete Plague City | quest:Plague City; need:Dwellberries 1; need:Rope 1; need:Bucket of milk 1; need:Chocolate dust 1; need:Snape grass 1; need:Spade 1
+Early members' quests | Complete Biohazard | quest:Biohazard
+Early members' quests | Complete Demon Slayer | quest:Demon Slayer
+Early members' quests | Buy a chronicle from Diango in Draynor Village | owned:Chronicle; go:3081,3250,0; npc:Diango
 ~ It teleports to the Champions' Guild. Fortunato next door sells jugs of wine for 1 coin each: cheap healing for questing
-First steps | Reach 20 Attack, Strength and Defence on cows and goblins | skill:Attack 20; skill:Strength 20; skill:Defence 20
+Early members' quests | Reach 20 Attack, Strength and Defence on cows and goblins | skill:Attack 20; skill:Strength 20; skill:Defence 20
 ~ Bury the cow bones and tan the hides later: both count toward your stores
-
-Early members' quests | Complete Druidic Ritual to unlock Herblore | quest:Druidic Ritual; need:Raw beef 1; need:Raw rat meat 1; need:Raw bear meat 1; need:Raw chicken 1
+Early members' quests | Complete Enter the Abyss | quest:Enter the Abyss
+Early members' quests | Finish the Ardougne easy diary and claim Ardougne cloak 1 | varbit:4499; diary:Ardougne Easy; npc:Two-pints
+~ The cloak teleports to the Ardougne Monastery as often as you like
+Early members' quests | Complete Fight Arena | quest:Fight Arena
+Early members' quests | Complete Sheep Herder | quest:Sheep Herder
 Early members' quests | Complete Waterfall Quest for 30 Attack and Strength | quest:Waterfall Quest; skill:Attack 30; skill:Strength 30; need:Rope 1; need:Air rune 6; need:Water rune 6; need:Earth rune 6
 ~ Bring a rope, six each of air, water and earth runes, and food. Glarial's amulet and pebble come from the tomb
 ~ Quests like this one and The Feud beat slow early training: their rewards come in one go
-Early members' quests | Complete Tree Gnome Village | quest:Tree Gnome Village; need:Logs 6
-Early members' quests | Complete Fight Arena | quest:Fight Arena
+Early members' quests | Complete Murder Mystery | quest:Murder Mystery
+Early members' quests | Complete Merlin's Crystal | quest:Merlin's Crystal; need:Bucket of wax 1; need:Bat bones 1
+Early members' quests | Complete Holy Grail | quest:Holy Grail
+Early members' quests | Complete Doric's Quest | quest:Doric's Quest
+~ Mine the clay, copper and iron yourself at the Rimmington mine
+Early members' quests | Complete Druidic Ritual to unlock Herblore | quest:Druidic Ritual; need:Raw beef 1; need:Raw rat meat 1; need:Raw bear meat 1; need:Raw chicken 1
 Early members' quests | Complete Witch's House | quest:Witch's House; need:Cheese 1
-Early members' quests | Complete Plague City | quest:Plague City; need:Dwellberries 1; need:Rope 1; need:Bucket of milk 1; need:Chocolate dust 1; need:Snape grass 1; need:Spade 1
-Early members' quests | Complete Biohazard | quest:Biohazard
-Early members' quests | Complete Jungle Potion | quest:Jungle Potion
-Early members' quests | Complete Monk's Friend | quest:Monk's Friend; need:Logs 1
-Early members' quests | Complete Hazeel Cult | quest:Hazeel Cult
-Early members' quests | Complete Sea Slug | quest:Sea Slug; need:Swamp paste 1
-Early members' quests | Complete Tribal Totem | quest:Tribal Totem
-Early members' quests | Complete Fishing Contest | quest:Fishing Contest; need:Garlic 1; need:Spade 1
-Early members' quests | Complete The Feud for Thieving | quest:The Feud
-Early members' quests | Complete Tai Bwo Wannai Trio for karambwans | quest:Tai Bwo Wannai Trio
-~ Dr Jekyll in Tai Bwo Wannai turns an irit leaf into a four-dose Agility potion, and a torstol into a stamina potion, before you can brew them
-Early members' quests | Take the boots of lightness from the Temple of Ikov cellar | owned:Boots of lightness; go:2676,3404,0
-~ Bring a light source and a slash weapon or a knife for the webs
-Early members' quests | Complete Temple of Ikov, siding with the Guardians of Armadyl | quest:Temple of Ikov
-~ The Armadyl pendant you keep counts for the Armadyl god items in the God Wars Dungeon
+Early members' quests | Complete Dwarf Cannon | quest:Dwarf Cannon
+Early members' quests | Complete Below Ice Mountain | quest:Below Ice Mountain
+Early members' quests | Complete Black Knights' Fortress | quest:Black Knights' Fortress
+Early members' quests | Complete Pirate's Treasure | quest:Pirate's Treasure
+Early members' quests | Complete A Ruff Situation | varbit:15889>=120
+Early members' quests | Complete The Ides of Milk | quest:The Ides of Milk
+Early members' quests | Complete Observatory Quest | quest:Observatory Quest
 Early members' quests | Complete Priest in Peril to open Morytania | quest:Priest in Peril; need:Rune essence 50
 ~ Mine the 50 essence yourself after Rune Mysteries: the Aubury teleport is quickest
 Early members' quests | Complete Nature Spirit | quest:Nature Spirit
+Early members' quests | Complete Recruitment Drive | quest:Recruitment Drive
+Early members' quests | Complete Alfred Grimhand's Barcrawl | quest:Alfred Grimhand's Barcrawl
+Early members' quests | Complete Scorpion Catcher | quest:Scorpion Catcher
+Early members' quests | Complete Jungle Potion | quest:Jungle Potion
+Early members' quests | Complete Vampyre Slayer | quest:Vampyre Slayer
+Early members' quests | Complete A Porcine of Interest | quest:A Porcine of Interest
+Early members' quests | Complete Rag and Bone Man I | quest:Rag and Bone Man I
+Early members' quests | Complete Death Plateau for climbing boots | quest:Death Plateau
+Early members' quests | Reach 10 Agility at the Draynor Village Rooftop Course | skill:Agility 10; go:3103,3279,0
+Early members' quests | Reach 20 Agility on the Draynor course | skill:Agility 20; go:3103,3279,0
+Early members' quests | Reach 30 Agility at the Varrock Rooftop Course | skill:Agility 30; go:3221,3414,0
+~ 10, 20 and 30 Agility each make run energy come back faster, and open shortcuts
+Early members' quests | Reach 40 Agility at the Canifis Rooftop Course | skill:Agility 40; go:3507,3488,0
+~ Marks of grace pay for graceful: 260 marks for the full set, usually by about 60 Agility
+Early members' quests | Buy the full graceful outfit from Grace | owned:Graceful hood; owned:Graceful top; owned:Graceful legs; owned:Graceful gloves; owned:Graceful boots; owned:Graceful cape; npc:Grace
+Early members' quests | Complete The Queen of Thieves | quest:The Queen of Thieves
+Early members' quests | Complete The Depths of Despair | quest:The Depths of Despair
+Early members' quests | Complete The Forsaken Tower | quest:The Forsaken Tower
+Early members' quests | Complete Tale of the Righteous | quest:Tale of the Righteous
+Early members' quests | Complete Mountain Daughter | quest:Mountain Daughter
+Early members' quests | Complete The Grand Tree | quest:The Grand Tree
+Early members' quests | Complete Tribal Totem | quest:Tribal Totem
 Early members' quests | Complete The Dig Site | quest:The Dig Site
 ~ Its experience rewards are worth spending on Mining or Herblore
-Early members' quests | Complete Merlin's Crystal | quest:Merlin's Crystal; need:Bucket of wax 1; need:Bat bones 1
-Early members' quests | Complete Death Plateau for climbing boots | quest:Death Plateau
-
-Getting around | Reach 10 Agility at the Draynor Village Rooftop Course | skill:Agility 10; go:3103,3279,0
-Getting around | Reach 20 Agility on the Draynor course | skill:Agility 20; go:3103,3279,0
-Getting around | Reach 30 Agility at the Varrock Rooftop Course | skill:Agility 30; go:3221,3414,0
-~ 10, 20 and 30 Agility each make run energy come back faster, and open shortcuts
-Getting around | Reach 40 Agility at the Canifis Rooftop Course | skill:Agility 40; go:3507,3488,0
-~ Marks of grace pay for graceful: 260 marks for the full set, usually by about 60 Agility
-Getting around | Buy the full graceful outfit from Grace | owned:Graceful hood; owned:Graceful top; owned:Graceful legs; owned:Graceful gloves; owned:Graceful boots; owned:Graceful cape; npc:Grace
+Early members' quests | Complete The Golem | quest:The Golem
+Early members' quests | Complete Recipe for Disaster - Another Cook's Quest | quest:Recipe for Disaster - Another Cook's Quest
+Early members' quests | Complete The Knight's Sword | quest:The Knight's Sword
+Early members' quests | Complete Elemental Workshop I | quest:Elemental Workshop I
+Early members' quests | Complete Prince Ali Rescue | quest:Prince Ali Rescue
+Early members' quests | Complete Shadow of the Storm | quest:Shadow of the Storm
+Early members' quests | Complete Prying Times | quest:Prying Times
+Early members' quests | Complete Imp Catcher | quest:Imp Catcher
+~ Kill imps around Draynor and Falador for the four beads; it gives an amulet of accuracy
+Early members' quests | Complete Elemental Workshop II | quest:Elemental Workshop II
+Early members' quests | Complete The Ribbiting Tale of a Lily Pad Labour Dispute | quest:The Ribbiting Tale of a Lily Pad Labour Dispute
 Getting around | Complete Lost City for a dramen staff | quest:Lost City; owned:Dramen staff
 ~ Kill the tree spirit with magic or crush it in melee; bring a knife and an axe. Zanaris also sells the dragon dagger
 Getting around | Complete Fairytale I - Growing Pains | quest:Fairytale I - Growing Pains
 Getting around | Start Fairytale II - Cure a Queen to use fairy rings | started:Fairytale II - Cure a Queen
 ~ Fairy rings make Zanaris, Fossil Island, Canifis and much more one click from home
-Getting around | Finish the Ardougne easy diary and claim Ardougne cloak 1 | varbit:4499; diary:Ardougne Easy; npc:Two-pints
-~ The cloak teleports to the Ardougne Monastery as often as you like
-Getting around | Finish the Lumbridge easy diary and claim Explorer's ring 1 | varbit:4535; diary:Lumbridge Easy; npc:Hatius Cosaintus
-Getting around | Finish the Karamja easy diary and claim Karamja gloves 1 | varbit:3577; diary:Karamja Easy; npc:Pirate Jackie the Fruit
-Getting around | Finish the Varrock easy diary and claim Varrock armour 1 | varbit:4519; diary:Varrock Easy; npc:Toby
-Getting around | Finish the Falador easy diary and claim Falador shield 1 | varbit:4503; diary:Falador Easy; optional
-Getting around | Make or find a games necklace and a ring of dueling | owned:Games necklace; owned:Ring of dueling
-~ The games necklace reaches Wintertodt, Barbarian Assault and the Burthorpe games room; the ring of dueling reaches Ferox Enclave
-Getting around | Complete Cabin Fever to halve charter ship fares | quest:Cabin Fever; optional
-~ A ring of charos(a) cuts the fares again
-Getting around | Move your house to Pollnivneach or Brimhaven, and buy law runes for Teleport to House | skill:Construction 20; optional
-~ Minigame teleports are free every 20 minutes: Burthorpe, Castle Wars and Ferox Enclave
-
-Skilling base | Reach 50 Firemaking at Wintertodt | skill:Firemaking 50; go:1630,3958,0; need:Cake 10
-~ Bring a hammer, a knife, a tinderbox and an axe. Wintertodt crates are an iron's first big supply of seeds, herbs and ores
-~ Logs from the Lumbridge castle roof, lit with a tinderbox, get you there if your Firemaking is low
-Skilling base | Reach 60 Woodcutting at Wintertodt for the Woodcutting Guild | skill:Woodcutting 60; optional; go:1630,3958,0
-~ Most irons stop here, at about 88 to 90 Firemaking; the guild sells a rune axe once you have 60
-Skilling base | Reach 45 Thieving at the Ardougne cake stall and on master farmers | skill:Thieving 45; go:2668,3311,0
-~ Master farmers in Draynor and Ardougne are your best early source of herb seeds. At 45, blackjacking in Pollnivneach pays well
+Getting around | Complete Goblin Diplomacy | quest:Goblin Diplomacy
+Getting around | Complete Recipe for Disaster - Wartface & Bentnoze | quest:Recipe for Disaster - Wartface & Bentnoze
+Getting around | Complete Sleeping Giants | quest:Sleeping Giants
+Getting around | Complete Shield of Arrav | quest:Shield of Arrav
+Getting around | Complete Creature of Fenkenstrain | quest:Creature of Fenkenstrain
+Getting around | Complete A Soul's Bane | quest:A Soul's Bane
+Getting around | Complete The Lost Tribe | quest:The Lost Tribe
+Getting around | Complete Death to the Dorgeshuun | quest:Death to the Dorgeshuun
+Getting around | Complete The Giant Dwarf | quest:The Giant Dwarf
+Getting around | Complete Another Slice of H.A.M. | quest:Another Slice of H.A.M.
+Getting around | Complete Making History | quest:Making History
+Getting around | Complete In Search of the Myreque | quest:In Search of the Myreque
+Getting around | Complete Shades of Mort'ton | quest:Shades of Mort'ton
+Getting around | Complete In Aid of the Myreque | quest:In Aid of the Myreque; optional
+Getting around | Beat the TzHaar Fight Cave for a fire cape | owned:Fire cape; go:2438,5167,0
+Getting around | Get a black mask from cave horrors | owned:Black mask; optional; go:3740,9373,0
 Skilling base | Complete Bone Voyage to reach Fossil Island | quest:Bone Voyage
 ~ Kudos come from the Varrock Museum: clean finds and answer the display quizzes
 Skilling base | Start birdhouse runs on Fossil Island every 50 minutes | skill:Hunter 5
@@ -117,76 +136,153 @@ Skilling base | Get a seed box from Tithe Farm | owned:Seed box; optional; go:18
 Skilling base | Get a herb sack from Tithe Farm | owned:Herb sack; optional; go:1806,3501,0
 Skilling base | Reach 35 Fishing and play Tempoross | skill:Fishing 35; go:3144,2818,0
 ~ Tempoross pays out jewellery, rune items, planks and uncut gems, dragonstone among them
-Skilling base | Complete Temple of the Eye and play Guardians of the Rift | quest:Temple of the Eye; optional
-Skilling base | Reach 58 Fishing, then barbarian fish at Otto's Grotto | skill:Fishing 58; go:2500,3488,0
-~ Barbarian fishing trains Agility and Strength too. Good stops: 74 Fishing (50 Agility and Strength), 84 (60), 94 (70)
-Skilling base | Reach 35 Herblore for super attack and combat-boosting potions | skill:Herblore 35
-Skilling base | Reach 50 Agility and run the Agility Pyramid for coins | skill:Agility 50; go:3347,2827,0
-~ Each pyramid top sells to Simon Templeton for 10,000 coins
-Skilling base | Reach 40 Mining | skill:Mining 40
-Skilling base | Reach 40 Crafting | skill:Crafting 40
-~ Glass-blowing and battlestaves from Zaff are the iron's classic route
-Skilling base | Smelt steel at the Blast Furnace to 50 Smithing | skill:Smithing 50; go:1942,4958,0
-~ Steel bars go on to cannonballs, darts and other skills
-Skilling base | Reach 50 Cooking | skill:Cooking 50
-Skilling base | Reach 55 Magic and start High Level Alchemy | skill:Magic 55; need:Nature rune 100
-~ Sell to the West Ardougne general store, or at full alchemy value to Martin Thwait's Lost and Found in the Rogues' Den
-
-Combat ready | Complete Animal Magnetism for Ava's attractor or accumulator | quest:Animal Magnetism
-Combat ready | Get Ava's accumulator | owned:Ava's accumulator; need:Steel arrow 75
+Skilling base | Complete Wanted! | quest:Wanted!
+Skilling base | Complete The Feud for Thieving | quest:The Feud
+Skilling base | Complete Troll Stronghold | quest:Troll Stronghold
+Skilling base | Complete Troll Romance | quest:Troll Romance
 Combat ready | Complete Dragon Slayer I | quest:Dragon Slayer I
 ~ The rune platebody and green d'hide body unlock with it; an anti-dragon shield is required
 Combat ready | Get a fighter torso at Barbarian Assault | owned:Fighter torso; go:2531,3569,0; optional
 Combat ready | Reach 60 Attack, Strength and Defence | skill:Attack 60; skill:Strength 60; skill:Defence 60
 ~ Slayer tasks from Vannaka or Chaeldar train combat and give drops worth keeping
 Combat ready | Get a dragon defender at the Warriors' Guild | owned:Dragon defender; go:2877,3546,0
-Combat ready | Complete The Grand Tree | quest:The Grand Tree
-Combat ready | Complete Monkey Madness I | quest:Monkey Madness I
-~ Unlocks dragon scimitars and Ape Atoll; bring prayer potions and a ranged or magic option for the demon
-Combat ready | Complete Holy Grail | quest:Holy Grail
 Combat ready | Complete Horror from the Deep for a god book | quest:Horror from the Deep
 ~ The Book of War is the Bandos book; Another Slice of H.A.M. later gives the ancient mace
+Combat ready | Complete Ernest the Chicken | quest:Ernest the Chicken
+Combat ready | Complete Animal Magnetism for Ava's attractor or accumulator | quest:Animal Magnetism
+Combat ready | Get Ava's accumulator | owned:Ava's accumulator; need:Steel arrow 75
+Combat ready | Complete Shilo Village | quest:Shilo Village
+Combat ready | Complete Spirits of the Elid | quest:Spirits of the Elid
+Combat ready | Complete Icthlarin's Little Helper | quest:Icthlarin's Little Helper
+Combat ready | Complete Ethically Acquired Antiquities | quest:Ethically Acquired Antiquities
+Combat ready | Complete Twilight's Promise | quest:Twilight's Promise
+Combat ready | Complete Death on the Isle | quest:Death on the Isle
+Combat ready | Complete Ratcatchers | quest:Ratcatchers
+Combat ready | Complete The Garden of Death | quest:The Garden of Death
+Combat ready | Complete Enlightened Journey | quest:Enlightened Journey
+Combat ready | Unlock the Crafting Guild balloon route with Auguste's balloons | varbit:2871>=1; optional
+Combat ready | Complete Sea Slug | quest:Sea Slug; need:Swamp paste 1
+Combat ready | Complete Current Affairs | quest:Current Affairs
+Combat ready | Complete Fishing Contest | quest:Fishing Contest; need:Garlic 1; need:Spade 1
+Combat ready | Complete Recipe for Disaster - Mountain Dwarf | quest:Recipe for Disaster - Mountain Dwarf
+Combat ready | Complete Ghosts Ahoy | quest:Ghosts Ahoy
+Combat ready | Complete Forgettable Tale... | quest:Forgettable Tale...
+Combat ready | Complete Garden of Tranquillity | quest:Garden of Tranquillity
+Combat ready | Complete Recipe for Disaster - Evil Dave | quest:Recipe for Disaster - Evil Dave
+Combat ready | Complete Big Chompy Bird Hunting | quest:Big Chompy Bird Hunting
+Combat ready | Complete Zogre Flesh Eaters | quest:Zogre Flesh Eaters
+Combat ready | Finish the Varrock easy diary and claim Varrock armour 1 | varbit:4519; diary:Varrock Easy; npc:Toby
+Combat ready | Finish the Desert easy diary and claim Desert amulet 1 | varbit:4523; diary:Desert Easy; npc:Jarr
+Combat ready | Complete Darkness of Hallowvale | quest:Darkness of Hallowvale
+Combat ready | Complete Tower of Life | quest:Tower of Life
+Combat ready | Complete Recipe for Disaster - Pirate Pete | quest:Recipe for Disaster - Pirate Pete
+Combat ready | Finish the Falador easy diary and claim Falador shield 1 | varbit:4503; diary:Falador Easy; optional
+Combat ready | Make or find a games necklace and a ring of dueling | owned:Games necklace; owned:Ring of dueling
+~ The games necklace reaches Wintertodt, Barbarian Assault and the Burthorpe games room; the ring of dueling reaches Ferox Enclave
+Combat ready | Complete Tai Bwo Wannai Trio for karambwans | quest:Tai Bwo Wannai Trio
+~ Dr Jekyll in Tai Bwo Wannai turns an irit leaf into a four-dose Agility potion, and a torstol into a stamina potion, before you can brew them
+Combat ready | Take the boots of lightness from the Temple of Ikov cellar | owned:Boots of lightness; go:2676,3404,0
+~ Bring a light source and a slash weapon or a knife for the webs
+Combat ready | Complete The Tourist Trap | quest:The Tourist Trap
+Combat ready | Complete Eadgar's Ruse | quest:Eadgar's Ruse
+Combat ready | Complete My Arm's Big Adventure | quest:My Arm's Big Adventure
 Combat ready | Complete The Fremennik Trials | quest:The Fremennik Trials
 Combat ready | Reach 43 Prayer for the protection prayers | skill:Prayer 43; need:Big bones 150
 ~ The Make tab shows how much Prayer experience your bones hold at your chosen altar
 Combat ready | Get a rune crossbow from the Crazy archaeologist | owned:Rune crossbow; optional
 ~ Broad bolts follow from the Broader fletching Slayer reward
 Combat ready | Get a zombie axe from armoured zombies | owned:Zombie axe; optional
-Combat ready | Complete Underground Pass and take Iban's staff | quest:Underground Pass; owned:Iban's staff
+Combat ready | Complete The Fremennik Isles | quest:The Fremennik Isles
+Combat ready | Complete Getting Ahead | quest:Getting Ahead
+Combat ready | Complete Recipe for Disaster - Lumbridge Guide | quest:Recipe for Disaster - Lumbridge Guide
+Combat ready | Complete Recipe for Disaster - Skrach Uglogwee | quest:Recipe for Disaster - Skrach Uglogwee
+Combat ready | Complete Haunted Mine | quest:Haunted Mine
+Combat ready | Finish the Karamja easy diary and claim Karamja gloves 1 | varbit:3577; diary:Karamja Easy; npc:Pirate Jackie the Fruit
+Combat ready | Complete Watchtower | quest:Watchtower
+Combat ready | Complete Contact! | quest:Contact!
+Combat ready | Complete The Eyes of Glouphrie | quest:The Eyes of Glouphrie
+Combat ready | Complete Temple of the Eye and play Guardians of the Rift | quest:Temple of the Eye; optional
+Combat ready | Reach 58 Fishing, then barbarian fish at Otto's Grotto | skill:Fishing 58; go:2500,3488,0
+~ Barbarian fishing trains Agility and Strength too. Good stops: 74 Fishing (50 Agility and Strength), 84 (60), 94 (70)
+Combat ready | Reach 35 Herblore for super attack and combat-boosting potions | skill:Herblore 35
+Combat ready | Reach 50 Agility and run the Agility Pyramid for coins | skill:Agility 50; go:3347,2827,0
+~ Each pyramid top sells to Simon Templeton for 10,000 coins
+Combat ready | Reach 40 Mining | skill:Mining 40
+Combat ready | Reach 40 Crafting | skill:Crafting 40
+~ Glass-blowing and battlestaves from Zaff are the iron's classic route
+Combat ready | Smelt steel at the Blast Furnace to 50 Smithing | skill:Smithing 50; go:1942,4958,0
+~ Steel bars go on to cannonballs, darts and other skills
+Combat ready | Reach 50 Cooking | skill:Cooking 50
+Combat ready | Reach 55 Magic and start High Level Alchemy | skill:Magic 55; need:Nature rune 100
+~ Sell to the West Ardougne general store, or at full alchemy value to Martin Thwait's Lost and Found in the Rogues' Den
+Combat ready | Unlock the Varrock balloon route with Auguste's balloons | varbit:2872>=1; optional
+Barrows gloves | Complete Olaf's Quest | quest:Olaf's Quest
+Barrows gloves | Complete Tears of Guthix | quest:Tears of Guthix
+Barrows gloves | Complete Temple of Ikov, siding with the Guardians of Armadyl | quest:Temple of Ikov
+~ The Armadyl pendant you keep counts for the Armadyl god items in the God Wars Dungeon
+Barrows gloves | Complete One Small Favour | quest:One Small Favour
+Barrows gloves | Complete A Tail of Two Cats | quest:A Tail of Two Cats
+Barrows gloves | Complete The Slug Menace | quest:The Slug Menace
+Barrows gloves | Complete Between a Rock... | quest:Between a Rock...
+Barrows gloves | Complete Monkey Madness I | quest:Monkey Madness I
+~ Unlocks dragon scimitars and Ape Atoll; bring prayer potions and a ranged or magic option for the demon
+Barrows gloves | Complete Cold War | quest:Cold War
+Barrows gloves | Complete The Ascent of Arceuus | quest:The Ascent of Arceuus
+Barrows gloves | Complete Eagles' Peak | quest:Eagles' Peak
+Barrows gloves | Complete Underground Pass and take Iban's staff | quest:Underground Pass; owned:Iban's staff
 ~ Zamorak robes drop from Iban's disciples, but only until you finish the quest
-Combat ready | Complete In Aid of the Myreque | quest:In Aid of the Myreque; optional
-Combat ready | Beat the TzHaar Fight Cave for a fire cape | owned:Fire cape; go:2438,5167,0
-Combat ready | Get a black mask from cave horrors | owned:Black mask; optional; go:3740,9373,0
-
-Barrows gloves | Complete Recipe for Disaster - Another Cook's Quest | quest:Recipe for Disaster - Another Cook's Quest
-Barrows gloves | Complete Recipe for Disaster - Mountain Dwarf | quest:Recipe for Disaster - Mountain Dwarf
-Barrows gloves | Complete Recipe for Disaster - Wartface & Bentnoze | quest:Recipe for Disaster - Wartface & Bentnoze
-Barrows gloves | Complete Recipe for Disaster - Pirate Pete | quest:Recipe for Disaster - Pirate Pete
-Barrows gloves | Complete Recipe for Disaster - Lumbridge Guide | quest:Recipe for Disaster - Lumbridge Guide
-Barrows gloves | Complete Recipe for Disaster - Evil Dave | quest:Recipe for Disaster - Evil Dave
-Barrows gloves | Complete Recipe for Disaster - Skrach Uglogwee | quest:Recipe for Disaster - Skrach Uglogwee
-Barrows gloves | Complete Recipe for Disaster - Sir Amik Varze | quest:Recipe for Disaster - Sir Amik Varze
+Barrows gloves | Complete Skippy and the Mogres | quest:Skippy and the Mogres
+Barrows gloves | Complete Rag and Bone Man II | quest:Rag and Bone Man II
+Barrows gloves | Complete Lair of Tarn Razorlor | quest:Lair of Tarn Razorlor
+Barrows gloves | Complete Rum Deal | quest:Rum Deal
+Barrows gloves | Complete Cabin Fever to halve charter ship fares | quest:Cabin Fever; optional
+~ A ring of charos(a) cuts the fares again
+Barrows gloves | Move your house to Pollnivneach or Brimhaven, and buy law runes for Teleport to House | skill:Construction 20; optional
+~ Minigame teleports are free every 20 minutes: Burthorpe, Castle Wars and Ferox Enclave
+Barrows gloves | Reach 50 Firemaking at Wintertodt | skill:Firemaking 50; go:1630,3958,0; need:Cake 10
+~ Bring a hammer, a knife, a tinderbox and an axe. Wintertodt crates are an iron's first big supply of seeds, herbs and ores
+~ Logs from the Lumbridge castle roof, lit with a tinderbox, get you there if your Firemaking is low
+Barrows gloves | Reach 60 Woodcutting at Wintertodt for the Woodcutting Guild | skill:Woodcutting 60; optional; go:1630,3958,0
+~ Most irons stop here, at about 88 to 90 Firemaking; the guild sells a rune axe once you have 60
+Barrows gloves | Reach 45 Thieving at the Ardougne cake stall and on master farmers | skill:Thieving 45; go:2668,3311,0
+~ Master farmers in Draynor and Ardougne are your best early source of herb seeds. At 45, blackjacking in Pollnivneach pays well
+Barrows gloves | Complete His Faithful Servants | quest:His Faithful Servants
+Barrows gloves | Complete The Great Brain Robbery | quest:The Great Brain Robbery
+Barrows gloves | Complete Scrambled! | quest:Scrambled!
+Barrows gloves | Complete The Hand in the Sand | quest:The Hand in the Sand
+Barrows gloves | Complete Enakhra's Lament | quest:Enakhra's Lament
+Barrows gloves | Complete Meat and Greet | quest:Meat and Greet
+Barrows gloves | Complete Heroes' Quest | quest:Heroes' Quest
+Barrows gloves | Complete Throne of Miscellania and start managing the kingdom | quest:Throne of Miscellania
+~ Herbs or hardwood are the iron's picks. Keep the coffer topped up for the daily maximum
+Barrows gloves | Complete Royal Trouble | quest:Royal Trouble; optional
+Barrows gloves | Get an imbued god cape from Mage Arena II | any:Imbued saradomin cape,Imbued guthix cape,Imbued zamorak cape; optional
+Barrows gloves | Get a berserker ring from Dagannoth Rex | owned:Berserker ring; optional; go:2913,4449,0
+~ Rex can be safespotted with ranged or magic
+Barrows gloves | Get void knight equipment at Pest Control | owned:Void knight top; optional; go:3041,3202,0
 Barrows gloves | Complete Desert Treasure I for ancient magicks | quest:Desert Treasure I
 ~ The final Recipe for Disaster fight needs it done, and ancient magicks speed up much of what follows
-Barrows gloves | Complete Recipe for Disaster - King Awowogei | quest:Recipe for Disaster - King Awowogei
-Barrows gloves | Reach 175 quest points | qp:175
-Barrows gloves | Complete Recipe for Disaster - Culinaromancer | quest:Recipe for Disaster - Culinaromancer
-Barrows gloves | Buy Barrows gloves from the Culinaromancer's chest | owned:Barrows gloves; npc:Culinaromancer's chest
-~ The chest also sells every lower glove tier, if you want a spare pair
-
-Mid game | Complete Lunar Diplomacy for the Lunar spellbook | quest:Lunar Diplomacy
-~ Spellbook swap, NPC contact and humidify make many iron chores quicker
-Mid game | Complete Dream Mentor | quest:Dream Mentor
+Mid game | Complete A Taste of Hope | quest:A Taste of Hope
+Mid game | Complete Family Crest | quest:Family Crest
+Mid game | Complete Legends' Quest | quest:Legends' Quest
+Mid game | Complete Recipe for Disaster - Sir Amik Varze | quest:Recipe for Disaster - Sir Amik Varze
+Mid game | Complete Curse of the Empty Lord | quest:Curse of the Empty Lord
+Mid game | Complete The General's Shadow | quest:The General's Shadow
+Mid game | Finish the Fremennik easy diary and claim Fremennik sea boots 1 | varbit:4531; diary:Fremennik Easy; npc:Thorodin
+Mid game | Finish the Kandarin easy diary and claim Kandarin headgear 1 | varbit:4515; diary:Kandarin Easy; npc:The 'Wedge'
+Mid game | Finish the Kourend easy diary and claim Rada's blessing 1 | varbit:7929; diary:Kourend Easy; npc:Elise
+Mid game | Finish the Lumbridge easy diary and claim Explorer's ring 1 | varbit:4535; diary:Lumbridge Easy; npc:Hatius Cosaintus
+Mid game | Finish the Morytania easy diary and claim Morytania legs 1 | varbit:4527; diary:Morytania Easy; npc:Le-sabrè
+Mid game | Finish the Western easy diary and claim Western banner 1 | varbit:4511; diary:Western Easy; npc:Elder Gnome child
+Mid game | Finish the Wilderness easy diary and claim Wilderness sword 1 | varbit:4507; diary:Wilderness Easy; npc:Lesser Fanatic
+Mid game | Finish the Ardougne medium diary and claim Ardougne cloak 2 | varbit:4500; diary:Ardougne Medium; npc:Two-pints
+Mid game | Finish the Falador medium diary and claim Falador shield 2 | varbit:4504; diary:Falador Medium; npc:Sir Rebral
+Mid game | Finish the Varrock medium diary and claim Varrock armour 2 | varbit:4520; diary:Varrock Medium; npc:Toby
+Mid game | Finish the Kandarin medium diary and claim Kandarin headgear 2 | varbit:4516; diary:Kandarin Medium; npc:The 'Wedge'
+Mid game | Complete Land of the Goblins | quest:Land of the Goblins
 Mid game | Complete Fairytale II - Cure a Queen | quest:Fairytale II - Cure a Queen
-Mid game | Complete Throne of Miscellania and start managing the kingdom | quest:Throne of Miscellania
-~ Herbs or hardwood are the iron's picks. Keep the coffer topped up for the daily maximum
-Mid game | Complete Royal Trouble | quest:Royal Trouble; optional
-Mid game | Get an imbued god cape from Mage Arena II | any:Imbued saradomin cape,Imbued guthix cape,Imbued zamorak cape; optional
-Mid game | Get a berserker ring from Dagannoth Rex | owned:Berserker ring; optional; go:2913,4449,0
-~ Rex can be safespotted with ranged or magic
-Mid game | Get void knight equipment at Pest Control | owned:Void knight top; optional; go:3041,3202,0
-Mid game | Finish the Morytania hard diary, then kill Barrows | varbit:4529; diary:Morytania Hard; optional
-~ Barrows Teleport at 78 Magic; the diary gives half again as many runes from the chest
+Mid game | Complete A Kingdom Divided | quest:A Kingdom Divided
+Mid game | Complete The Heart of Darkness | quest:The Heart of Darkness
 Mid game | Complete Perilous Moons and kill the Moons of Peril | quest:Perilous Moons
 ~ Blood moon armour is a Strength set before Bandos; eclipse moon armour and the atlatl are a ranged set
 Mid game | Reach 70 Agility | skill:Agility 70
@@ -199,15 +295,94 @@ Mid game | Get an abyssal whip at 85 Slayer | skill:Slayer 85; owned:Abyssal whi
 Mid game | Get a trident of the seas from cave kraken | owned:Trident of the seas; optional
 Mid game | Make an amulet of fury at 90 Crafting | owned:Amulet of fury; optional
 Mid game | Get a dragon warhammer from lizardman shamans | owned:Dragon warhammer; optional; go:1312,3686,0
+Mid game | Complete Recipe for Disaster - King Awowogei | quest:Recipe for Disaster - King Awowogei
+Mid game | Reach 175 quest points | qp:175
+Mid game | Complete Regicide | quest:Regicide
+Mid game | Complete Roving Elves | quest:Roving Elves
+Mid game | Complete Mourning's End Part I | quest:Mourning's End Part I
+Mid game | Complete Mourning's End Part II | quest:Mourning's End Part II
+Mid game | Complete Lunar Diplomacy for the Lunar spellbook | quest:Lunar Diplomacy
+~ Spellbook swap, NPC contact and humidify make many iron chores quicker
+Mid game | Complete What Lies Below | quest:What Lies Below
+Mid game | Complete King's Ransom | quest:King's Ransom
+Mid game | Complete Knight Waves Training Grounds | varbit:3909>=8
+Mid game | Complete Swan Song | quest:Swan Song
+Mid game | Complete Recipe for Disaster - Culinaromancer | quest:Recipe for Disaster - Culinaromancer
+Mid game | Buy Barrows gloves from the Culinaromancer's chest | owned:Barrows gloves; npc:Culinaromancer's chest
+~ The chest also sells every lower glove tier, if you want a spare pair
+Mid game | Complete Grim Tales | quest:Grim Tales
+Mid game | Complete Dream Mentor | quest:Dream Mentor
+Mid game | Complete At First Light | quest:At First Light
+Mid game | Complete Defender of Varrock | quest:Defender of Varrock
+Mid game | Finish the Wilderness medium diary and claim Wilderness sword 2 | varbit:4508; diary:Wilderness Medium; npc:Lesser Fanatic
+Mid game | Finish the Karamja medium diary and claim Karamja gloves 2 | varbit:3598; diary:Karamja Medium; npc:Pirate Jackie the Fruit
+Mid game | Finish the Kourend medium diary and claim Rada's blessing 2 | varbit:7930; diary:Kourend Medium; npc:Elise
+Mid game | Finish the Lumbridge medium diary and claim Explorer's ring 2 | varbit:4536; diary:Lumbridge Medium; npc:Hatius Cosaintus
+Mid game | Finish the Morytania medium diary and claim Morytania legs 2 | varbit:4528; diary:Morytania Medium; npc:Le-sabrè
+Mid game | Complete Devious Minds | quest:Devious Minds
+Mid game | Complete The Final Dawn | quest:The Final Dawn
+Mid game | Complete Troubled Tortugans | quest:Troubled Tortugans
+Mid game | Complete The Red Reef | quest:The Red Reef
+Mid game | Complete Fallen From Grace | quest:Fallen From Grace
+Mid game | Complete Shadows of Custodia | quest:Shadows of Custodia
+Mid game | Complete The Path of Glouphrie | quest:The Path of Glouphrie
+Mid game | Complete The Fremennik Exiles | quest:The Fremennik Exiles
+Mid game | Complete Sins of the Father | quest:Sins of the Father
 Mid game | Complete Beneath Cursed Sands for the Tombs of Amascut | quest:Beneath Cursed Sands
 ~ Low invocations make it a gentle first raid
-Mid game | Complete Song of the Elves to reach Prifddinas | quest:Song of the Elves
-~ The Gauntlet is free to try again and again; the Corrupted Gauntlet gives the Bow of Faerdhinen's seed
-
+Mid game | Complete The Curse of Arrav | quest:The Curse of Arrav
+Mid game | Complete Making Friends with My Arm | quest:Making Friends with My Arm
+Mid game | Complete Monkey Madness II | quest:Monkey Madness II
+Mid game | Finish the Fremennik medium diary and claim Fremennik sea boots 2 | varbit:4532; diary:Fremennik Medium; npc:Thorodin
+Mid game | Complete A Night at the Theatre | quest:A Night at the Theatre
 Toward the late game | Complete Dragon Slayer II for Vorkath | quest:Dragon Slayer II
 Toward the late game | Complete Regicide and get a toxic blowpipe from Zulrah | owned:Toxic blowpipe; optional; go:2215,3057,0
+Toward the late game | Complete Secrets of the North | quest:Secrets of the North
+Toward the late game | Complete While Guthix Sleeps | quest:While Guthix Sleeps
+Toward the late game | Complete Song of the Elves to reach Prifddinas | quest:Song of the Elves
+~ The Gauntlet is free to try again and again; the Corrupted Gauntlet gives the Bow of Faerdhinen's seed
 Toward the late game | Complete Desert Treasure II - The Fallen Empire | quest:Desert Treasure II - The Fallen Empire
 Toward the late game | Get a Bow of Faerdhinen from the Corrupted Gauntlet | owned:Bow of faerdhinen; optional
 Toward the late game | Reach 95 Slayer for the Alchemical Hydra | skill:Slayer 95; optional; go:1312,10215,0
 Toward the late game | Complete every quest for the quest point cape | owned:Quest point cape; optional
 Toward the late game | Get an infernal cape from the Inferno | owned:Infernal cape; optional
+Toward the late game | Complete The Blood Moon Rises | quest:The Blood Moon Rises
+Toward the late game | Complete The Corsair Curse | quest:The Corsair Curse
+Toward the late game | Complete In Search of Knowledge | quest:In Search of Knowledge
+Toward the late game | Complete Hopespear's Will | quest:Hopespear's Will
+Toward the late game | Complete Vale Totems | quest:Vale Totems
+Toward the late game | Unlock the Grand Tree balloon route with Auguste's balloons | varbit:2870>=1; optional
+Toward the late game | Unlock the Castle Wars balloon route with Auguste's balloons | varbit:2869>=1; optional
+Toward the late game | Complete Barbarian Training | quest:Barbarian Training
+Toward the late game | Complete Bear Your Soul | quest:Bear Your Soul
+Toward the late game | Complete The Enchanted Key | quest:The Enchanted Key
+Toward the late game | Complete Family Pest | quest:Family Pest
+Toward the late game | Complete Mage Arena I | quest:Mage Arena I
+Toward the late game | Complete Mage Arena II | quest:Mage Arena II
+Toward the late game | Finish the Desert medium diary and claim Desert amulet 2 | varbit:4524; diary:Desert Medium; npc:Jarr
+Toward the late game | Finish the Western medium diary and claim Western banner 2 | varbit:4512; diary:Western Medium; npc:Elder Gnome child
+Toward the late game | Finish the Ardougne hard diary and claim Ardougne cloak 3 | varbit:4501; diary:Ardougne Hard; npc:Two-pints
+Toward the late game | Finish the Desert hard diary and claim Desert amulet 3 | varbit:4525; diary:Desert Hard; npc:Jarr
+Toward the late game | Finish the Falador hard diary and claim Falador shield 3 | varbit:4505; diary:Falador Hard; npc:Sir Rebral
+Toward the late game | Finish the Fremennik hard diary and claim Fremennik sea boots 3 | varbit:4533; diary:Fremennik Hard; npc:Thorodin
+Toward the late game | Finish the Kandarin hard diary and claim Kandarin headgear 3 | varbit:4517; diary:Kandarin Hard; npc:The 'Wedge'
+Toward the late game | Finish the Karamja hard diary and claim Karamja gloves 3 | varbit:3610; diary:Karamja Hard; npc:Pirate Jackie the Fruit
+Toward the late game | Finish the Kourend hard diary and claim Rada's blessing 3 | varbit:7931; diary:Kourend Hard; npc:Elise
+Toward the late game | Finish the Lumbridge hard diary and claim Explorer's ring 3 | varbit:4537; diary:Lumbridge Hard; npc:Hatius Cosaintus
+Toward the late game | Finish the Morytania hard diary, then kill Barrows | varbit:4529; diary:Morytania Hard; optional
+~ Barrows Teleport at 78 Magic; the diary gives half again as many runes from the chest
+Toward the late game | Finish the Varrock hard diary and claim Varrock armour 3 | varbit:4521; diary:Varrock Hard; npc:Toby
+Toward the late game | Finish the Western hard diary and claim Western banner 3 | varbit:4513; diary:Western Hard; npc:Elder Gnome child
+Toward the late game | Finish the Wilderness hard diary and claim Wilderness sword 3 | varbit:4509; diary:Wilderness Hard; npc:Lesser Fanatic
+Toward the late game | Finish the Ardougne elite diary and claim Ardougne cloak 4 | varbit:4502; diary:Ardougne Elite; npc:Two-pints
+Toward the late game | Finish the Desert elite diary and claim Desert amulet 4 | varbit:4526; diary:Desert Elite; npc:Jarr
+Toward the late game | Finish the Falador elite diary and claim Falador shield 4 | varbit:4506; diary:Falador Elite; npc:Sir Rebral
+Toward the late game | Finish the Fremennik elite diary and claim Fremennik sea boots 4 | varbit:4534; diary:Fremennik Elite; npc:Thorodin
+Toward the late game | Finish the Kandarin elite diary and claim Kandarin headgear 4 | varbit:4518; diary:Kandarin Elite; npc:The 'Wedge'
+Toward the late game | Finish the Karamja elite diary and claim Karamja gloves 4 | varbit:4567; diary:Karamja Elite; npc:Pirate Jackie the Fruit
+Toward the late game | Finish the Kourend elite diary and claim Rada's blessing 4 | varbit:7932; diary:Kourend Elite; npc:Elise
+Toward the late game | Finish the Lumbridge elite diary and claim Explorer's ring 4 | varbit:4538; diary:Lumbridge Elite; npc:Hatius Cosaintus
+Toward the late game | Finish the Morytania elite diary and claim Morytania legs 4 | varbit:4530; diary:Morytania Elite; npc:Le-sabrè
+Toward the late game | Finish the Varrock elite diary and claim Varrock armour 4 | varbit:4522; diary:Varrock Elite; npc:Toby
+Toward the late game | Finish the Western elite diary and claim Western banner 4 | varbit:4514; diary:Western Elite; npc:Elder Gnome child
+Toward the late game | Finish the Wilderness elite diary and claim Wilderness sword 4 | varbit:4510; diary:Wilderness Elite; npc:Lesser Fanatic
