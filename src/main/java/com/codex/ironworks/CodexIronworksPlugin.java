@@ -5,6 +5,7 @@ import com.codex.ironworks.core.Classify;
 import com.codex.ironworks.core.Family;
 import com.codex.ironworks.core.Flow;
 import com.codex.ironworks.core.Place;
+import com.codex.ironworks.core.Route;
 import com.codex.ironworks.core.Runway;
 import com.codex.ironworks.core.Settle;
 import com.codex.ironworks.core.SharedBank;
@@ -15,6 +16,7 @@ import com.codex.ironworks.core.Ware;
 import com.codex.ironworks.core.Window;
 import com.codex.ironworks.core.Works;
 import com.codex.ironworks.overlay.ItemTips;
+import com.codex.ironworks.overlay.People;
 import com.codex.ironworks.overlay.ShopPlaque;
 import com.codex.ironworks.ui.Arrivals;
 import com.codex.ironworks.ui.Format;
@@ -56,6 +58,7 @@ import net.runelite.api.Tile;
 import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ActorDeath;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
@@ -77,6 +80,7 @@ import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ClientShutdown;
 import net.runelite.client.events.ConfigChanged;
@@ -87,6 +91,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.ui.overlay.outline.ModelOutlineRenderer;
 import net.runelite.client.util.AsyncBufferedImage;
 import net.runelite.client.util.Text;
 import org.slf4j.Logger;
@@ -94,8 +99,8 @@ import org.slf4j.LoggerFactory;
 
 @PluginDescriptor(
 	name = "Codex Ironworks",
-	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources and shops",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "codex"}
+	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources, shops and a guide",
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -164,6 +169,16 @@ public class CodexIronworksPlugin extends Plugin
 	@Inject
 	private ItemTips tips;
 
+	@Inject
+	private EventBus eventBus;
+
+	@Inject
+	private ModelOutlineRenderer outlines;
+
+	private Route route;
+	private RouteGuide guide;
+	private People people;
+
 	private final ShopPlaque plaque = new ShopPlaque();
 	private final Settle settle = new Settle();
 	private final Map<Integer, String> names = new HashMap<>();
@@ -224,15 +239,56 @@ public class CodexIronworksPlugin extends Plugin
 			arrivals.ask(image, onLoaded);
 			return image;
 		};
-		panel = new IronworksPanel(icons, () -> clientThread.invokeLater(() ->
+		route = Route.load();
+		guide = new RouteGuide(client, eventBus, route, this::name);
+		people = new People(client, outlines, () -> guide.people());
+		panel = new IronworksPanel(icons, new IronworksPanel.Actions()
 		{
-			if (works != null)
+			@Override
+			public void forgetDeath()
 			{
-				works.forgetDeath();
-				unsaved = true;
-				publish();
+				clientThread.invokeLater(() ->
+				{
+					if (works != null)
+					{
+						works.forgetDeath();
+						unsaved = true;
+						publish();
+					}
+				});
 			}
-		}));
+
+			@Override
+			public void tick(String key, boolean done)
+			{
+				clientThread.invokeLater(() ->
+				{
+					if (works != null && works.tick(key, done))
+					{
+						unsaved = true;
+						publish();
+					}
+				});
+			}
+
+			@Override
+			public void follow(boolean on)
+			{
+				clientThread.invokeLater(() ->
+				{
+					if (works != null)
+					{
+						works.setFollowing(on);
+						if (!on)
+						{
+							guide.stop();
+						}
+						unsaved = true;
+						publish();
+					}
+				});
+			}
+		});
 		navButton = NavigationButton.builder()
 			.tooltip("Codex Ironworks")
 			.icon(Sigil.icon(16))
@@ -242,6 +298,7 @@ public class CodexIronworksPlugin extends Plugin
 		clientToolbar.addNavigation(navButton);
 		overlayManager.add(plaque);
 		overlayManager.add(tips);
+		overlayManager.add(people);
 		lookup = Catalogue.with(config.picked(), config.hidden());
 		clientThread.invokeLater(() ->
 		{
@@ -267,9 +324,12 @@ public class CodexIronworksPlugin extends Plugin
 	{
 		overlayManager.remove(plaque);
 		overlayManager.remove(tips);
+		overlayManager.remove(people);
 		clientToolbar.removeNavigation(navButton);
+		RouteGuide leaving = guide;
 		clientThread.invokeLater(() ->
 		{
+			leaving.stop();
 			save();
 			works = null;
 			tracker = null;
@@ -332,6 +392,8 @@ public class CodexIronworksPlugin extends Plugin
 			}
 			reset();
 			lastXp.clear();
+			guide.stop();
+			guide.stale();
 			save();
 			dirty = true;
 			publish();
@@ -656,6 +718,10 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			warnLow(today);
 		}
+		if (ticks % 2 == 0)
+		{
+			followGuide();
+		}
 		if (ticks % 500 == 0)
 		{
 			works.trim(today);
@@ -668,6 +734,67 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			publish();
 		}
+	}
+
+	// ---- the guide ----
+
+	@Subscribe
+	public void onChatMessage(ChatMessage event)
+	{
+		if (guide != null && (event.getType() == ChatMessageType.GAMEMESSAGE || event.getType() == ChatMessageType.SPAM))
+		{
+			guide.heard(Text.removeTags(event.getMessage()));
+		}
+	}
+
+	/** Ticks the step in hand when the game shows it done, and points the way while following. */
+	private void followGuide()
+	{
+		Set<Integer> carried = new HashSet<>();
+		for (Spot spot : new Spot[]{Spot.INVENTORY, Spot.WORN, Spot.RUNE_POUCH, Spot.LOOTING_BAG})
+		{
+			Map<Integer, Long> items = held.get(spot);
+			if (items != null)
+			{
+				carried.addAll(items.keySet());
+			}
+		}
+		View shown = view;
+		Route.Moment moment = guide.moment(carried, () ->
+		{
+			Set<String> all = new HashSet<>();
+			for (View.Found f : shown.found)
+			{
+				all.add(f.name.toLowerCase(java.util.Locale.ENGLISH));
+			}
+			return all;
+		}, here());
+		boolean changed = false;
+		for (Route.Step step : guide.observe(works.ticked(), moment))
+		{
+			changed |= works.tick(step.key(), true);
+		}
+		if (changed)
+		{
+			unsaved = true;
+			dirty = true;
+		}
+		if (works.isFollowing())
+		{
+			guide.guide(guide.current(works.ticked()), config.guideArrow(), config.guidePeople(), config.guidePath());
+		}
+	}
+
+	/** Where the player stands: x, y, plane; or null. */
+	private int[] here()
+	{
+		Player me = client.getLocalPlayer();
+		if (me == null)
+		{
+			return null;
+		}
+		WorldPoint p = WorldPoint.fromLocalInstance(client, me.getLocalLocation());
+		return new int[]{p.getX(), p.getY(), p.getPlane()};
 	}
 
 	/** What else happened on this tick, for filing changes to what is carried. */
@@ -1227,8 +1354,29 @@ public class CodexIronworksPlugin extends Plugin
 			: Views.build(works, lookup, config.target(), config.warn(), System.currentTimeMillis(), LocalDate.now(), this::unitWorth,
 			levels, xp, config.altar(), itemManager::getItemPrice);
 		built.loggedIn = loggedIn;
+		if (works != null)
+		{
+			built.guide = Guides.build(route, works.ticked(), guide.account(), works.isFollowing(), built.found, built.workshop, xp);
+			if (loggedIn && built.guide.current != null)
+			{
+				Route.Step step = route.steps().get(indexOf(built.guide.current.key));
+				built.guide.way = RouteGuide.way(here(), guide.target(step));
+			}
+		}
 		view = built;
 		SwingUtilities.invokeLater(() -> target.show(built));
+	}
+
+	private int indexOf(String key)
+	{
+		for (Route.Step s : route.steps())
+		{
+			if (s.key().equals(key))
+			{
+				return s.index;
+			}
+		}
+		return 0;
 	}
 
 	/** The view the panel shows now, for the tooltips. */

@@ -2,7 +2,7 @@
 
 A RuneLite plugin for the ironman economy, in one app. An ironman lives on what they make, gather, loot and buy from shops, and Ironworks keeps the books: how long each of your stores lasts at the pace you actually play, what experience your stores hold, where anything you own is kept, where every potion, herb, rune and bolt came from and how to get more, and the shops you restock at, with what they charge and how fast each one fills again.
 
-It brings together what a handful of single-purpose plugins do (banked experience, finding your items, item sources, supply tracking, shop restock timers and shop cost calculators) into five tabs that share one picture of your account.
+It brings together what a handful of single-purpose plugins do (banked experience, finding your items, item sources, supply tracking, shop restock timers, shop cost calculators and ironman guides) into six tabs that share one picture of your account.
 
 It works for every kind of ironman (regular, hardcore, ultimate and group) and for main accounts too.
 
@@ -12,6 +12,7 @@ It works for every kind of ironman (regular, hardcore, ultimate and group) and f
   <img src="docs/screenshots/find.png" width="225" alt="The Find tab">
   <img src="docs/screenshots/sources.png" width="225" alt="The Sources tab">
   <img src="docs/screenshots/shops.png" width="225" alt="The Shops tab">
+  <img src="docs/screenshots/guide.png" width="225" alt="The Guide tab">
 </p>
 
 ## What it does
@@ -27,6 +28,8 @@ It works for every kind of ironman (regular, hardcore, ultimate and group) and f
 - **Prices, learned.** Shops charge more for each item bought as the stock falls. Ironworks learns each item's first price and how fast it climbs from what you paid, shows the range on the shop card, and works out the cost of your whole shopping list when you hop worlds once the price is a tenth up.
 - **Restock times, learned.** Ironworks watches shop stock climb back after you buy and learns how long each item takes to restock, per item and per shop. Shops keep stock per world, so when you hop it remembers each world you emptied and says when each will be full again.
 - **Shop runs.** Shop visits close together are one run: the shops, how many worlds you hopped, what you bought and what it cost, and how long it took.
+- **Guide tab.** A route for ironmen from a fresh account through the early members' quests, getting around, a skilling base, combat, Barrows gloves and the mid game, about a hundred steps. Steps tick themselves as the game shows them done (quests finished or started, levels, quest points, and items Ironworks has seen you own), and a step you did another way can be marked done. The step in hand shows what the game checks and where you stand ("Attack 27 / 30"), and when your stores hold the experience for a level the step needs, it says so. *Supplies ahead* adds up what the next steps use (rope, runes, logs, bones) against everything you own, so you can gather it before you need it.
+- **Pointing the way.** Press *Point the way* and the game's hint arrow points at the person or place the step needs once it is near, the people it names are outlined in gold, and, if you have the Shortest Path plugin and turn on *Shortest Path*, it draws the way there.
 - **Shop plaque.** At a shop you have used before, a plaque in the game view shows what your stores need from it ("Buy 12 for 10h of play"), the stock now on this world, and how long it takes to fill (*Shop plaque*).
 - **Low stores at the bank.** When you open your bank, a chat line names up to three stores that will run out within your *Running low* time, once a session each (*Low stores in chat*).
 - **Item tooltips.** Hover an item in your inventory, bank or seed vault to see how much of its store you have, how long it lasts, what the Make tab would turn it into, and how many more of a missing ingredient would finish it (*Item tooltips*).
@@ -53,9 +56,12 @@ Ironworks reads what you carry every tick and files each change by what else hap
 - **Item tooltips** (on): store and recipe tooltips on items.
 - **Others' loot last** (on): Take below Walk here on loot you cannot take, on ironmen only.
 - **Bones go to** (Gilded altar): buried, gilded altar, Ectofuntus or the Wilderness chaos altar, for the Prayer experience the Make tab counts.
+- **Hint arrow**, **Outline people** (on) and **Shortest Path** (off): how the Guide points the way while you follow it.
 - **Also track** and **Never track**: item names to add as stores, or stores to leave out, separated by commas.
 
 ## With other Codex plugins
+
+The Guide reads its route in the same format as Codex Nomad's ultimate ironman route, so both plugins tick and point the same way. Quest start points come from the Quest Helper plugin (BSD 2-Clause).
 
 Before Ironworks has seen your bank, it starts from the shared copy Codex Bank Steward keeps (`codexbanksteward/bankV1`), if you have it installed. It only reads it, and works the same without it.
 

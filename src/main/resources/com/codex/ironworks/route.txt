@@ -1,0 +1,141 @@
+# The Ironworks route: an ironman's way from a fresh account to Barrows gloves and the mid game.
+# Written for Codex Ironworks. Format: section | step | tags, tags optional, separated by ";".
+# Lasting tags (read from the game at any time): quest:, started:, skill:Name level, qp:, combat:,
+# varbit:id>=value, varp:, ca:tier. Moment tags (watched while the step is in hand): item: (carried),
+# owned: (anywhere Ironworks has seen), gone:, at:x,y,plane,reach, area:, empty:, coins:, chat:.
+# Guidance: go:x,y,plane and npc:Name. need:Item quantity names supplies the step uses up, so the
+# Guide tab can check them against your stores ahead of time. optional marks a step that can be skipped.
+# A line starting with "~" is a tip shown under the step before it.
+
+First steps | Finish the tutorial and claim your ironman armour from Paul in Lumbridge | owned:Ironman helm; go:3229,3226,0; npc:Paul
+~ Ironman armour is free to reclaim and sells for nothing: wear it, don't bank it
+First steps | Complete Cook's Assistant | quest:Cook's Assistant
+First steps | Complete Sheep Shearer, spinning the wool in Lumbridge castle | quest:Sheep Shearer
+First steps | Complete X Marks the Spot | quest:X Marks the Spot
+~ Keep the antique lamp for later: Herblore or Hitpoints are the usual picks
+First steps | Complete Rune Mysteries | quest:Rune Mysteries
+First steps | Complete The Restless Ghost | quest:The Restless Ghost
+First steps | Complete Misthalin Mystery | quest:Misthalin Mystery
+First steps | Complete Ernest the Chicken | quest:Ernest the Chicken
+First steps | Complete Romeo & Juliet | quest:Romeo & Juliet
+First steps | Complete Witch's Potion | quest:Witch's Potion
+First steps | Complete Imp Catcher | quest:Imp Catcher
+~ Kill imps around Draynor and Falador for the four beads; it gives an amulet of accuracy
+First steps | Complete Doric's Quest | quest:Doric's Quest
+~ Mine the clay, copper and iron yourself at the Rimmington mine
+First steps | Complete Goblin Diplomacy | quest:Goblin Diplomacy
+First steps | Complete Vampyre Slayer | quest:Vampyre Slayer
+First steps | Complete Below Ice Mountain | quest:Below Ice Mountain
+First steps | Complete Children of the Sun | quest:Children of the Sun
+First steps | Complete Pirate's Treasure | quest:Pirate's Treasure
+First steps | Complete Prince Ali Rescue | quest:Prince Ali Rescue
+First steps | Complete Black Knights' Fortress | quest:Black Knights' Fortress
+First steps | Complete Demon Slayer | quest:Demon Slayer
+First steps | Reach 20 Attack, Strength and Defence on cows and goblins | skill:Attack 20; skill:Strength 20; skill:Defence 20
+~ Bury the cow bones and tan the hides later: both count toward your stores
+
+Early members' quests | Complete Druidic Ritual to unlock Herblore | quest:Druidic Ritual; need:Raw beef 1; need:Raw rat meat 1; need:Raw bear meat 1; need:Raw chicken 1
+Early members' quests | Complete Waterfall Quest for 30 Attack and Strength | quest:Waterfall Quest; skill:Attack 30; skill:Strength 30; need:Rope 1; need:Air rune 6; need:Water rune 6; need:Earth rune 6
+~ Bring a rope, six each of air, water and earth runes, and food. Glarial's amulet and pebble come from the tomb
+Early members' quests | Complete Tree Gnome Village | quest:Tree Gnome Village; need:Logs 6
+Early members' quests | Complete Fight Arena | quest:Fight Arena
+Early members' quests | Complete Witch's House | quest:Witch's House; need:Cheese 1
+Early members' quests | Complete Plague City | quest:Plague City; need:Dwellberries 1; need:Rope 1; need:Bucket of milk 1; need:Chocolate dust 1; need:Snape grass 1; need:Spade 1
+Early members' quests | Complete Biohazard | quest:Biohazard
+Early members' quests | Complete Jungle Potion | quest:Jungle Potion
+Early members' quests | Complete Monk's Friend | quest:Monk's Friend; need:Logs 1
+Early members' quests | Complete Hazeel Cult | quest:Hazeel Cult
+Early members' quests | Complete Sea Slug | quest:Sea Slug; need:Swamp paste 1
+Early members' quests | Complete Tribal Totem | quest:Tribal Totem
+Early members' quests | Complete Fishing Contest | quest:Fishing Contest; need:Garlic 1; need:Spade 1
+Early members' quests | Complete Priest in Peril to open Morytania | quest:Priest in Peril; need:Rune essence 50
+~ Mine the 50 essence yourself after Rune Mysteries: the Aubury teleport is quickest
+Early members' quests | Complete Nature Spirit | quest:Nature Spirit
+Early members' quests | Complete The Dig Site | quest:The Dig Site
+~ Its experience rewards are worth spending on Mining or Herblore
+Early members' quests | Complete Merlin's Crystal | quest:Merlin's Crystal; need:Bucket of wax 1; need:Bat bones 1
+Early members' quests | Complete Death Plateau for climbing boots | quest:Death Plateau
+
+Getting around | Reach 10 Agility at the Draynor Village Rooftop Course | skill:Agility 10; go:3103,3279,0
+Getting around | Reach 20 Agility on the Draynor course | skill:Agility 20; go:3103,3279,0
+Getting around | Reach 30 Agility at the Varrock Rooftop Course | skill:Agility 30; go:3221,3414,0
+Getting around | Reach 40 Agility at the Canifis Rooftop Course | skill:Agility 40; go:3507,3488,0
+~ Marks of grace pay for graceful: it is the biggest early quality-of-life upgrade
+Getting around | Buy the full graceful outfit from Grace | owned:Graceful hood; owned:Graceful top; owned:Graceful legs; owned:Graceful gloves; owned:Graceful boots; owned:Graceful cape; npc:Grace
+Getting around | Complete Lost City for a dramen staff | quest:Lost City; owned:Dramen staff
+~ Kill the tree spirit with magic or crush it in melee; bring a knife and an axe
+Getting around | Complete Fairytale I - Growing Pains | quest:Fairytale I - Growing Pains
+Getting around | Start Fairytale II - Cure a Queen to use fairy rings | started:Fairytale II - Cure a Queen
+~ Fairy rings make Zanaris, Fossil Island, Canifis and much more one click from home
+Getting around | Finish the Ardougne easy diary and claim Ardougne cloak 1 | owned:Ardougne cloak 1; npc:Two-pints
+Getting around | Finish the Lumbridge easy diary and claim Explorer's ring 1 | owned:Explorer's ring 1; npc:Hatius Cosaintus
+Getting around | Finish the Karamja easy diary and claim Karamja gloves 1 | owned:Karamja gloves 1; npc:Pirate Jackie the Fruit
+Getting around | Finish the Varrock easy diary and claim Varrock armour 1 | owned:Varrock armour 1; npc:Toby
+
+Skilling base | Reach 50 Firemaking at Wintertodt | skill:Firemaking 50; go:1630,3958,0; need:Cake 10
+~ Bring a hammer, a knife, a tinderbox and an axe. Wintertodt crates are an iron's first big supply of seeds, herbs and ores
+Skilling base | Reach 70 Firemaking at Wintertodt for steadier crates | skill:Firemaking 70; go:1630,3958,0; optional
+Skilling base | Reach 45 Thieving at the Ardougne cake stall and on master farmers | skill:Thieving 45; go:2668,3311,0
+~ Master farmers in Draynor and Ardougne are your best early source of herb seeds
+Skilling base | Get a seed box from Tithe Farm | owned:Seed box; optional
+~ Tithe Farm points also buy the herb sack and the gricoller's can
+Skilling base | Get a herb sack from Tithe Farm | owned:Herb sack; optional
+Skilling base | Complete Bone Voyage to reach Fossil Island | quest:Bone Voyage
+~ Kudos come from the Varrock Museum: clean finds and answer the display quizzes
+Skilling base | Start birdhouse runs on Fossil Island every 50 minutes | skill:Hunter 5
+~ Birdhouses give Hunter experience and a steady stream of bird nests: tree, fruit tree and herb seeds
+Skilling base | Plant herb patches in Falador, Catherby and Ardougne | skill:Farming 15; go:3058,3311,0; need:Compost 3
+~ Ranarr and snapdragon seeds are worth saving for Farming 32+ and 62+
+Skilling base | Reach 35 Herblore for super attack and combat-boosting potions | skill:Herblore 35
+Skilling base | Reach 50 Fishing with barbarian fishing at Otto's Grotto | skill:Fishing 50; go:2500,3488,0
+~ Barbarian fishing trains Agility and Strength as well, and gives roe for Herblore
+Skilling base | Reach 50 Woodcutting | skill:Woodcutting 50
+Skilling base | Reach 40 Mining | skill:Mining 40
+Skilling base | Reach 40 Crafting | skill:Crafting 40
+~ Glass-blowing and battlestaves from Zaff are the iron's classic route
+Skilling base | Reach 50 Smithing | skill:Smithing 50
+Skilling base | Reach 50 Cooking | skill:Cooking 50
+
+Combat ready | Complete Animal Magnetism for Ava's attractor or accumulator | quest:Animal Magnetism
+Combat ready | Get Ava's accumulator | owned:Ava's accumulator; need:Steel arrow 75
+Combat ready | Complete Dragon Slayer I | quest:Dragon Slayer I
+~ The rune platebody and green d'hide body unlock with it; an anti-dragon shield is required
+Combat ready | Get a fighter torso at Barbarian Assault | owned:Fighter torso; go:2531,3569,0; optional
+Combat ready | Reach 60 Attack, Strength and Defence | skill:Attack 60; skill:Strength 60; skill:Defence 60
+~ Slayer tasks from Vannaka or Chaeldar train combat and give drops worth keeping
+Combat ready | Get a dragon defender at the Warriors' Guild | owned:Dragon defender; go:2877,3546,0
+Combat ready | Complete The Grand Tree | quest:The Grand Tree
+Combat ready | Complete Monkey Madness I | quest:Monkey Madness I
+~ Unlocks dragon scimitars and Ape Atoll; bring prayer potions and a ranged or magic option for the demon
+Combat ready | Complete Holy Grail | quest:Holy Grail
+Combat ready | Complete Horror from the Deep for a god book | quest:Horror from the Deep
+Combat ready | Complete The Fremennik Trials | quest:The Fremennik Trials
+Combat ready | Reach 43 Prayer for the protection prayers | skill:Prayer 43; need:Big bones 150
+~ The Make tab shows how much Prayer experience your bones hold at your chosen altar
+
+Barrows gloves | Complete Recipe for Disaster - Another Cook's Quest | quest:Recipe for Disaster - Another Cook's Quest
+Barrows gloves | Complete Recipe for Disaster - Mountain Dwarf | quest:Recipe for Disaster - Mountain Dwarf
+Barrows gloves | Complete Recipe for Disaster - Wartface & Bentnoze | quest:Recipe for Disaster - Wartface & Bentnoze
+Barrows gloves | Complete Recipe for Disaster - Pirate Pete | quest:Recipe for Disaster - Pirate Pete
+Barrows gloves | Complete Recipe for Disaster - Lumbridge Guide | quest:Recipe for Disaster - Lumbridge Guide
+Barrows gloves | Complete Recipe for Disaster - Evil Dave | quest:Recipe for Disaster - Evil Dave
+Barrows gloves | Complete Recipe for Disaster - Skrach Uglogwee | quest:Recipe for Disaster - Skrach Uglogwee
+Barrows gloves | Complete Recipe for Disaster - Sir Amik Varze | quest:Recipe for Disaster - Sir Amik Varze
+Barrows gloves | Complete Desert Treasure I for ancient magicks | quest:Desert Treasure I
+~ The final Recipe for Disaster fight needs it done, and ancient magicks speed up much of what follows
+Barrows gloves | Complete Recipe for Disaster - King Awowogei | quest:Recipe for Disaster - King Awowogei
+Barrows gloves | Reach 175 quest points | qp:175
+Barrows gloves | Complete Recipe for Disaster - Culinaromancer | quest:Recipe for Disaster - Culinaromancer
+Barrows gloves | Buy Barrows gloves from the Culinaromancer's chest | owned:Barrows gloves; npc:Culinaromancer's chest
+~ The chest also sells every lower glove tier, if you want a spare pair
+
+Mid game | Complete Lunar Diplomacy for the Lunar spellbook | quest:Lunar Diplomacy
+~ Spellbook swap, NPC contact and humidify make many iron chores quicker
+Mid game | Complete Dream Mentor | quest:Dream Mentor
+Mid game | Complete Fairytale II - Cure a Queen | quest:Fairytale II - Cure a Queen
+Mid game | Reach 70 Agility | skill:Agility 70
+Mid game | Reach 70 Herblore | skill:Herblore 70
+~ The Make tab shows which potions your stored herbs and secondaries become, and what is short
+Mid game | Reach 70 Ranged and 70 Magic | skill:Ranged 70; skill:Magic 70
+Mid game | Reach 70 Slayer | skill:Slayer 70
+Mid game | Complete Song of the Elves to reach Prifddinas | quest:Song of the Elves

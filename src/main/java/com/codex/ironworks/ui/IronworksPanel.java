@@ -46,12 +46,13 @@ import net.runelite.client.ui.PluginPanel;
 public class IronworksPanel extends PluginPanel
 {
 	static final int WIDTH = 200;
-	private static final String[] TABS = {"stores", "make", "find", "sources", "shops"};
+	private static final String[] TABS = {"stores", "make", "find", "sources", "shops", "guide"};
 	private static final int STORES = 0;
 	private static final int MAKE = 1;
 	private static final int FIND = 2;
 	private static final int SOURCES = 3;
 	private static final int SHOPS = 4;
+	private static final int GUIDE = 5;
 	/** Things found shown before the list is cut short. */
 	private static final int FOUND = 60;
 	/** Stores shown per shelf before "Show all". */
@@ -59,24 +60,37 @@ public class IronworksPanel extends PluginPanel
 
 	private final ItemIcons icons;
 	private final Crest crest = new Crest();
-	private final Segmented tabs = new Segmented(false, "Stores", "Make", "Find", "Sources", "Shops");
+	private final Segmented tabs = new Segmented(false, "Stores", "Make", "Find", "Sources", "Shops", "Guide").rows(2);
 	private final Segmented period = new Segmented(false, "Today", "7 days", "All time");
 	private final CardLayout cards = new CardLayout();
 	private final JPanel content = new JPanel(cards);
-	private final JScrollPane[] pages = {scroller(), scroller(), scroller(), scroller(), scroller()};
-	private final boolean[] stale = {true, true, true, true, true};
+	private final JScrollPane[] pages = {scroller(), scroller(), scroller(), scroller(), scroller(), scroller()};
+	private final boolean[] stale = {true, true, true, true, true, true};
 	private final JTextField search = new SearchField();
-	private final Runnable forgetDeath;
+	private final Actions actions;
 	private final Set<String> open = new HashSet<>();
 	private final Set<Family> shelvesOpen = new HashSet<>();
 
 	private View view = new View();
 
-	public IronworksPanel(ItemIcons icons, Runnable forgetDeath)
+	/** What the panel asks of the plugin, run on the client thread there. */
+	public interface Actions
+	{
+		/** The last death's items are all taken back. */
+		void forgetDeath();
+
+		/** A guide step was done another way, or ticked by mistake. */
+		void tick(String key, boolean done);
+
+		/** Start or stop pointing the way to the step in hand. */
+		void follow(boolean on);
+	}
+
+	public IronworksPanel(ItemIcons icons, Actions actions)
 	{
 		super(false);
 		this.icons = icons;
-		this.forgetDeath = forgetDeath;
+		this.actions = actions;
 		setLayout(new BorderLayout());
 		setBackground(Theme.INK);
 
@@ -202,7 +216,7 @@ public class IronworksPanel extends PluginPanel
 		}
 		stale[page] = false;
 		JComponent body = page == STORES ? stores() : page == MAKE ? workshop() : page == FIND ? find()
-			: page == SOURCES ? sources() : shops();
+			: page == SOURCES ? sources() : page == SHOPS ? shops() : guide();
 		JScrollPane scroll = pages[page];
 		int y = scroll.getVerticalScrollBar().getValue();
 		scroll.setViewportView(body);
@@ -791,6 +805,145 @@ public class IronworksPanel extends PluginPanel
 		return card;
 	}
 
+	// ---- guide ----
+
+	private JComponent guide()
+	{
+		StackPanel p = new StackPanel(6, 8);
+		View v = view;
+		View.GuideView g = v.guide;
+		if (!v.loggedIn)
+		{
+			p.add(note("Log in and the guide reads your quests, levels and bank to find where you are on the route."));
+		}
+		if (g.current == null)
+		{
+			if (g.total > 0 && v.loggedIn)
+			{
+				p.add(note("You have finished the route. Everything from here is yours to choose."));
+			}
+		}
+		else
+		{
+			p.add(stepCard(g));
+		}
+
+		if (!g.needs.isEmpty())
+		{
+			p.add(new SectionHeader("Supplies ahead", "owned / needed"));
+			Card card = new Card(new BorderLayout());
+			StackPanel in = new StackPanel(2, 0);
+			for (View.NeedView n : g.needs.subList(0, Math.min(8, g.needs.size())))
+			{
+				boolean enough = n.have >= n.need;
+				String figure = Format.amount(n.have) + " / " + Format.amount(n.need);
+				in.add(new IconLine(n.icon, n.item + (n.stepsAway == 0 ? ", now" : ""), figure, icons, Theme.TEXT,
+					enough ? Theme.GREEN : Theme.EMBER));
+			}
+			if (g.needs.size() > 8)
+			{
+				in.add(new Line("and " + (g.needs.size() - 8) + " more further on", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+			card.add(in, BorderLayout.CENTER);
+			p.add(card);
+		}
+
+		if (!g.next.isEmpty())
+		{
+			p.add(new SectionHeader("Coming up", ""));
+			Card card = new Card(new BorderLayout());
+			StackPanel in = new StackPanel(3, 0);
+			for (View.StepView s : g.next)
+			{
+				in.add(new Line(s.text + (s.optional ? " (optional)" : ""), null, Theme.GOLD_DIM, Theme.TEXT_MUTED, Theme.TEXT_MUTED));
+			}
+			card.add(in, BorderLayout.CENTER);
+			p.add(card);
+		}
+
+		if (!g.sections.isEmpty())
+		{
+			p.add(new SectionHeader("The route", g.done + " of " + g.total));
+			Card card = new Card(new BorderLayout());
+			StackPanel in = new StackPanel(4, 0);
+			for (View.SectionView sv : g.sections)
+			{
+				double share = sv.all == 0 ? 0 : sv.done / (double) sv.all;
+				in.add(new Meter(sv.name, sv.done + " / " + sv.all, share, share >= 1 ? Theme.GREEN : Theme.GOLD));
+			}
+			card.add(in, BorderLayout.CENTER);
+			p.add(card);
+		}
+		p.add(foot("Steps tick themselves as the game shows them done: quests, levels, and items in your bank or pack. "
+			+ "Done one another way? Mark it done."));
+		return p;
+	}
+
+	private JComponent stepCard(View.GuideView g)
+	{
+		View.StepView s = g.current;
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.GOLD);
+		card.highlighted(true);
+		StackPanel in = new StackPanel(3, 0);
+		in.add(new Line(s.section.toUpperCase(Locale.ENGLISH), g.done + " of " + g.total, null, Theme.GOLD_DIM, Theme.TEXT_FAINT));
+		in.add(new Progress(g.total == 0 ? 0 : g.done / (double) g.total));
+		Line text = new Line(s.text, null, null, Theme.TEXT, Theme.TEXT);
+		text.setFont(Theme.body());
+		in.add(text);
+		if (s.optional)
+		{
+			in.add(new Line("Optional", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+		}
+		for (String tip : s.tips)
+		{
+			in.add(new Line(tip, null, null, Theme.GOLD_DIM, Theme.GOLD_DIM));
+		}
+		for (View.CheckView c : s.checks)
+		{
+			in.add(new Line(c.label, c.figure, c.ok ? Theme.GREEN : Theme.EMBER, Theme.TEXT_MUTED, c.ok ? Theme.GREEN : Theme.TEXT));
+		}
+		for (String hint : s.hints)
+		{
+			in.add(new Line(hint, null, null, Theme.TEAL, Theme.TEAL));
+		}
+		if (g.following && g.way != null)
+		{
+			in.add(new Line(g.way.equals("Here") ? "You are here" : "Head " + g.way, null, null, Theme.GOLD, Theme.GOLD));
+		}
+		JPanel buttons = new JPanel(new java.awt.GridLayout(1, 2, 6, 0));
+		buttons.setOpaque(false);
+		buttons.setBorder(new EmptyBorder(4, 0, 0, 0));
+		String key = s.key;
+		buttons.add(new CodexButton(g.following ? "Stop pointing" : "Point the way", !g.following, () -> actions.follow(!g.following)));
+		buttons.add(new CodexButton("Mark done", false, () -> actions.tick(key, true)));
+		in.add(buttons);
+		card.add(in, BorderLayout.CENTER);
+		return card;
+	}
+
+	/** A thin bar of how far through the route the player is. */
+	private static final class Progress extends JComponent
+	{
+		private final double share;
+
+		Progress(double share)
+		{
+			this.share = share;
+			setOpaque(false);
+			setPreferredSize(new Dimension(10, 8));
+		}
+
+		@Override
+		protected void paintComponent(Graphics graphics)
+		{
+			Graphics2D g = (Graphics2D) graphics.create();
+			Theme.smooth(g);
+			Bar.paint(g, 0, 2, getWidth(), 4, share);
+			g.dispose();
+		}
+	}
+
 	// ---- find ----
 
 	private JComponent find()
@@ -888,7 +1041,7 @@ public class IronworksPanel extends PluginPanel
 		}
 		JPanel holder = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		holder.setOpaque(false);
-		holder.add(new CodexButton("Taken back", false, forgetDeath));
+		holder.add(new CodexButton("Taken back", false, actions::forgetDeath));
 		in.add(holder);
 		card.add(in, BorderLayout.CENTER);
 		return card;
