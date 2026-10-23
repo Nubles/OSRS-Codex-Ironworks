@@ -1,7 +1,8 @@
 # The Ironworks route: an ironman's way from a fresh account to Barrows gloves and the mid game.
 # Written for Codex Ironworks. Format: section | step | tags, tags optional, separated by ";".
 # Lasting tags (read from the game at any time): quest:, started:, skill:Name level, qp:, combat:,
-# varbit:id>=value, varp:, ca:tier. Moment tags (watched while the step is in hand): item: (carried),
+# varbit:id>=value (diary rewards claimed: ARDOUGNE_EASY_REWARD 4499, LUMBRIDGE_EASY_REWARD 4535,
+# ATJUN_EASY_REWARD 3577, VARROCK_EASY_REWARD 4519), varp:, ca:tier. Moment tags (watched while the step is in hand): item: (carried),
 # owned: (anywhere Ironworks has seen), gone:, at:x,y,plane,reach, area:, empty:, coins:, chat:.
 # Guidance: go:x,y,plane and npc:Name. need:Item quantity names supplies the step uses up, so the
 # Guide tab can check them against your stores ahead of time. optional marks a step that can be skipped.
@@ -67,10 +68,10 @@ Getting around | Complete Lost City for a dramen staff | quest:Lost City; owned:
 Getting around | Complete Fairytale I - Growing Pains | quest:Fairytale I - Growing Pains
 Getting around | Start Fairytale II - Cure a Queen to use fairy rings | started:Fairytale II - Cure a Queen
 ~ Fairy rings make Zanaris, Fossil Island, Canifis and much more one click from home
-Getting around | Finish the Ardougne easy diary and claim Ardougne cloak 1 | owned:Ardougne cloak 1; npc:Two-pints
-Getting around | Finish the Lumbridge easy diary and claim Explorer's ring 1 | owned:Explorer's ring 1; npc:Hatius Cosaintus
-Getting around | Finish the Karamja easy diary and claim Karamja gloves 1 | owned:Karamja gloves 1; npc:Pirate Jackie the Fruit
-Getting around | Finish the Varrock easy diary and claim Varrock armour 1 | owned:Varrock armour 1; npc:Toby
+Getting around | Finish the Ardougne easy diary and claim Ardougne cloak 1 | varbit:4499; npc:Two-pints
+Getting around | Finish the Lumbridge easy diary and claim Explorer's ring 1 | varbit:4535; npc:Hatius Cosaintus
+Getting around | Finish the Karamja easy diary and claim Karamja gloves 1 | varbit:3577; npc:Pirate Jackie the Fruit
+Getting around | Finish the Varrock easy diary and claim Varrock armour 1 | varbit:4519; npc:Toby
 
 Skilling base | Reach 50 Firemaking at Wintertodt | skill:Firemaking 50; go:1630,3958,0; need:Cake 10
 ~ Bring a hammer, a knife, a tinderbox and an axe. Wintertodt crates are an iron's first big supply of seeds, herbs and ores

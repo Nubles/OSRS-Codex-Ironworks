@@ -153,6 +153,11 @@ final class Guides
 				}
 			}
 		}
+		for (Route.Var var : s.varbits)
+		{
+			boolean ok = var.exact ? a.varbit(var.id) == var.value : a.varbit(var.id) >= var.value;
+			checks.add(new View.CheckView("Done in game", ok ? "Yes" : "Not yet", ok));
+		}
 		if (s.questPoints > 0)
 		{
 			checks.add(new View.CheckView("Quest points", a.questPoints() + " / " + s.questPoints, a.questPoints() >= s.questPoints));
