@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** What each quest asks before it can be started: levels, quests finished first, and quest points. */
+/** What each quest, or diary tier, asks: levels, quests finished first, and quest points. */
 public final class QuestReqs
 {
 	/** One quest's requirements. */
@@ -40,7 +40,18 @@ public final class QuestReqs
 
 	public static QuestReqs load()
 	{
-		try (InputStream in = QuestReqs.class.getResourceAsStream("/com/codex/ironworks/quest-reqs.txt"))
+		return load("/com/codex/ironworks/quest-reqs.txt");
+	}
+
+	/** Achievement diary tiers by "Area Tier", such as "Ardougne Easy". */
+	public static QuestReqs diaries()
+	{
+		return load("/com/codex/ironworks/diary-reqs.txt");
+	}
+
+	private static QuestReqs load(String resource)
+	{
+		try (InputStream in = QuestReqs.class.getResourceAsStream(resource))
 		{
 			if (in == null)
 			{

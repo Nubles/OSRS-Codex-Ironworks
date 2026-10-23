@@ -1,0 +1,50 @@
+# Achievement diary requirements: tier | skill levels | quests | quest points.
+# From the Fate Locked dataset (github.com/Nubles/OSRS-Fate-Locked). Some levels may be boosted in game.
+Ardougne Easy|Thieving 5|Rune Mysteries;Plague City|
+Ardougne Medium|Agility 39,Farming 31,Firemaking 50,Magic 51,Strength 38,Thieving 38|Enlightened Journey;The Hand in the Sand;Tower of Life;Sea Slug|
+Ardougne Hard|Agility 65,Construction 50,Crafting 35,Farming 65,Fishing 53,Hunter 59,Magic 66,Mining 52,Prayer 42,Runecraft 65,Smithing 68,Thieving 72,Woodcutting 50|Monkey Madness I;Legends' Quest;Mourning's End Part I;Watchtower|
+Ardougne Elite|Agility 90,Cooking 91,Crafting 35,Farming 85,Fishing 81,Fletching 69,Herblore 45,Magic 94,Smithing 91,Thieving 82|Desert Treasure I;Song of the Elves|
+Desert Easy|Hunter 5,Thieving 21||
+Desert Medium|Agility 30,Construction 20,Crafting 30,Firemaking 45,Herblore 36,Hunter 47,Magic 39,Mining 37,Prayer 43,Slayer 22,Thieving 25,Woodcutting 35|The Golem;Eagles' Peak;Spirits of the Elid;Enakhra's Lament|
+Desert Hard|Agility 75,Construction 70,Crafting 61,Firemaking 50,Fletching 10,Herblore 50,Hunter 67,Magic 94,Mining 70,Prayer 70,Slayer 65,Smithing 50,Thieving 65|Desert Treasure I;Contact!;Dream Mentor;The Tourist Trap|
+Desert Elite|Construction 78,Cooking 85,Crafting 80,Fletching 95,Herblore 90,Magic 94,Prayer 85,Slayer 93,Thieving 91|Desert Treasure II - The Fallen Empire|
+Falador Easy|Agility 5,Construction 16,Mining 10,Smithing 13,Thieving 13|The Knight's Sword;Doric's Quest|
+Falador Medium|Agility 42,Cooking 20,Crafting 40,Defence 20,Farming 23,Firemaking 49,Magic 37,Mining 40,Prayer 10,Ranged 19,Slayer 32,Strength 37,Thieving 40,Woodcutting 30|Ratcatchers;Skippy and the Mogres;Recruitment Drive|
+Falador Hard|Agility 59,Construction 50,Crafting 31,Defence 50,Farming 45,Firemaking 30,Herblore 52,Mining 60,Prayer 70,Runecraft 56,Slayer 72,Smithing 40,Thieving 58,Woodcutting 71|Heroes' Quest;Grim Tales;The Slug Menace|
+Falador Elite|Agility 80,Farming 91,Herblore 81,Magic 96,Mining 17,Runecraft 88,Smithing 13,Thieving 13,Woodcutting 75||
+Fremennik Easy|Crafting 23,Firemaking 15,Hunter 11,Mining 20,Smithing 20,Thieving 5,Woodcutting 15|The Fremennik Trials|
+Fremennik Medium|Agility 35,Construction 37,Defence 30,Hunter 35,Mining 40,Slayer 47,Smithing 50,Thieving 42,Woodcutting 56|Eagles' Peak;Between a Rock...;The Giant Dwarf;Olaf's Quest|
+Fremennik Hard|Agility 35,Construction 20,Crafting 61,Herblore 66,Hunter 55,Magic 72,Mining 70,Smithing 60,Thieving 75,Woodcutting 56|The Fremennik Isles;Lunar Diplomacy;Royal Trouble;Throne of Miscellania|
+Fremennik Elite|Agility 80,Crafting 80,Fletching 25,Hitpoints 70,Magic 82,Prayer 85,Runecraft 77,Slayer 83,Smithing 90,Strength 70|Dragon Slayer II|
+Kandarin Easy|Agility 20,Farming 13,Fishing 16|Waterfall Quest;Monk's Friend|
+Kandarin Medium|Agility 36,Cooking 43,Farming 26,Fishing 46,Fletching 50,Herblore 48,Magic 45,Mining 30,Ranged 40,Strength 22,Thieving 47|Alfred Grimhand's Barcrawl;Elemental Workshop II;Waterfall Quest|
+Kandarin Hard|Agility 60,Construction 50,Crafting 10,Defence 70,Firemaking 65,Fishing 70,Fletching 70,Herblore 45,Magic 56,Prayer 70,Smithing 75,Strength 50,Thieving 53,Woodcutting 60|King's Ransom;Legends' Quest|
+Kandarin Elite|Agility 60,Construction 50,Cooking 80,Crafting 85,Farming 79,Firemaking 85,Fishing 76,Herblore 86,Magic 87,Smithing 90|Barbarian Training|
+Karamja Easy|Agility 15,Mining 40|Jungle Potion|
+Karamja Medium|Agility 12,Cooking 16,Farming 27,Fishing 65,Hunter 41,Mining 40,Woodcutting 50|Tai Bwo Wannai Trio;Shilo Village;The Grand Tree|
+Karamja Hard|Agility 53,Cooking 30,Magic 59,Mining 52,Ranged 42,Runecraft 44,Slayer 50,Smithing 40,Strength 50,Thieving 50,Woodcutting 34|Legends' Quest;Tai Bwo Wannai Trio;Shilo Village|
+Karamja Elite|Agility 15,Cooking 22,Farming 72,Herblore 87,Runecraft 91,Slayer 87||
+Kourend Easy|Construction 25,Fishing 20,Herblore 12,Mining 15,Thieving 25|Client of Kourend|
+Kourend Medium|Agility 49,Crafting 30,Farming 45,Firemaking 50,Fishing 43,Hunter 35,Magic 25,Mining 42,Slayer 50,Woodcutting 50|The Depths of Despair;The Queen of Thieves;Tale of the Righteous;The Forsaken Tower;The Ascent of Arceuus|
+Kourend Hard|Agility 49,Construction 50,Crafting 38,Farming 74,Magic 66,Mining 65,Slayer 62,Smithing 70,Thieving 49,Woodcutting 60|Dream Mentor;Architectural Alliance|
+Kourend Elite|Cooking 84,Crafting 38,Farming 85,Firemaking 85,Fishing 82,Fletching 40,Herblore 90,Magic 95,Mining 38,Prayer 85,Runecraft 77,Slayer 95,Smithing 40,Woodcutting 90|Dragon Slayer II;A Kingdom Divided|
+Lumbridge Easy|Agility 10,Firemaking 15,Fishing 15,Mining 15,Runecraft 5,Slayer 7,Woodcutting 15|Cook's Assistant;Rune Mysteries;The Restless Ghost|
+Lumbridge Medium|Agility 20,Crafting 38,Fishing 30,Hunter 15,Magic 31,Prayer 40,Ranged 30,Runecraft 23,Strength 30,Thieving 30,Woodcutting 36|Lost City|
+Lumbridge Hard|Agility 46,Crafting 50,Farming 63,Firemaking 65,Magic 60,Prayer 52,Runecraft 59,Woodcutting 57|Recipe for Disaster - Culinaromancer;Desert Treasure I|
+Lumbridge Elite|Agility 70,Farming 63,Magic 70,Ranged 70,Runecraft 76,Smithing 88,Strength 70,Thieving 72,Woodcutting 75||
+Morytania Easy|Cooking 12,Crafting 15,Farming 23,Slayer 15|Nature Spirit;Priest in Peril;The Restless Ghost|
+Morytania Medium|Agility 42,Cooking 40,Fishing 50,Herblore 22,Hunter 29,Slayer 42,Smithing 50,Thieving 42,Woodcutting 45|Cabin Fever;Ghosts Ahoy|
+Morytania Hard|Agility 71,Construction 50,Defence 70,Farming 53,Firemaking 50,Magic 66,Mining 55,Prayer 70,Slayer 58,Smithing 50,Thieving 53,Woodcutting 50|Desert Treasure I;King's Ransom;Haunted Mine|
+Morytania Elite|Attack 70,Crafting 84,Defence 70,Firemaking 80,Fishing 96,Magic 83,Ranged 70,Slayer 85,Strength 76|Lunar Diplomacy|
+Varrock Easy|Agility 13,Crafting 8,Fishing 20,Mining 15,Runecraft 9,Thieving 5|Rune Mysteries|
+Varrock Medium|Agility 30,Farming 30,Firemaking 40,Herblore 10,Magic 25,Mining 40,Thieving 25,Woodcutting 40|Enlightened Journey;Gertrude's Cat;Garden of Tranquillity;Tree Gnome Village|
+Varrock Hard|Agility 51,Construction 50,Farming 68,Firemaking 60,Hunter 66,Magic 54,Prayer 52,Ranged 40,Thieving 53,Woodcutting 60|Desert Treasure I|
+Varrock Elite|Cooking 95,Fletching 81,Herblore 90,Magic 86,Runecraft 78,Smithing 89|Dream Mentor;Rune Mysteries|
+Western Easy|Fletching 10,Hunter 9,Mining 15,Ranged 30|Big Chompy Bird Hunting;Biohazard;Plague City;Roving Elves|
+Western Medium|Agility 37,Cooking 42,Firemaking 35,Fishing 46,Fletching 5,Hunter 31,Mining 40,Ranged 30,Woodcutting 35|The Eyes of Glouphrie;Big Chompy Bird Hunting;Eagles' Peak;Monkey Madness I;One Small Favour;Underground Pass|
+Western Hard|Agility 56,Construction 50,Cooking 70,Farming 68,Firemaking 50,Fishing 62,Fletching 5,Hunter 69,Magic 64,Mining 70,Prayer 70,Ranged 70,Thieving 50,Woodcutting 50|Mourning's End Part I;Swan Song;Regicide|
+Western Elite|Agility 85,Construction 50,Cooking 42,Defence 40,Farming 75,Firemaking 35,Fletching 85,Magic 75,Prayer 42,Ranged 40,Slayer 93,Strength 40,Thieving 85||
+Wilderness Easy|Agility 15,Magic 21,Mining 15|Enter the Abyss|
+Wilderness Medium|Agility 60,Construction 1,Magic 60,Mining 55,Slayer 50,Smithing 50,Strength 60,Woodcutting 61|Between a Rock...|
+Wilderness Hard|Agility 64,Firemaking 50,Fishing 53,Hunter 67,Magic 66,Prayer 52,Slayer 68,Smithing 75|Death Plateau;Desert Treasure I|
+Wilderness Elite|Agility 60,Construction 50,Cooking 90,Firemaking 75,Fishing 85,Fletching 5,Magic 96,Mining 85,Slayer 83,Smithing 90,Strength 60,Thieving 84,Woodcutting 75|Desert Treasure I;King's Ransom|

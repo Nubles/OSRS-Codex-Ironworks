@@ -27,6 +27,7 @@ final class Guides
 	static final int FIRST = 5;
 
 	private static final QuestReqs REQS = QuestReqs.load();
+	private static final QuestReqs DIARIES = QuestReqs.diaries();
 
 	private Guides()
 	{
@@ -239,7 +240,7 @@ final class Guides
 	}
 
 	/**
-	 * What the step's quests ask that the account lacks: quests to finish first, down the whole chain,
+	 * What the step's quests and diaries ask that the account lacks: quests to finish first, down the whole chain,
 	 * and the highest level any quest on the way asks.
 	 */
 	static void requirements(Route.Step s, Route.Account a, List<View.CheckView> checks)
@@ -257,7 +258,24 @@ final class Guides
 				chain(q, a, seen, first, levels, qp);
 			}
 		}
+		for (String d : s.diaries)
+		{
+			QuestReqs.Req req = DIARIES.of(d);
+			for (String q : req.quests)
+			{
+				if (!a.questDone(q))
+				{
+					chain(q, a, seen, first, levels, qp);
+				}
+			}
+			for (Map.Entry<String, Integer> e : req.skills.entrySet())
+			{
+				levels.merge(e.getKey(), e.getValue(), Math::max);
+			}
+			qp[0] = Math.max(qp[0], req.questPoints);
+		}
 		first.removeAll(quests);
+		String what = quests.isEmpty() ? "the diary" : "the quest";
 		List<String> named = new ArrayList<>(first);
 		for (String q : named.subList(0, Math.min(FIRST, named.size())))
 		{
@@ -273,12 +291,12 @@ final class Guides
 			Integer asked = s.skills.get(e.getKey());
 			if (level < e.getValue() && (asked == null || asked < e.getValue()))
 			{
-				checks.add(new View.CheckView(e.getKey() + " for the quest", level + " / " + e.getValue(), false));
+				checks.add(new View.CheckView(e.getKey() + " for " + what, level + " / " + e.getValue(), false));
 			}
 		}
 		if (qp[0] > Math.max(s.questPoints, a.questPoints()))
 		{
-			checks.add(new View.CheckView("Quest points for the quest", a.questPoints() + " / " + qp[0], false));
+			checks.add(new View.CheckView("Quest points for " + what, a.questPoints() + " / " + qp[0], false));
 		}
 	}
 

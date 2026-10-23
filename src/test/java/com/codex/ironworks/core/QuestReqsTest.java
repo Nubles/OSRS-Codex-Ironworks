@@ -45,6 +45,29 @@ public class QuestReqsTest
 	}
 
 	@Test
+	public void everyDiaryTheRouteNamesIsKnown()
+	{
+		QuestReqs diaries = QuestReqs.diaries();
+		Set<String> quests = Arrays.stream(Quest.values()).map(Quest::getName).collect(Collectors.toSet());
+		int named = 0;
+		for (Route.Step s : Route.load().steps())
+		{
+			for (String d : s.diaries)
+			{
+				named++;
+				QuestReqs.Req req = diaries.of(d);
+				assertTrue(d, !req.skills.isEmpty() || !req.quests.isEmpty());
+				for (String q : req.quests)
+				{
+					assertTrue(d + ": " + q, quests.contains(q));
+				}
+			}
+		}
+		assertTrue(named >= 5);
+		assertEquals(Integer.valueOf(5), diaries.of("Ardougne Easy").skills.get("Thieving"));
+	}
+
+	@Test
 	public void regicideAsksForUndergroundPassAndAgility()
 	{
 		QuestReqs.Req r = QuestReqs.load().of("Regicide");

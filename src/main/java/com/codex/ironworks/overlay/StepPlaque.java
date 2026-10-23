@@ -26,7 +26,7 @@ public class StepPlaque extends Overlay
 	/** The widest the step's text runs before it wraps. */
 	private static final int TEXT = 200;
 	/** Checks shown at most; the rest wait in the panel. */
-	private static final int CHECKS = 4;
+	private static final int CHECKS = 6;
 
 	private volatile Shown shown;
 
@@ -66,6 +66,13 @@ public class StepPlaque extends Overlay
 			if (!c.ok && checks.size() < CHECKS)
 			{
 				checks.add(c);
+			}
+		}
+		for (View.NeedView n : g.needs)
+		{
+			if (n.stepsAway == 0 && n.have < n.need && checks.size() < CHECKS)
+			{
+				checks.add(new View.CheckView(n.item, com.codex.ironworks.ui.Format.amount(n.have) + " / " + com.codex.ironworks.ui.Format.amount(n.need), false));
 			}
 		}
 		String way = g.way == null ? null : g.way.equals("Here") ? "You are here" : "Head " + g.way;

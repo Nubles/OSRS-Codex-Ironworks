@@ -113,6 +113,14 @@ public class GuidesTest
 		all.remove("Regicide");
 		Guides.requirements(r.steps().get(0), account(all, 99), checks);
 		assertTrue(checks.isEmpty());
+
+		checks.clear();
+		Route d = Route.parse(java.util.Collections.singletonList("A | Finish the Ardougne easy diary | varbit:4499; diary:Ardougne Easy"));
+		Guides.requirements(d.steps().get(0), account(new HashSet<>(), 1), checks);
+		labels.clear();
+		checks.forEach(c -> labels.add(c.label));
+		assertTrue(labels.toString(), labels.contains("Plague City"));
+		assertTrue(labels.toString(), labels.contains("Thieving for the diary"));
 	}
 
 	@Test
