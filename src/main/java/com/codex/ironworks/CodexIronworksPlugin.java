@@ -18,6 +18,7 @@ import com.codex.ironworks.core.Works;
 import com.codex.ironworks.overlay.ItemTips;
 import com.codex.ironworks.overlay.People;
 import com.codex.ironworks.overlay.ShopPlaque;
+import com.codex.ironworks.overlay.StepPlaque;
 import com.codex.ironworks.ui.Arrivals;
 import com.codex.ironworks.ui.Format;
 import com.codex.ironworks.ui.IronworksPanel;
@@ -180,6 +181,7 @@ public class CodexIronworksPlugin extends Plugin
 	private People people;
 
 	private final ShopPlaque plaque = new ShopPlaque();
+	private final StepPlaque stepPlaque = new StepPlaque();
 	private final Settle settle = new Settle();
 	private final Map<Integer, String> names = new HashMap<>();
 	private final Map<Skill, Long> lastXp = new EnumMap<>(Skill.class);
@@ -297,6 +299,7 @@ public class CodexIronworksPlugin extends Plugin
 			.build();
 		clientToolbar.addNavigation(navButton);
 		overlayManager.add(plaque);
+		overlayManager.add(stepPlaque);
 		overlayManager.add(tips);
 		overlayManager.add(people);
 		lookup = Catalogue.with(config.picked(), config.hidden());
@@ -323,6 +326,7 @@ public class CodexIronworksPlugin extends Plugin
 	protected void shutDown()
 	{
 		overlayManager.remove(plaque);
+		overlayManager.remove(stepPlaque);
 		overlayManager.remove(tips);
 		overlayManager.remove(people);
 		clientToolbar.removeNavigation(navButton);
@@ -356,6 +360,7 @@ public class CodexIronworksPlugin extends Plugin
 		beforeDeath = null;
 		held.clear();
 		plaque.show(null, null, null);
+		stepPlaque.show(null);
 	}
 
 	@Subscribe
@@ -781,7 +786,9 @@ public class CodexIronworksPlugin extends Plugin
 		}
 		if (works.isFollowing())
 		{
-			guide.guide(guide.current(works.ticked()), config.guideArrow(), config.guidePeople(), config.guidePath());
+			Route.Step step = guide.current(works.ticked());
+			guide.guide(step, config.guideArrow(), config.guidePeople(), config.guidePath());
+			stepPlaque.way(step == null ? null : RouteGuide.way(here(), guide.target(step)));
 		}
 	}
 
@@ -1363,6 +1370,7 @@ public class CodexIronworksPlugin extends Plugin
 				built.guide.way = RouteGuide.way(here(), guide.target(step));
 			}
 		}
+		stepPlaque.show(loggedIn && built.guide != null && built.guide.following && config.guidePlaque() ? built.guide : null);
 		view = built;
 		SwingUtilities.invokeLater(() -> target.show(built));
 	}

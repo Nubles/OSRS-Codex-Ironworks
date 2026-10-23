@@ -205,7 +205,7 @@ final class RouteGuide
 			@Override
 			public boolean held(String item)
 			{
-				return held.contains(item);
+				return Route.holds(held, item);
 			}
 
 			@Override
@@ -216,7 +216,7 @@ final class RouteGuide
 					all = new HashSet<>(held);
 					all.addAll(owned.get());
 				}
-				return all.contains(item);
+				return Route.holds(all, item);
 			}
 
 			@Override
