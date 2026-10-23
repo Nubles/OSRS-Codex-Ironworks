@@ -89,6 +89,16 @@ public class StepPlaque extends Overlay
 		}
 	}
 
+	/** A line in place of the way, as it is. */
+	public void say(String line)
+	{
+		Shown s = shown;
+		if (s != null)
+		{
+			s.way = line;
+		}
+	}
+
 	@Override
 	public Dimension render(Graphics2D g)
 	{

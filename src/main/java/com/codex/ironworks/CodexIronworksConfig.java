@@ -165,7 +165,7 @@ public interface CodexIronworksConfig extends Config
 	)
 	default boolean guidePath()
 	{
-		return false;
+		return true;
 	}
 
 	@ConfigItem(
@@ -176,6 +176,30 @@ public interface CodexIronworksConfig extends Config
 		position = 24
 	)
 	default boolean guidePlaque()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "guideMap",
+		name = "Map pin and minimap arrow",
+		description = "Pin the step in hand on the world map and point to it from the minimap, however far it is",
+		section = GUIDE,
+		position = 25
+	)
+	default boolean guideMap()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "guideChat",
+		name = "Step done in chat",
+		description = "When the game shows the step in hand done, say so in chat and name the next step",
+		section = GUIDE,
+		position = 26
+	)
+	default boolean guideChat()
 	{
 		return true;
 	}

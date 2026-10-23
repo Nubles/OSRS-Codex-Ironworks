@@ -92,6 +92,7 @@ import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.ui.overlay.outline.ModelOutlineRenderer;
+import net.runelite.client.ui.overlay.worldmap.WorldMapPointManager;
 import net.runelite.client.util.AsyncBufferedImage;
 import net.runelite.client.util.Text;
 import org.slf4j.Logger;
@@ -175,10 +176,15 @@ public class CodexIronworksPlugin extends Plugin
 	@Inject
 	private ModelOutlineRenderer outlines;
 
+	@Inject
+	private WorldMapPointManager worldMap;
+
 	private Route route;
 	private RouteGuide guide;
 	private Highlights highlights;
 	private Clicks clicks;
+	private Compass compass;
+	private StepItems stepItems;
 
 	private final ShopPlaque plaque = new ShopPlaque();
 	private final StepPlaque stepPlaque = new StepPlaque();
@@ -242,9 +248,11 @@ public class CodexIronworksPlugin extends Plugin
 			return image;
 		};
 		route = Route.load();
-		guide = new RouteGuide(client, eventBus, route, this::name);
+		guide = new RouteGuide(client, eventBus, worldMap, Sigil.icon(18), route, this::name);
 		highlights = new Highlights(client, outlines, guide);
 		clicks = new Clicks(client, guide, this::name);
+		compass = new Compass(client, guide);
+		stepItems = new StepItems(itemManager, guide);
 		panel = new IronworksPanel(icons, new IronworksPanel.Actions()
 		{
 			@Override
@@ -304,6 +312,8 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.add(tips);
 		overlayManager.add(highlights);
 		overlayManager.add(clicks);
+		overlayManager.add(compass);
+		overlayManager.add(stepItems);
 		lookup = Catalogue.with(config.picked(), config.hidden());
 		clientThread.invokeLater(() ->
 		{
@@ -332,6 +342,8 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.remove(tips);
 		overlayManager.remove(highlights);
 		overlayManager.remove(clicks);
+		overlayManager.remove(compass);
+		overlayManager.remove(stepItems);
 		clientToolbar.removeNavigation(navButton);
 		RouteGuide leaving = guide;
 		clientThread.invokeLater(() ->
@@ -778,7 +790,9 @@ public class CodexIronworksPlugin extends Plugin
 			return all;
 		}, here());
 		boolean changed = false;
-		for (Route.Step step : guide.observe(works.ticked(), moment))
+		Route.Step was = works.isFollowing() ? guide.current(works.ticked()) : null;
+		List<Route.Step> met = guide.observe(works.ticked(), moment);
+		for (Route.Step step : met)
 		{
 			changed |= works.tick(step.key(), true);
 		}
@@ -786,13 +800,38 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			unsaved = true;
 			dirty = true;
+			// Only the step in hand, done in play: a first reading at login can tick dozens at once.
+			if (was != null && met.size() <= 2 && met.contains(was) && config.guideChat())
+			{
+				announce(was, guide.current(works.ticked()));
+			}
 		}
 		if (works.isFollowing())
 		{
 			Route.Step step = guide.current(works.ticked());
-			guide.guide(step, config.guideArrow(), config.guidePeople(), config.guidePath());
+			String quest = Route.inQuest(step, guide.account());
+			if (quest != null)
+			{
+				// Under way: Quest Helper starts itself when a quest begins and leads it step by step.
+				guide.stop();
+				stepPlaque.say(quest + " is under way: Quest Helper leads it");
+				return;
+			}
+			guide.guide(step, config.guideArrow(), config.guidePeople(), config.guidePath(), config.guideMap());
 			stepPlaque.way(step == null ? null : RouteGuide.way(here(), guide.target(step)));
 		}
+	}
+
+	/** "Ironworks: Done: Complete Cook's Assistant. Next: Complete Sheep Shearer." */
+	private void announce(Route.Step done, Route.Step next)
+	{
+		String message = new ChatMessageBuilder()
+			.append(ChatColorType.HIGHLIGHT)
+			.append("Ironworks: ")
+			.append(ChatColorType.NORMAL)
+			.append(Guides.chat(done, next))
+			.build();
+		chatMessageManager.queue(QueuedMessage.builder().type(ChatMessageType.CONSOLE).runeLiteFormattedMessage(message).build());
 	}
 
 	/** Where the player stands: x, y, plane; or null. */

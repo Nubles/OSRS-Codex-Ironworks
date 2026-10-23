@@ -500,4 +500,11 @@ final class Guides
 		}
 		return null;
 	}
+
+	/** The chat line for a step done in play: what was done and what comes next. */
+	static String chat(Route.Step done, Route.Step next)
+	{
+		String line = "Done: " + done.text + ".";
+		return next == null ? line + " That was the last step of the route." : line + " Next: " + next.text + ".";
+	}
 }

@@ -33,6 +33,8 @@ import net.runelite.api.gameval.VarPlayerID;
 import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.events.PluginMessage;
+import net.runelite.client.ui.overlay.worldmap.WorldMapPoint;
+import net.runelite.client.ui.overlay.worldmap.WorldMapPointManager;
 
 /**
  * Reads the game for the route: what is true for good (quests, levels, unlocks) and what is true
@@ -62,12 +64,19 @@ final class RouteGuide
 	private final Map<String, Quest> quests = new HashMap<>();
 	private final Map<String, Skill> skills = new HashMap<>();
 	private final Deque<Object[]> heard = new ArrayDeque<>();
+	private final WorldMapPointManager worldMap;
+	private final java.awt.image.BufferedImage pin;
 
 	private Route.Account account;
 	private int accountTick = Integer.MIN_VALUE;
 	private WorldPoint pathed;
 	private WorldPoint arrowPoint;
 	private NPC arrowNpc;
+	/** Where the step in hand is, for the minimap arrow; null when nothing is being pointed at. */
+	private volatile WorldPoint aim;
+	private WorldMapPoint marked;
+	/** Lower-cased names of the items the step in hand asks for, for the bank and inventory outlines. */
+	private volatile Set<String> items = Collections.emptySet();
 	/** What to click for the step in hand, for the overlays. */
 	private Route.Lead lead = new Route.Lead();
 	/** Objects in the scene to click, found by the last scan. */
@@ -75,10 +84,13 @@ final class RouteGuide
 	/** Ground items to pick up, found by the last scan: the tile and the item's name. */
 	private List<Object[]> ground = Collections.emptyList();
 
-	RouteGuide(Client client, EventBus eventBus, Route route, IntFunction<String> name)
+	RouteGuide(Client client, EventBus eventBus, WorldMapPointManager worldMap, java.awt.image.BufferedImage pin,
+		Route route, IntFunction<String> name)
 	{
 		this.client = client;
 		this.eventBus = eventBus;
+		this.worldMap = worldMap;
+		this.pin = pin;
 		this.route = route;
 		this.name = name;
 		for (Quest q : Quest.values())
@@ -406,9 +418,12 @@ final class RouteGuide
 	 * Points the way to the step in hand: the hint arrow at a named person in sight, else the thing
 	 * to click, else the place; outlines everything to click; and asks Shortest Path for the way.
 	 */
-	void guide(Route.Step s, boolean arrow, boolean outline, boolean path)
+	void guide(Route.Step s, boolean arrow, boolean outline, boolean path, boolean map)
 	{
 		WorldPoint target = target(s);
+		aim = map ? target : null;
+		mark(map ? target : null, s);
+		items = outline ? items(s) : Collections.emptySet();
 		Route.Lead l = route.lead(s, account());
 		lead = outline ? l : new Route.Lead();
 		scan(l);
@@ -595,9 +610,85 @@ final class RouteGuide
 		pathed = target;
 	}
 
-	/** Takes down the arrow and the path. */
+	/** The step's items, lower-cased: what to carry, own, use or bring along. */
+	static Set<String> items(Route.Step s)
+	{
+		Set<String> all = new HashSet<>();
+		if (s == null)
+		{
+			return all;
+		}
+		List<String> names = new ArrayList<>(s.items);
+		names.addAll(s.owned);
+		names.addAll(s.use);
+		names.addAll(s.needs.keySet());
+		s.anyOf.forEach(names::addAll);
+		for (String n : names)
+		{
+			all.add(n.toLowerCase(Locale.ENGLISH));
+		}
+		return all;
+	}
+
+	/** True when an item of this name is one the step asks for: "Black mask" takes "Black mask (10)". */
+	static boolean asked(Set<String> items, String name)
+	{
+		if (items.isEmpty() || name == null)
+		{
+			return false;
+		}
+		String n = name.toLowerCase(Locale.ENGLISH);
+		if (items.contains(n))
+		{
+			return true;
+		}
+		int cut = n.indexOf('(');
+		return cut > 0 && items.contains(n.substring(0, cut).trim());
+	}
+
+	Set<String> items()
+	{
+		return items;
+	}
+
+	/** Where the step in hand is, while the guide points the way. */
+	WorldPoint aim()
+	{
+		return aim;
+	}
+
+	/** Pins the step's place on the world map, where a click on the pin's edge marker jumps to it. */
+	private void mark(WorldPoint target, Route.Step s)
+	{
+		if (target == null ? marked == null : marked != null && target.equals(marked.getWorldPoint()))
+		{
+			return;
+		}
+		if (marked != null)
+		{
+			worldMap.remove(marked);
+			marked = null;
+		}
+		if (target != null)
+		{
+			marked = WorldMapPoint.builder()
+				.worldPoint(target)
+				.image(pin)
+				.name("Ironworks")
+				.tooltip(s == null ? "Ironworks" : "Ironworks: " + s.text)
+				.jumpOnClick(true)
+				.snapToEdge(true)
+				.build();
+			worldMap.add(marked);
+		}
+	}
+
+	/** Takes down the arrow, the path and the map pin. */
 	void stop()
 	{
+		aim = null;
+		items = Collections.emptySet();
+		mark(null, null);
 		pointArrow(null, null);
 		pathTo(null);
 		lead = new Route.Lead();
