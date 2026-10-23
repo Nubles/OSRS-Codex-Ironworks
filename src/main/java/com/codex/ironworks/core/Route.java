@@ -98,6 +98,8 @@ public final class Route
 		/** Head for your house portal, wherever the house is. */
 		public boolean goHouse;
 		public final List<String> npcs = new ArrayList<>();
+		/** Achievement diaries the step finishes, by "Area Tier", so their levels and quests can be shown. */
+		public final List<String> diaries = new ArrayList<>();
 		public boolean optional;
 		/** Supplies the step uses up, by item name, so they can be checked against the stores ahead of time. */
 		public final Map<String, Long> needs = new LinkedHashMap<>();
@@ -467,6 +469,9 @@ public final class Route
 				}
 				case "npc":
 					step.npcs.add(value);
+					break;
+				case "diary":
+					step.diaries.add(value);
 					break;
 				case "optional":
 					step.optional = true;

@@ -20,7 +20,7 @@ public class RouteTest
 {
 	private static final Set<String> TAGS = new HashSet<>(Arrays.asList("quest", "started", "skill", "qp", "combat", "varbit", "varp",
 		"ca", "item", "owned", "gone", "at", "area", "empty", "coins", "chat", "deathbank", "nodeathbank", "built", "house", "go", "npc",
-		"optional", "need", "any"));
+		"optional", "need", "any", "diary"));
 
 	private final Route route = Route.load();
 

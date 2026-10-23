@@ -3,7 +3,7 @@
 # OSRS Wiki's "Ironman guide" (https://oldschool.runescape.wiki/w/Ironman_guide), CC BY-NC-SA 3.0.
 # Format: section | step | tags, tags optional, separated by ";".
 # Lasting tags (read from the game at any time): quest:, started:, skill:Name level, qp:, combat:,
-# varbit:id>=value, varp:, ca:tier. Diary rewards claimed are varbits: ARDOUGNE_EASY_REWARD 4499,
+# varbit:id>=value, varp:, ca:tier. diary:Area Tier names the diary, so its levels and quests show as needs. Diary rewards claimed are varbits: ARDOUGNE_EASY_REWARD 4499,
 # ARDOUGNE_MEDIUM_REWARD 4500, FALADOR_EASY_REWARD 4503, FALADOR_MEDIUM_REWARD 4504,
 # FALADOR_HARD_REWARD 4505, KANDARIN_MEDIUM_REWARD 4516, VARROCK_EASY_REWARD 4519,
 # VARROCK_MEDIUM_REWARD 4520, MORYTANIA_MEDIUM_REWARD 4528, MORYTANIA_HARD_REWARD 4529,
@@ -86,12 +86,12 @@ Getting around | Complete Lost City for a dramen staff | quest:Lost City; owned:
 Getting around | Complete Fairytale I - Growing Pains | quest:Fairytale I - Growing Pains
 Getting around | Start Fairytale II - Cure a Queen to use fairy rings | started:Fairytale II - Cure a Queen
 ~ Fairy rings make Zanaris, Fossil Island, Canifis and much more one click from home
-Getting around | Finish the Ardougne easy diary and claim Ardougne cloak 1 | varbit:4499; npc:Two-pints
+Getting around | Finish the Ardougne easy diary and claim Ardougne cloak 1 | varbit:4499; diary:Ardougne Easy; npc:Two-pints
 ~ The cloak teleports to the Ardougne Monastery as often as you like
-Getting around | Finish the Lumbridge easy diary and claim Explorer's ring 1 | varbit:4535; npc:Hatius Cosaintus
-Getting around | Finish the Karamja easy diary and claim Karamja gloves 1 | varbit:3577; npc:Pirate Jackie the Fruit
-Getting around | Finish the Varrock easy diary and claim Varrock armour 1 | varbit:4519; npc:Toby
-Getting around | Finish the Falador easy diary and claim Falador shield 1 | varbit:4503; optional
+Getting around | Finish the Lumbridge easy diary and claim Explorer's ring 1 | varbit:4535; diary:Lumbridge Easy; npc:Hatius Cosaintus
+Getting around | Finish the Karamja easy diary and claim Karamja gloves 1 | varbit:3577; diary:Karamja Easy; npc:Pirate Jackie the Fruit
+Getting around | Finish the Varrock easy diary and claim Varrock armour 1 | varbit:4519; diary:Varrock Easy; npc:Toby
+Getting around | Finish the Falador easy diary and claim Falador shield 1 | varbit:4503; diary:Falador Easy; optional
 Getting around | Make or find a games necklace and a ring of dueling | owned:Games necklace; owned:Ring of dueling
 ~ The games necklace reaches Wintertodt, Barbarian Assault and the Burthorpe games room; the ring of dueling reaches Ferox Enclave
 Getting around | Complete Cabin Fever to halve charter ship fares | quest:Cabin Fever; optional
@@ -185,7 +185,7 @@ Mid game | Get an imbued god cape from Mage Arena II | any:Imbued saradomin cape
 Mid game | Get a berserker ring from Dagannoth Rex | owned:Berserker ring; optional
 ~ Rex can be safespotted with ranged or magic
 Mid game | Get void knight equipment at Pest Control | owned:Void knight top; optional
-Mid game | Finish the Morytania hard diary, then kill Barrows | varbit:4529; optional
+Mid game | Finish the Morytania hard diary, then kill Barrows | varbit:4529; diary:Morytania Hard; optional
 ~ Barrows Teleport at 78 Magic; the diary gives half again as many runes from the chest
 Mid game | Complete Perilous Moons and kill the Moons of Peril | quest:Perilous Moons
 ~ Blood moon armour is a Strength set before Bandos; eclipse moon armour and the atlatl are a ranged set
