@@ -69,6 +69,8 @@ public class IronworksPanel extends PluginPanel
 	private final JTextField search = new SearchField();
 	private final Actions actions;
 	private final Set<String> open = new HashSet<>();
+	/** Parts of the route the player has closed, which would otherwise open for holding the step in hand. */
+	private final Set<String> closed = new HashSet<>();
 	private final Set<Family> shelvesOpen = new HashSet<>();
 
 	private View view = new View();
@@ -885,7 +887,7 @@ public class IronworksPanel extends PluginPanel
 	private JComponent routePart(View.SectionView sv, View.GuideView g)
 	{
 		String id = "route:" + sv.name;
-		boolean shown = open.contains(id);
+		boolean shown = open.contains(id) || sv.current && !closed.contains(id);
 		Card card = new Card(new BorderLayout());
 		if (sv.current)
 		{
@@ -898,9 +900,15 @@ public class IronworksPanel extends PluginPanel
 		card.add(in, BorderLayout.CENTER);
 		card.onClick(() ->
 		{
-			if (!open.remove(id))
+			if (shown)
+			{
+				open.remove(id);
+				closed.add(id);
+			}
+			else
 			{
 				open.add(id);
+				closed.remove(id);
 			}
 			rebuild(GUIDE);
 		});

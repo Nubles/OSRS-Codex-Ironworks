@@ -36,8 +36,16 @@ final class Guides
 	{
 		View.GuideView g = new View.GuideView();
 		g.following = following;
-		g.total = route.size();
-		g.done = route.doneCount(ticked, a);
+		for (Route.Step s : route.steps())
+		{
+			boolean done = route.done(s, ticked, a);
+			// An optional step left undone does not hold the route back from being finished.
+			if (done || !s.optional)
+			{
+				g.total++;
+				g.done += done ? 1 : 0;
+			}
+		}
 		Map<String, View.Found> owned = new HashMap<>();
 		for (View.Found f : found)
 		{
@@ -90,18 +98,21 @@ final class Guides
 		List<View.SectionView> sections = new ArrayList<>();
 		for (String name : route.sections())
 		{
-			int[] d = route.section(name, ticked, a);
 			View.SectionView sv = new View.SectionView();
 			sv.name = name;
-			sv.done = d[0];
-			sv.all = d[1];
 			List<View.StepView> steps = new ArrayList<>();
 			for (Route.Step s : route.steps())
 			{
 				if (s.section.equals(name))
 				{
-					steps.add(step(route, s, ticked, a, owned, workshop, xp, false));
+					View.StepView step = step(route, s, ticked, a, owned, workshop, xp, false);
+					steps.add(step);
 					sv.current |= s == current;
+					if (step.done || !s.optional)
+					{
+						sv.all++;
+						sv.done += step.done ? 1 : 0;
+					}
 				}
 			}
 			sv.steps = steps;
