@@ -65,7 +65,8 @@ public class GuidesTest
 		View.GuideView g = Guides.build(route, new HashSet<>(), account(quests, 25), false,
 			Arrays.asList(found("Rope", 2), found("Air rune", 3)), Workshop.empty(), Collections.emptyMap());
 		assertNotNull(g.current);
-		assertEquals("Early members' quests", g.current.section);
+		assertEquals("First steps", g.current.section);
+		assertTrue(g.current.text, g.current.text.contains("Stronghold of Security"));
 		View.NeedView air = g.needs.stream().filter(n -> n.item.equals("Air rune")).findFirst().get();
 		assertEquals(6, air.need);
 		assertEquals(3, air.have);

@@ -55,4 +55,20 @@ public class GuideWayTest
 		long placed = r.steps().stream().filter(s -> r.target(s, null) != null).count();
 		assertTrue(placed + " of " + r.size(), placed * 10 >= r.size() * 7);
 	}
+
+	@Test
+	public void theRouteCarriesEveryQuestAndDiary()
+	{
+		Route r = Route.load();
+		Set<String> quests = new java.util.HashSet<>();
+		Set<String> diaries = new java.util.HashSet<>();
+		r.steps().forEach(s ->
+		{
+			quests.addAll(s.quests);
+			diaries.addAll(s.diaries);
+		});
+		assertTrue(quests.size() + " quests", quests.size() >= 200);
+		assertEquals(48, diaries.size());
+		assertTrue(r.size() + " steps", r.size() >= 300);
+	}
 }
