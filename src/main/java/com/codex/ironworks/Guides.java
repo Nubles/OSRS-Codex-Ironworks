@@ -25,6 +25,8 @@ final class Guides
 	static final int AHEAD = 12;
 	/** Unfinished quests named as needed first, at most. */
 	static final int FIRST = 5;
+	/** Route quests listed as ready now, at most. */
+	static final int READY = 6;
 
 	private static final QuestReqs REQS = QuestReqs.load();
 	private static final QuestReqs DIARIES = QuestReqs.diaries();
@@ -101,6 +103,8 @@ final class Guides
 			g.next = next;
 			g.needs = new ArrayList<>(needs.values());
 		}
+
+		ready(g, route, ticked, a, current, owned, workshop, xp);
 
 		List<View.UseView> uses = new ArrayList<>();
 		for (Route.Step s : route.steps())
@@ -237,6 +241,84 @@ final class Guides
 		v.checks = checks;
 		v.hints = hints;
 		return v;
+	}
+
+	/** Quests the account could do now, past the steps coming up: those further on the route, then the rest. */
+	private static void ready(View.GuideView g, Route route, Set<String> ticked, Route.Account a, Route.Step current,
+		Map<String, View.Found> owned, Workshop workshop, Map<Skill, Integer> xp)
+	{
+		List<View.StepView> ready = new ArrayList<>();
+		Set<String> listed = new java.util.HashSet<>();
+		for (View.StepView n : g.next)
+		{
+			listed.add(n.key);
+		}
+		Set<String> onRoute = new java.util.HashSet<>();
+		for (Route.Step s : route.steps())
+		{
+			onRoute.addAll(s.quests);
+			if (s == current || s.quests.isEmpty() || listed.contains(s.key()) || route.done(s, ticked, a)
+				|| current != null && s.index < current.index)
+			{
+				continue;
+			}
+			if (questReady(s, a) && ready.size() < READY)
+			{
+				ready.add(step(route, s, ticked, a, owned, workshop, xp, false));
+			}
+		}
+		List<String> others = new ArrayList<>();
+		for (net.runelite.api.Quest q : net.runelite.api.Quest.values())
+		{
+			String name = q.getName();
+			if (!onRoute.contains(name) && !a.questDone(name) && met(name, a))
+			{
+				others.add(name);
+			}
+		}
+		g.ready = ready;
+		g.readyElse = others;
+	}
+
+	/** True when nothing stands between the account and every quest the step asks for. */
+	static boolean questReady(Route.Step s, Route.Account a)
+	{
+		for (Map.Entry<String, Integer> e : s.skills.entrySet())
+		{
+			if (a.level(e.getKey()) < e.getValue())
+			{
+				return false;
+			}
+		}
+		for (String q : s.quests)
+		{
+			if (!a.questDone(q) && !met(q, a))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/** True when a quest's own levels, quest points and quests first are all in hand. */
+	static boolean met(String quest, Route.Account a)
+	{
+		QuestReqs.Req req = REQS.of(quest);
+		for (String q : req.quests)
+		{
+			if (!a.questDone(q))
+			{
+				return false;
+			}
+		}
+		for (Map.Entry<String, Integer> e : req.skills.entrySet())
+		{
+			if (a.level(e.getKey()) < e.getValue())
+			{
+				return false;
+			}
+		}
+		return a.questPoints() >= req.questPoints;
 	}
 
 	/**

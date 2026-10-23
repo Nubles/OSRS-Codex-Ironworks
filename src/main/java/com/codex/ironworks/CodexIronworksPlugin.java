@@ -16,7 +16,6 @@ import com.codex.ironworks.core.Ware;
 import com.codex.ironworks.core.Window;
 import com.codex.ironworks.core.Works;
 import com.codex.ironworks.overlay.ItemTips;
-import com.codex.ironworks.overlay.People;
 import com.codex.ironworks.overlay.ShopPlaque;
 import com.codex.ironworks.overlay.StepPlaque;
 import com.codex.ironworks.ui.Arrivals;
@@ -178,7 +177,8 @@ public class CodexIronworksPlugin extends Plugin
 
 	private Route route;
 	private RouteGuide guide;
-	private People people;
+	private Highlights highlights;
+	private Clicks clicks;
 
 	private final ShopPlaque plaque = new ShopPlaque();
 	private final StepPlaque stepPlaque = new StepPlaque();
@@ -243,7 +243,8 @@ public class CodexIronworksPlugin extends Plugin
 		};
 		route = Route.load();
 		guide = new RouteGuide(client, eventBus, route, this::name);
-		people = new People(client, outlines, () -> guide.people());
+		highlights = new Highlights(client, outlines, guide);
+		clicks = new Clicks(client, guide, this::name);
 		panel = new IronworksPanel(icons, new IronworksPanel.Actions()
 		{
 			@Override
@@ -301,7 +302,8 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.add(plaque);
 		overlayManager.add(stepPlaque);
 		overlayManager.add(tips);
-		overlayManager.add(people);
+		overlayManager.add(highlights);
+		overlayManager.add(clicks);
 		lookup = Catalogue.with(config.picked(), config.hidden());
 		clientThread.invokeLater(() ->
 		{
@@ -328,7 +330,8 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.remove(plaque);
 		overlayManager.remove(stepPlaque);
 		overlayManager.remove(tips);
-		overlayManager.remove(people);
+		overlayManager.remove(highlights);
+		overlayManager.remove(clicks);
 		clientToolbar.removeNavigation(navButton);
 		RouteGuide leaving = guide;
 		clientThread.invokeLater(() ->

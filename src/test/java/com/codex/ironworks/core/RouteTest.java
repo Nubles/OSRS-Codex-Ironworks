@@ -20,7 +20,7 @@ public class RouteTest
 {
 	private static final Set<String> TAGS = new HashSet<>(Arrays.asList("quest", "started", "skill", "qp", "combat", "varbit", "varp",
 		"ca", "item", "owned", "gone", "at", "area", "empty", "coins", "chat", "deathbank", "nodeathbank", "built", "house", "go", "npc",
-		"optional", "need", "any", "diary"));
+		"optional", "need", "any", "diary", "npcid", "obj", "use", "shop", "ground", "say"));
 
 	private final Route route = Route.load();
 
@@ -171,6 +171,32 @@ public class RouteTest
 				return false;
 			}
 		};
+	}
+
+	@Test
+	public void questStepsLeadToWhoStartsThem()
+	{
+		int quests = 0;
+		int led = 0;
+		for (Route.Step s : route.steps())
+		{
+			if (!s.quests.isEmpty())
+			{
+				quests++;
+				Route.Lead l = route.lead(s, account(new HashSet<>(), 1));
+				led += l.npcIds.isEmpty() && l.objects.isEmpty() ? 0 : 1;
+			}
+		}
+		assertTrue(led + " of " + quests, led * 10 >= quests * 9);
+	}
+
+	@Test
+	public void buyStepsLightUpTheShop()
+	{
+		Route r = Route.parse(Arrays.asList("A | Buy a chronicle from Diango | owned:Chronicle; npc:Diango"));
+		Route.Lead l = r.lead(r.steps().get(0), account(new HashSet<>(), 1));
+		assertTrue(l.shop.contains("Chronicle"));
+		assertTrue(l.npcs.contains("Diango"));
 	}
 
 	static Route.Account account(Set<String> quests, int level)
