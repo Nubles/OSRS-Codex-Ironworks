@@ -985,10 +985,6 @@ public class IronworksPanel extends PluginPanel
 		{
 			in.add(new Line("Optional", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
 		}
-		for (String tip : s.tips)
-		{
-			in.add(new Line(tip, null, null, Theme.GOLD_DIM, Theme.GOLD_DIM));
-		}
 		for (View.CheckView c : s.checks)
 		{
 			in.add(new Line(c.label, c.figure, c.ok ? Theme.GREEN : Theme.EMBER, Theme.TEXT_MUTED, c.ok ? Theme.GREEN : Theme.TEXT));
@@ -996,6 +992,22 @@ public class IronworksPanel extends PluginPanel
 		for (String hint : s.hints)
 		{
 			in.add(new Line(hint, null, null, Theme.TEAL, Theme.TEAL));
+		}
+		if (!s.tips.isEmpty())
+		{
+			in.add(new Line("ALONG THE WAY", null, null, Theme.GOLD_DIM, Theme.GOLD_DIM));
+		}
+		for (int i = 0; i < s.tips.size(); i++)
+		{
+			String tip = s.tips.get(i);
+			if (View.heading(tip))
+			{
+				in.add(new Line(tip, null, null, Theme.GOLD_DIM, Theme.GOLD_DIM));
+				continue;
+			}
+			boolean ticked = i < s.tipsDone.size() && s.tipsDone.get(i);
+			String key = View.tipKey(s.key, i);
+			in.add(new StepLine(tip, ticked, false, false, () -> actions.tick(key, !ticked)));
 		}
 		if (g.following && g.way != null)
 		{
