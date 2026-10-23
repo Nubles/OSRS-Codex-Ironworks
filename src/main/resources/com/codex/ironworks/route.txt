@@ -102,7 +102,7 @@ Getting around | Move your house to Pollnivneach or Brimhaven, and buy law runes
 Skilling base | Reach 50 Firemaking at Wintertodt | skill:Firemaking 50; go:1630,3958,0; need:Cake 10
 ~ Bring a hammer, a knife, a tinderbox and an axe. Wintertodt crates are an iron's first big supply of seeds, herbs and ores
 ~ Logs from the Lumbridge castle roof, lit with a tinderbox, get you there if your Firemaking is low
-Skilling base | Reach 60 Woodcutting at Wintertodt for the Woodcutting Guild | skill:Woodcutting 60; optional
+Skilling base | Reach 60 Woodcutting at Wintertodt for the Woodcutting Guild | skill:Woodcutting 60; optional; go:1630,3958,0
 ~ Most irons stop here, at about 88 to 90 Firemaking; the guild sells a rune axe once you have 60
 Skilling base | Reach 45 Thieving at the Ardougne cake stall and on master farmers | skill:Thieving 45; go:2668,3311,0
 ~ Master farmers in Draynor and Ardougne are your best early source of herb seeds. At 45, blackjacking in Pollnivneach pays well
@@ -112,10 +112,10 @@ Skilling base | Start birdhouse runs on Fossil Island every 50 minutes | skill:H
 ~ Birdhouses give Hunter experience and a steady stream of bird nests: tree, fruit tree and herb seeds
 Skilling base | Plant herb patches in Falador, Catherby and Ardougne | skill:Farming 15; go:3058,3311,0; need:Compost 3
 ~ Ranarr and snapdragon seeds are worth saving for Farming 32+ and 62+
-Skilling base | Get a seed box from Tithe Farm | owned:Seed box; optional
+Skilling base | Get a seed box from Tithe Farm | owned:Seed box; optional; go:1806,3501,0
 ~ Tithe Farm points also buy the herb sack and the gricoller's can
-Skilling base | Get a herb sack from Tithe Farm | owned:Herb sack; optional
-Skilling base | Reach 35 Fishing and play Tempoross | skill:Fishing 35
+Skilling base | Get a herb sack from Tithe Farm | owned:Herb sack; optional; go:1806,3501,0
+Skilling base | Reach 35 Fishing and play Tempoross | skill:Fishing 35; go:3144,2818,0
 ~ Tempoross pays out jewellery, rune items, planks and uncut gems, dragonstone among them
 Skilling base | Complete Temple of the Eye and play Guardians of the Rift | quest:Temple of the Eye; optional
 Skilling base | Reach 58 Fishing, then barbarian fish at Otto's Grotto | skill:Fishing 58; go:2500,3488,0
@@ -126,7 +126,7 @@ Skilling base | Reach 50 Agility and run the Agility Pyramid for coins | skill:A
 Skilling base | Reach 40 Mining | skill:Mining 40
 Skilling base | Reach 40 Crafting | skill:Crafting 40
 ~ Glass-blowing and battlestaves from Zaff are the iron's classic route
-Skilling base | Smelt steel at the Blast Furnace to 50 Smithing | skill:Smithing 50
+Skilling base | Smelt steel at the Blast Furnace to 50 Smithing | skill:Smithing 50; go:1942,4958,0
 ~ Steel bars go on to cannonballs, darts and other skills
 Skilling base | Reach 50 Cooking | skill:Cooking 50
 Skilling base | Reach 55 Magic and start High Level Alchemy | skill:Magic 55; need:Nature rune 100
@@ -155,8 +155,8 @@ Combat ready | Get a zombie axe from armoured zombies | owned:Zombie axe; option
 Combat ready | Complete Underground Pass and take Iban's staff | quest:Underground Pass; owned:Iban's staff
 ~ Zamorak robes drop from Iban's disciples, but only until you finish the quest
 Combat ready | Complete In Aid of the Myreque | quest:In Aid of the Myreque; optional
-Combat ready | Beat the TzHaar Fight Cave for a fire cape | owned:Fire cape
-Combat ready | Get a black mask from cave horrors | owned:Black mask; optional
+Combat ready | Beat the TzHaar Fight Cave for a fire cape | owned:Fire cape; go:2438,5167,0
+Combat ready | Get a black mask from cave horrors | owned:Black mask; optional; go:3740,9373,0
 
 Barrows gloves | Complete Recipe for Disaster - Another Cook's Quest | quest:Recipe for Disaster - Another Cook's Quest
 Barrows gloves | Complete Recipe for Disaster - Mountain Dwarf | quest:Recipe for Disaster - Mountain Dwarf
@@ -182,9 +182,9 @@ Mid game | Complete Throne of Miscellania and start managing the kingdom | quest
 ~ Herbs or hardwood are the iron's picks. Keep the coffer topped up for the daily maximum
 Mid game | Complete Royal Trouble | quest:Royal Trouble; optional
 Mid game | Get an imbued god cape from Mage Arena II | any:Imbued saradomin cape,Imbued guthix cape,Imbued zamorak cape; optional
-Mid game | Get a berserker ring from Dagannoth Rex | owned:Berserker ring; optional
+Mid game | Get a berserker ring from Dagannoth Rex | owned:Berserker ring; optional; go:2913,4449,0
 ~ Rex can be safespotted with ranged or magic
-Mid game | Get void knight equipment at Pest Control | owned:Void knight top; optional
+Mid game | Get void knight equipment at Pest Control | owned:Void knight top; optional; go:3041,3202,0
 Mid game | Finish the Morytania hard diary, then kill Barrows | varbit:4529; diary:Morytania Hard; optional
 ~ Barrows Teleport at 78 Magic; the diary gives half again as many runes from the chest
 Mid game | Complete Perilous Moons and kill the Moons of Peril | quest:Perilous Moons
@@ -198,16 +198,16 @@ Mid game | Reach 70 Slayer | skill:Slayer 70
 Mid game | Get an abyssal whip at 85 Slayer | skill:Slayer 85; owned:Abyssal whip
 Mid game | Get a trident of the seas from cave kraken | owned:Trident of the seas; optional
 Mid game | Make an amulet of fury at 90 Crafting | owned:Amulet of fury; optional
-Mid game | Get a dragon warhammer from lizardman shamans | owned:Dragon warhammer; optional
+Mid game | Get a dragon warhammer from lizardman shamans | owned:Dragon warhammer; optional; go:1312,3686,0
 Mid game | Complete Beneath Cursed Sands for the Tombs of Amascut | quest:Beneath Cursed Sands
 ~ Low invocations make it a gentle first raid
 Mid game | Complete Song of the Elves to reach Prifddinas | quest:Song of the Elves
 ~ The Gauntlet is free to try again and again; the Corrupted Gauntlet gives the Bow of Faerdhinen's seed
 
 Toward the late game | Complete Dragon Slayer II for Vorkath | quest:Dragon Slayer II
-Toward the late game | Complete Regicide and get a toxic blowpipe from Zulrah | owned:Toxic blowpipe; optional
+Toward the late game | Complete Regicide and get a toxic blowpipe from Zulrah | owned:Toxic blowpipe; optional; go:2215,3057,0
 Toward the late game | Complete Desert Treasure II - The Fallen Empire | quest:Desert Treasure II - The Fallen Empire
 Toward the late game | Get a Bow of Faerdhinen from the Corrupted Gauntlet | owned:Bow of faerdhinen; optional
-Toward the late game | Reach 95 Slayer for the Alchemical Hydra | skill:Slayer 95; optional
+Toward the late game | Reach 95 Slayer for the Alchemical Hydra | skill:Slayer 95; optional; go:1312,10215,0
 Toward the late game | Complete every quest for the quest point cape | owned:Quest point cape; optional
 Toward the late game | Get an infernal cape from the Inferno | owned:Infernal cape; optional
