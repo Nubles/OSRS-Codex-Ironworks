@@ -190,6 +190,13 @@ public class IronworksPanel extends PluginPanel
 		search.setText(text);
 	}
 
+	/** For the screenshot harness: opens a part of the route on the Guide tab. */
+	public void openRoute(String section)
+	{
+		open.add("route:" + section);
+		rebuild(GUIDE);
+	}
+
 	/** For the screenshot harness: picks the Sources period. */
 	public void showPeriod(int index)
 	{
@@ -850,12 +857,12 @@ public class IronworksPanel extends PluginPanel
 
 		if (!g.next.isEmpty())
 		{
-			p.add(new SectionHeader("Coming up", ""));
+			p.add(new SectionHeader("Coming up", "tap to mark done"));
 			Card card = new Card(new BorderLayout());
-			StackPanel in = new StackPanel(3, 0);
+			StackPanel in = new StackPanel(2, 0);
 			for (View.StepView s : g.next)
 			{
-				in.add(new Line(s.text + (s.optional ? " (optional)" : ""), null, Theme.GOLD_DIM, Theme.TEXT_MUTED, Theme.TEXT_MUTED));
+				in.add(stepLine(s, false));
 			}
 			card.add(in, BorderLayout.CENTER);
 			p.add(card);
@@ -864,19 +871,63 @@ public class IronworksPanel extends PluginPanel
 		if (!g.sections.isEmpty())
 		{
 			p.add(new SectionHeader("The route", g.done + " of " + g.total));
-			Card card = new Card(new BorderLayout());
-			StackPanel in = new StackPanel(4, 0);
 			for (View.SectionView sv : g.sections)
 			{
-				double share = sv.all == 0 ? 0 : sv.done / (double) sv.all;
-				in.add(new Meter(sv.name, sv.done + " / " + sv.all, share, share >= 1 ? Theme.GREEN : Theme.GOLD));
+				p.add(routePart(sv, g));
 			}
-			card.add(in, BorderLayout.CENTER);
-			p.add(card);
 		}
 		p.add(foot("Steps tick themselves as the game shows them done: quests, levels, and items in your bank or pack. "
-			+ "Done one another way? Mark it done."));
+			+ "Open a part of the route to tick or undo any step yourself."));
 		return p;
+	}
+
+	/** A part of the route: its share done, opening onto every step in it. */
+	private JComponent routePart(View.SectionView sv, View.GuideView g)
+	{
+		String id = "route:" + sv.name;
+		boolean shown = open.contains(id);
+		Card card = new Card(new BorderLayout());
+		if (sv.current)
+		{
+			card.accent(Theme.GOLD_DIM);
+		}
+		StackPanel in = new StackPanel(3, 0);
+		double share = sv.all == 0 ? 0 : sv.done / (double) sv.all;
+		in.add(new Meter((shown ? "\u25BE " : "\u25B8 ") + sv.name, sv.done + " / " + sv.all, share,
+			share >= 1 ? Theme.GREEN : Theme.GOLD));
+		card.add(in, BorderLayout.CENTER);
+		card.onClick(() ->
+		{
+			if (!open.remove(id))
+			{
+				open.add(id);
+			}
+			rebuild(GUIDE);
+		});
+		if (!shown)
+		{
+			return card;
+		}
+		JPanel holder = new JPanel(new BorderLayout());
+		holder.setOpaque(false);
+		holder.add(card, BorderLayout.NORTH);
+		StackPanel steps = new StackPanel(1, 0);
+		steps.setBorder(new EmptyBorder(4, 10, 2, 4));
+		String here = g.current == null ? null : g.current.key;
+		for (View.StepView s : sv.steps)
+		{
+			steps.add(stepLine(s, s.key.equals(here)));
+		}
+		holder.add(steps, BorderLayout.CENTER);
+		return holder;
+	}
+
+	/** A step that ticks or unticks with a click, unless the game confirms it. */
+	private JComponent stepLine(View.StepView s, boolean here)
+	{
+		String key = s.key;
+		boolean done = s.done;
+		return new StepLine(s.text + (s.optional ? " (optional)" : ""), done, s.met, here, () -> actions.tick(key, !done));
 	}
 
 	private JComponent stepCard(View.GuideView g)

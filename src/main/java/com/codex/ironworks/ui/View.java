@@ -272,6 +272,9 @@ public final class View
 		public String name;
 		public int done;
 		public int all;
+		/** True when the step in hand is in this part. */
+		public boolean current;
+		public List<StepView> steps = Collections.emptyList();
 	}
 
 	/** A supply the next steps use up. */

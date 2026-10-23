@@ -95,6 +95,16 @@ final class Guides
 			sv.name = name;
 			sv.done = d[0];
 			sv.all = d[1];
+			List<View.StepView> steps = new ArrayList<>();
+			for (Route.Step s : route.steps())
+			{
+				if (s.section.equals(name))
+				{
+					steps.add(step(route, s, ticked, a, owned, workshop, xp, false));
+					sv.current |= s == current;
+				}
+			}
+			sv.steps = steps;
 			sections.add(sv);
 		}
 		g.sections = sections;

@@ -73,6 +73,24 @@ public class GuidesTest
 	}
 
 	@Test
+	public void everyPartOfTheRouteListsItsStepsAndTheOneInHand()
+	{
+		View.GuideView g = Guides.build(route, new HashSet<>(), account(new HashSet<>(), 1), false,
+			Arrays.asList(found("Black mask (10)", 1)), Workshop.empty(), Collections.emptyMap());
+		int steps = 0;
+		int current = 0;
+		for (View.SectionView sv : g.sections)
+		{
+			assertEquals(sv.all, sv.steps.size());
+			steps += sv.steps.size();
+			current += sv.current ? 1 : 0;
+		}
+		assertEquals(route.size(), steps);
+		assertEquals(1, current);
+		assertTrue(g.sections.get(0).current);
+	}
+
+	@Test
 	public void bankedExperienceIsNamedTowardALevel()
 	{
 		Set<String> quests = new HashSet<>();

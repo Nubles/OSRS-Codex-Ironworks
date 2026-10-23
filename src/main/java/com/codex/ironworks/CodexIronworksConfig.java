@@ -167,4 +167,16 @@ public interface CodexIronworksConfig extends Config
 	{
 		return false;
 	}
+
+	@ConfigItem(
+		keyName = "guidePlaque",
+		name = "Step plaque",
+		description = "While the guide points the way, show the step in hand and what it still needs in the game view",
+		section = GUIDE,
+		position = 24
+	)
+	default boolean guidePlaque()
+	{
+		return true;
+	}
 }
