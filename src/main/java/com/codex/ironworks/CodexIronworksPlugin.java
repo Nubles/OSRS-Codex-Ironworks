@@ -1367,6 +1367,7 @@ public class CodexIronworksPlugin extends Plugin
 		if (works != null)
 		{
 			built.guide = Guides.build(route, works.ticked(), guide.account(), works.isFollowing(), built.found, built.workshop, xp);
+			Views.sources(built, works, lookup, levels);
 			if (loggedIn && built.guide.current != null)
 			{
 				Route.Step step = route.steps().get(indexOf(built.guide.current.key));
