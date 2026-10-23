@@ -18,6 +18,7 @@ import net.runelite.api.Quest;
 import net.runelite.api.Skill;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -135,6 +136,24 @@ public class GuidesTest
 		}
 		assertTrue(Guides.met("Cook's Assistant", account(new HashSet<>(), 1)));
 		assertTrue(!Guides.met("Regicide", account(new HashSet<>(), 99)));
+	}
+
+	@Test
+	public void storesThatHoldTheLevelUnlockAQuest()
+	{
+		Route r = Route.parse(Collections.singletonList("A | Brew for a quest | quest:Cook's Assistant; skill:Herblore 40"));
+		Map<String, Long> stocks = new HashMap<>();
+		stocks.put("Ranarr weed", 500L);
+		stocks.put("Vial of water", 500L);
+		stocks.put("Snape grass", 500L);
+		Map<Skill, Integer> levels = new EnumMap<>(Skill.class);
+		levels.put(Skill.HERBLORE, 38);
+		Workshop w = Workshop.plan(stocks, Catalogue.standard(), levels, Altar.GILDED);
+		Map<Skill, Integer> xp = new EnumMap<>(Skill.class);
+		xp.put(Skill.HERBLORE, Experience.getXpForLevel(38));
+		Route.Account a = account(new HashSet<>(), 38);
+		assertEquals(Collections.singletonList("Herblore 40"), Guides.banked(r.steps().get(0), a, w, xp));
+		assertNull(Guides.banked(r.steps().get(0), a, Workshop.empty(), xp));
 	}
 
 	@Test

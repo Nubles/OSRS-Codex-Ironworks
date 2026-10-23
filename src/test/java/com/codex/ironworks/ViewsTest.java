@@ -66,6 +66,29 @@ public class ViewsTest
 	}
 
 	@Test
+	public void routeSuppliesSayWhereToGetThem()
+	{
+		Works w = feathers();
+		View v = Views.build(w, Catalogue.standard(), 10, 2, NOW, TODAY, s -> 1);
+		v.guide = new View.GuideView();
+		View.NeedView feather = new View.NeedView();
+		feather.item = "Feather";
+		feather.need = 5000;
+		feather.have = 1500;
+		View.NeedView shark = new View.NeedView();
+		shark.item = "Shark";
+		shark.need = 10;
+		shark.have = 300;
+		View.NeedView rope = new View.NeedView();
+		rope.item = "Rope";
+		rope.need = 1;
+		v.guide.needs = java.util.Arrays.asList(feather, shark, rope);
+		Views.sources(v, w, Catalogue.standard(), Collections.emptyMap());
+		assertEquals("Sold at Gerrant's Fishy Business", feather.how);
+		assertNull(shark.how);
+	}
+
+	@Test
 	public void hiddenStoresAreLeftOut()
 	{
 		View v = Views.build(feathers(), Catalogue.with("", "feather"), 10, 2, NOW, TODAY, s -> 1);

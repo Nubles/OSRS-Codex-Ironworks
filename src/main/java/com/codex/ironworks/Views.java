@@ -355,6 +355,62 @@ final class Views
 		}
 	}
 
+	/**
+	 * Where to get what the route is short of: a shop you have bought from that sells it first, else the
+	 * best way to get more, with how long the shortfall takes at your own pace when Ironworks knows it.
+	 */
+	static void sources(View view, Works works, Catalogue.Lookup lookup, Map<Skill, Integer> levels)
+	{
+		if (view.guide == null)
+		{
+			return;
+		}
+		for (View.NeedView n : view.guide.needs)
+		{
+			long short_ = n.need - n.have;
+			if (short_ <= 0)
+			{
+				continue;
+			}
+			Catalogue.Match m = lookup.match(n.item);
+			String store = m == null ? n.item : m.store;
+			String shop = null;
+			for (View.ShopView sv : view.shops)
+			{
+				for (View.WareView w : sv.wares)
+				{
+					if (n.item.equalsIgnoreCase(w.name) || store.equalsIgnoreCase(w.store))
+					{
+						shop = sv.name;
+						break;
+					}
+				}
+				if (shop != null)
+				{
+					break;
+				}
+			}
+			if (shop != null)
+			{
+				n.how = "Sold at " + shop;
+				continue;
+			}
+			for (View.WayView w : getting(store, n.icon, works, lookup, levels).ways)
+			{
+				if (!w.open)
+				{
+					continue;
+				}
+				n.how = w.text;
+				if (w.perHour > 0)
+				{
+					n.how += ", about " + com.codex.ironworks.ui.Format.duration(Math.round(short_ / w.perHour * 3_600_000)) + " at your pace";
+				}
+				break;
+			}
+		}
+	}
+
 	/** The ways to get more of a store: the player's own paces first, then what they have the levels for. */
 	static View.Getting getting(String store, int icon, Works works, Catalogue.Lookup lookup, Map<Skill, Integer> levels)
 	{

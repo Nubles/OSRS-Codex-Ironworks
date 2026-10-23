@@ -850,6 +850,10 @@ public class IronworksPanel extends PluginPanel
 				String figure = Format.amount(n.have) + " / " + Format.amount(n.need);
 				in.add(new IconLine(n.icon, n.item + (n.stepsAway == 0 ? ", now" : ""), figure, icons, Theme.TEXT,
 					enough ? Theme.GREEN : Theme.EMBER));
+				if (!enough && n.how != null)
+				{
+					in.add(new Line("      " + n.how, null, null, Theme.TEAL, Theme.TEAL));
+				}
 			}
 			if (g.needs.size() > 8)
 			{
@@ -872,7 +876,7 @@ public class IronworksPanel extends PluginPanel
 			p.add(card);
 		}
 
-		if (!g.ready.isEmpty() || !g.readyElse.isEmpty())
+		if (!g.ready.isEmpty() || !g.readyElse.isEmpty() || !g.unlock.isEmpty())
 		{
 			p.add(new SectionHeader("Ready now", "needs all met"));
 			Card card = new Card(new BorderLayout());
@@ -880,6 +884,12 @@ public class IronworksPanel extends PluginPanel
 			for (View.StepView s : g.ready)
 			{
 				in.add(new Line(s.text, null, Theme.GREEN, Theme.TEXT_MUTED, Theme.TEXT_MUTED));
+			}
+			for (View.StepView s : g.unlock)
+			{
+				in.add(new Line(s.text, null, Theme.GOLD, Theme.TEXT_MUTED, Theme.TEXT_MUTED));
+				in.add(new Line("   Train " + String.join(", ", s.hints) + " from your stores first: see Make", null, null,
+					Theme.GOLD_DIM, Theme.GOLD_DIM));
 			}
 			if (!g.readyElse.isEmpty())
 			{

@@ -234,6 +234,8 @@ public final class View
 		public String way;
 		/** Route quests further on whose every requirement the account already meets. */
 		public List<StepView> ready = Collections.emptyList();
+		/** Route quests held back only by levels the stores already hold the experience for. */
+		public List<StepView> unlock = Collections.emptyList();
 		/** Other quests, off the route, the account could start now. */
 		public List<String> readyElse = Collections.emptyList();
 		/** Every supply the steps not yet done use up, in route order, for Find. */
@@ -300,5 +302,7 @@ public final class View
 		public long have;
 		/** The first step that needs it, counted from the step in hand (0). */
 		public int stepsAway;
+		/** Where to get what is short, from the shops you use and your own pace, or null. */
+		public String how;
 	}
 }

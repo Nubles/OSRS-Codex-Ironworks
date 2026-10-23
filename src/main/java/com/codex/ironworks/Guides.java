@@ -248,6 +248,7 @@ final class Guides
 		Map<String, View.Found> owned, Workshop workshop, Map<Skill, Integer> xp)
 	{
 		List<View.StepView> ready = new ArrayList<>();
+		List<View.StepView> unlock = new ArrayList<>();
 		Set<String> listed = new java.util.HashSet<>();
 		for (View.StepView n : g.next)
 		{
@@ -262,9 +263,22 @@ final class Guides
 			{
 				continue;
 			}
-			if (questReady(s, a) && ready.size() < READY)
+			if (questReady(s, a))
 			{
-				ready.add(step(route, s, ticked, a, owned, workshop, xp, false));
+				if (ready.size() < READY)
+				{
+					ready.add(step(route, s, ticked, a, owned, workshop, xp, false));
+				}
+			}
+			else if (unlock.size() < READY)
+			{
+				List<String> banked = banked(s, a, workshop, xp);
+				if (banked != null)
+				{
+					View.StepView v = step(route, s, ticked, a, owned, workshop, xp, false);
+					v.hints = banked;
+					unlock.add(v);
+				}
 			}
 		}
 		List<String> others = new ArrayList<>();
@@ -277,7 +291,57 @@ final class Guides
 			}
 		}
 		g.ready = ready;
+		g.unlock = unlock;
 		g.readyElse = others;
+	}
+
+	/**
+	 * The levels a quest step lacks when the stores hold the experience for every one of them, such as
+	 * "Herblore 52"; null when anything else stands in the way.
+	 */
+	static List<String> banked(Route.Step s, Route.Account a, Workshop workshop, Map<Skill, Integer> xp)
+	{
+		Map<String, Integer> levels = new LinkedHashMap<>(s.skills);
+		int qp = s.questPoints;
+		for (String q : s.quests)
+		{
+			if (a.questDone(q))
+			{
+				continue;
+			}
+			QuestReqs.Req req = REQS.of(q);
+			for (String first : req.quests)
+			{
+				if (!a.questDone(first))
+				{
+					return null;
+				}
+			}
+			req.skills.forEach((k, v) -> levels.merge(k, v, Math::max));
+			qp = Math.max(qp, req.questPoints);
+		}
+		if (a.questPoints() < qp)
+		{
+			return null;
+		}
+		List<String> out = new ArrayList<>();
+		for (Map.Entry<String, Integer> e : levels.entrySet())
+		{
+			if (a.level(e.getKey()) >= e.getValue())
+			{
+				continue;
+			}
+			Skill skill = skill(e.getKey());
+			Integer now = skill == null ? null : xp.get(skill);
+			Workshop.Plan plan = skill == null ? null : workshop.plan(skill);
+			if (now == null || plan == null || e.getValue() > Experience.MAX_REAL_LEVEL
+				|| plan.xp < Experience.getXpForLevel(e.getValue()) - now)
+			{
+				return null;
+			}
+			out.add(e.getKey() + " " + e.getValue());
+		}
+		return out.isEmpty() ? null : out;
 	}
 
 	/** True when nothing stands between the account and every quest the step asks for. */
