@@ -49,11 +49,15 @@ public class GuideWayTest
 	}
 
 	@Test
-	public void mostStepsHaveAPlaceToPointAt()
+	public void questStepsHaveAPlaceToPointAt()
 	{
 		Route r = Route.load();
-		long placed = r.steps().stream().filter(s -> r.target(s, null) != null).count();
-		assertTrue(placed + " of " + r.size(), placed * 10 >= r.size() * 7);
+		// Training can happen anywhere; every quest, start and named place should be pointed at.
+		java.util.List<Route.Step> placeable = r.steps().stream()
+			.filter(s -> !s.quests.isEmpty() || !s.started.isEmpty() || s.go != null)
+			.collect(java.util.stream.Collectors.toList());
+		long placed = placeable.stream().filter(s -> r.target(s, null) != null).count();
+		assertTrue(placed + " of " + placeable.size(), placed * 10 >= placeable.size() * 9);
 	}
 
 	@Test
@@ -70,5 +74,36 @@ public class GuideWayTest
 		assertTrue(quests.size() + " quests", quests.size() >= 200);
 		assertEquals(48, diaries.size());
 		assertTrue(r.size() + " steps", r.size() >= 300);
+	}
+
+	@Test
+	public void theWikisNotesSitUnderTheirQuestAndTickOff()
+	{
+		Route r = Route.load();
+		Route.Step cook = r.steps().stream().filter(s -> s.quests.contains("Cook's Assistant")).findFirst().get();
+		assertTrue(cook.tips.size() >= 5);
+		assertTrue(r.steps().stream().anyMatch(s -> s.text.equals("Train Thieving to 21")));
+		Set<String> ticked = new java.util.HashSet<>();
+		Route.Account none = new Route.Account()
+		{
+			@Override
+			public boolean questDone(String quest)
+			{
+				return false;
+			}
+
+			@Override
+			public int level(String skill)
+			{
+				return 1;
+			}
+		};
+		com.codex.ironworks.ui.View.GuideView g = Guides.build(r, ticked, none, false, Collections.emptyList(),
+			com.codex.ironworks.core.Workshop.empty(), Collections.emptyMap());
+		ticked.add(com.codex.ironworks.ui.View.tipKey(g.current.key, 0));
+		g = Guides.build(r, ticked, none, false, Collections.emptyList(), com.codex.ironworks.core.Workshop.empty(), Collections.emptyMap());
+		assertTrue(g.current.tipsDone.get(0));
+		assertTrue(!g.current.tipsDone.get(1));
+		assertTrue(com.codex.ironworks.ui.View.heading("While in Port Sarim:"));
 	}
 }

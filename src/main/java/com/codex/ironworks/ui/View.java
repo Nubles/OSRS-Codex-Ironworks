@@ -257,6 +257,8 @@ public final class View
 		public String section;
 		public String text;
 		public List<String> tips = Collections.emptyList();
+		/** Which tips are ticked off, as the wiki's checklist under each quest: by tip, in order. */
+		public List<Boolean> tipsDone = Collections.emptyList();
 		public boolean done;
 		/** The game confirms it for good. */
 		public boolean met;
@@ -304,5 +306,17 @@ public final class View
 		public int stepsAway;
 		/** Where to get what is short, from the shops you use and your own pace, or null. */
 		public String how;
+	}
+
+	/** The key a tip is ticked off by: its step's key and its place under the step. */
+	public static String tipKey(String step, int tip)
+	{
+		return step + "#" + tip;
+	}
+
+	/** A tip that heads the ones after it ("While in Port Sarim:") rather than asking for something. */
+	public static boolean heading(String tip)
+	{
+		return tip.endsWith(":");
 	}
 }

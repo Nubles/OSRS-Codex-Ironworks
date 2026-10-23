@@ -166,6 +166,11 @@ final class Guides
 			return v;
 		}
 		v.tips = new ArrayList<>(s.tips);
+		v.tipsDone = new ArrayList<>();
+		for (int i = 0; i < s.tips.size(); i++)
+		{
+			v.tipsDone.add(ticked.contains(View.tipKey(s.key(), i)));
+		}
 		List<View.CheckView> checks = new ArrayList<>();
 		List<String> hints = new ArrayList<>();
 		for (String q : s.started)

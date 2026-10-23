@@ -2,6 +2,8 @@
 # and on toward the late game. Written for Codex Ironworks; its order, milestones and tips draw on the
 # OSRS Wiki's "Ironman guide" (https://oldschool.runescape.wiki/w/Ironman_guide), CC BY-NC-SA 3.0. Quests, miniquests and
 # diaries follow the wiki's "Optimal quest guide/Ironman" order as the Quest Helper plugin carries it (BSD 2-Clause).
+# The training steps, partial quest starts and the "~" notes under each quest are taken from that wiki page
+# (https://oldschool.runescape.wiki/w/Optimal_quest_guide/Ironman), CC BY-NC-SA 3.0, lightly trimmed.
 # Format: section | step | tags, tags optional, separated by ";".
 # Lasting tags (read from the game at any time): quest:, started:, skill:Name level, qp:, combat:,
 # varbit:id>=value, varp:, ca:tier. diary:Area Tier names the diary, so its levels and quests show as needs. Diary rewards claimed are varbits: ARDOUGNE_EASY_REWARD 4499,
@@ -17,66 +19,355 @@
 # A line starting with "~" is a tip shown under the step before it.
 
 First steps | Finish the tutorial and claim your ironman armour from Paul in Lumbridge | owned:Ironman helm; go:3229,3226,0; npc:Paul
+~ On first arrival in Lumbridge:
+~ Pickpocket a nearby man for an easy Lumbridge Diary task.
+~ Buy a spade from the Lumbridge General Store, using 3 coins from the coin pouch you just pickpocketed.
+~ Start X Marks the Spot by speaking to Veos in The Sheared Ram.
+~ Dig by Bob's Axe Shop for X Marks the Spot.
+~ Learn your age from Hans for an easy Lumbridge Diary task. He can be found patrolling around the outside of the castle.
+~ Dig behind Lumbridge Castle for X Marks the Spot. Kill a nearby giant rat and take the raw rat meat for Druidic Ritual. Pick up the bones for an easy Varrock Diary task.
+~ Bank your inventory on the 2nd floor of Lumbridge Castle, keeping only the pot and bucket, in order to have enough inventory space for the following steps.
+~ Pick up nearby logs until you have at least 17 (world hop to restock) and bank these for Daddy's Home, Tree Gnome Village and Monk's Friend. A total of 65 logs are required to complete all quests.
 ~ Ironman armour is free to reclaim and sells for nothing: wear it, don't bank it
 First steps | Complete Cook's Assistant | quest:Cook's Assistant
+~ Start the quest by talking to the Cook in the kitchen on the ground floor. Pick up an additional pot from the nearby table, and a bucket from the Lumbridge Castle cellar.
+~ Gather the egg, flour, and milk on the west side of the River Lum.
+~ Fill a second pot of flour at the windmill for an easy Lumbridge Diary task.
+~ Fill a second bucket of milk at the cow pen for Gertrude's Cat.
+~ Kill a chicken for feathers for Client of Kourend and raw chicken for Druidic Ritual while in the chicken pen to pick up the egg.
+~ Before returning to the Cook to complete the quest, start Sheep Shearer by talking to Fred the Farmer and gather 20 wool from the sheep in the nearby pen.
+~ After quest completion, pick up a bucket from the cellar and fill it at the sink. Use it on your pot of flour to create bread dough. Use the bread dough on the range for an easy Lumbridge Diary task.
 First steps | Complete Sheep Shearer, spinning the wool in Lumbridge castle | quest:Sheep Shearer
+~ Spin the wool at the spinning wheel on the 1st floor of the castle.
+~ Speak to Duke Horacio on the same floor to start Rune Mysteries.
+~ Return to Fred the Farmer to complete Sheep Shearer.
+~ After quest completion, pick an onion from the field behind Fred's house for Witch's Potion.
 First steps | Complete Misthalin Mystery | quest:Misthalin Mystery
+~ Complete during The Restless Ghost.
 First steps | Complete The Restless Ghost | quest:The Restless Ghost
+~ Start the quest by talking to Father Aereck in the Lumbridge church. Ensure you have not banked your air talisman given to you by Duke Horacio.
+~ On the way to Father Urhney, stop by the south-eastern corner of Lumbridge Swamp near the fishing spots and speak to Abigale to start Misthalin Mystery. Complete it before continuing.
+~ After speaking to Father Urhney, pick up the leather gloves, as these are required for numerous quests.
+~ While at the Wizards' Tower, bring the air talisman to Archmage Sedridor in the basement for the second step of Rune Mysteries.
 First steps | Complete X Marks the Spot | quest:X Marks the Spot
 ~ Keep the antique lamp for later: Herblore or Hitpoints are the usual picks
+~ While in Draynor Village:
+~ Start Vampyre Slayer by talking to Morgan, taking garlic from the cupboard upstairs for the quest. Take three additional pieces for Fishing Contest, Desert Treasure I and While Guthix Sleeps.
+~ Do a lap of the Draynor Agility Course for an easy Lumbridge Diary task.
+~ Bank everything except your coins, onion, and feathers before completing the quest in Port Sarim.
+~ After completion of this quest use the 300 experience reward on Agility.
 First steps | Complete Witch's Potion | quest:Witch's Potion
+~ While in Port Sarim:
+~ From Betty's Magic Emporium buy two eye of newt, one for this quest and one for Another Cook's Quest.
+~ From Gerrant's Fishy Business, buy a raw sardine for Gertrude's Cat and a fishing bait for Recipe for Disaster/Freeing the Goblin generals.
+~ From Wydin's Food Store buy 6 pieces of cheese for Witch's House, Ratcatchers and Mourning's End Part II's item list. Buy two pieces of raw beef, one for this quest and one for Druidic Ritual (hop worlds to restock).
+~ Burn one raw beef at the range north of the food store for this quest (cook it twice).
 First steps | Complete Client of Kourend | quest:Client of Kourend
+~ Use the Minecart network to travel throughout the quest, which costs 20 per trip.
+~ While in Shayzien:
+~ Pick up the black wizard hat off the table in the clothing shop Shayzien Styles for Shadow of the Storm.
+~ Pick up 25 bones by the Shayzien West minecart for Demon Slayer - you can bank them at Shayzien to the east.
+~ When activating the mysterious orb near the Dark Altar, talk to Tyss to change your spellbook to Arceuus spellbook for a medium Kourend & Kebos Diary task. You may change it back after completing the task.
+~ Return to Port Sarim and talk to Redbeard Frank to start Pirate's Treasure.
+~ After completion of this quest use both 500 experience rewards on Agility.
 First steps | Complete Pandemonium | quest:Pandemonium
+~ Keep the sawmill coupons from the quest reward for Daddy's Home and other quests requiring planks.
+~ After completing the quest:
+~ Head north-west to Pandemonium Cave and talk to Chartin' Charles McAtless to receive a spyglass for use in Sea charting.
+~ Use your spyglass to admire Chartin' Charles McAtless in the Pandemonium Cave.
+~ Use your spyglass to get a good view of the Pandemonium from the Pandemonium Cave entrance.
+~ Return to Port Sarim via charter ship.
+First steps | Start Pirate's Treasure and take it as far as the guide says | started:Pirate's Treasure
+~ Purchase a small fishing net at Gerrant's Fishy Business.
+~ Travel to Musa Point (Karamja) via charter ship for 30.
+~ Complete all of the quest steps in Musa Point.
+~ Fish at the fishing spot to the north for an easy Karamja Diary task.
+~ Return to Port Sarim via the charter ship to complete another easy Karamja Diary task.
+~ Complete all of the quest steps in Port Sarim. Keep the White apron for Mourning's End Part II's item list.
 First steps | Clear the Stronghold of Security for its boots and 10,000 coins | varbit:2312>=1; go:3081,3421,0
+~ Requires RuneScape Authenticator to be set.
+~ On your way to the Barbarian Village, purchase an inventory of jugs of wine from Fortunato in Draynor Village for 1 coin each, a cheap source of food to help you pass the Stronghold.
+~ At Barbarian Village climb down the entrance in between the Coal and Tin rocks. Run through dangerous rooms as fast as possible, with auto-retaliate off. This rewards players with 10,000 from just the first three floors.
+~ Return to Draynor Village to use some of the coins to purchase the Chronicle, along with 10-15 teleport cards to charge it. This can be used to teleport to the Champions' Guild near Varrock for the following quests.
+~ While in Draynor Village, also purchase 2 ropes from Ned for Plague City and Waterfall Quest.
 First steps | Complete Children of the Sun | quest:Children of the Sun
+~ Allows access to Varlamore.
+~ While in the Varrock town square:
+~ Look for a nearby stray dog and use bones on it for an easy Varrock Diary task.
+~ Purchase 3 silk from Thessalia's Fine Clothes for the easy Ardougne Diary (keep for future quests). Also buy a pink skirt for Prince Ali Rescue.
+~ Talk to Dr Harlow at the Blue Moon Inn south of the square for Vampyre Slayer. Continue Pirate's Treasure by using the chest key on the chest upstairs. You can now complete the quest the next time the guide takes you to Falador.
+~ Bring the research package to Aubury in the rune shop to the east of the inn for Rune Mysteries.
 First steps | Complete Romeo & Juliet | quest:Romeo & Juliet
+~ Buy a newspaper from Benny in the town square for an easy Varrock Diary task.
+~ Gather extra cadava berries for Making Friends with My Arm. While there, pick at least 6 redberries from the nearby redberry bush. 6 is the minimum to complete all quests (assuming you purchase red dye from Dyes to Die For later instead of using redberries to create them). Consider getting 6-8 extra as you have a chance to burn redberry pie (world hop to restock the bushes).
 First steps | Complete Gertrude's Cat | quest:Gertrude's Cat
+~ Allows raising of cats. Raise a kitten to a cat to speed up Recipe for Disaster/Freeing Evil Dave and Ratcatchers. Note: Raw karambwanji is a stackable fish that can be fed to cats. Consider catching some on the next trip to Karamja.
+~ On your way past the museum complete the Natural history quiz in the Varrock Museum basement.
+~ Before the Lumber yard step:
+~ Start Daddy's Home by talking to Marlo in the house of the Varrock Estate Agent in north-east Varrock.
+~ Go to Old Man Yarlo's house south-west of Aubury's Rune Shop, talk to him and complete his tasks. Talk to him again and watch the cutscene.
+~ Now search the crates in the kitchen for three waxwood logs.
+~ Bring the following for the Lumber Yard step:
+~ An Axe
+~ Bucket of milk
+~ Seasoned sardine, or create them from:
+~ Raw sardine, bought from the fishing shop at Port Sarim
+~ Doogle leaves, found behind Gertrude's house.
+~ 3 waxwood logs
+~ 10 logs and 10 sawmill coupons (wood plank) received from the Pandemonium quest
+~ 3,600-4,000 (+1000 extra if not bringing coupons for the planks)
+~ On the way to the Lumber Yard:
+~ Talk to Regulus Cento to travel to Civitas illa Fortis and back - this will unlock other transportation methods to Varlamore. Before returning, you may also consider picking up the Black wizard robe from the 2nd floor of the pub just south of the Quetzal for an early Magic bonus.
+~ Get waxwood planks, 10 regular planks, 5 bolts of cloth and around 100 bronze nails from the sawmill operator for the final step of Daddy's Home. Also buy 150 steel nails for Dragon Slayer I and Horror from the Deep.
+~ Cut down a dying tree for an easy Varrock Diary task.
+~ On your way back to Gertrude to finish the quest, return to Old Man Yarlo to finish Daddy's Home. Bank the steel nails beforehand, or they will be used instead of the bronze nails when constructing the furniture.
+~ Save the stew reward for The Queen of Thieves, and the chocolate cake for A Tail of Two Cats.
 First steps | Complete Daddy's Home | quest:Daddy's Home
+~ Complete during Gertrude's Cat.
+~ This quest rewards you with:
+~ 25 Planks (Keep all of them for future quests; you will need at least 35 planks to complete all quests)
+~ 50 Mithril nails (Use whenever quests require nails)
+~ 5 Steel bars (You will need 1 for Prying Times, 2 for In Aid of the Myreque, 4 for One Small Favour, and 6 for Desert Treasure I)
+~ 10 Oak planks (Keep for Cold War)
+~ 8 bolts of cloth (Keep 1 for Making Friends with My Arm)
 First steps | Complete Rune Mysteries | quest:Rune Mysteries
+~ Unlocks the ability to use lamps and books of knowledge on the Runecraft skill.
+~ Complete during Demon Slayer.
+Early members' quests | Start Enter the Abyss and take it as far as the guide says | started:Enter the Abyss
+~ Start the quest by talking to the Mage of Zamorak in the Wilderness to the north of the Edgeville slayer master.
+~ Talk to him again in south-eastern Varrock at the Varrock chaos temple until he gives you a scrying orb.
+~ With the scrying orb, visit the rune essence mine via Aubury at Aubury's Rune Shop in Varrock to complete the first task. Take a pickaxe and collect 50 rune essence for Priest in Peril, and an additional 21 for Wanted!, The Slug Menace and Garden of Tranquillity.
+~ Purchase roughly 300+ mind runes from Aubury, as well as 6 air runes, 6 water runes and 6 earth runes for Waterfall Quest. Also purchase an air staff from Zaff. Using wind strike will allow you to safespot for some early game quests like Tree Gnome Village and Fight Arena.
 Early members' quests | Complete Tree Gnome Village | quest:Tree Gnome Village; need:Logs 6
+~ Allows the use of spirit trees.
+~ Optional: Hardcore ironmen may consider completing Witch's House first for the safety of the additional hitpoints.
+~ Bring your coins and 7 logs with you, and travel to Rimmington (you can use the teleport to house tablet you got from Marlo's Crate).
+~ Collect three pieces of snape grass at the Hobgoblin Peninsula to the north for Plague City, Skippy and the Mogres and Fairytale I - Growing Pains.
+~ Use the ship west of Rimmington to travel to Ardougne for 30.
+~ Walk south-west from Ardougne and enter the Gnome maze to start the quest.
+~ Purchase a jug to fill with water for Monk's Friend, from Bolkoy's Village Shop upstairs in the centre of the maze.
+~ After completing this quest, use the spirit tree to teleport to the Battlefield of Khazard and enter the house to the north to start Hazeel Cult.
 Early members' quests | Complete Hazeel Cult | quest:Hazeel Cult
+~ If siding with Ceril, the quest will be faster but you will need to defeat a level 13 Hazeel Cultist. There will also be two "rewards". The first is 5 coins. Find the poison in the cupboard upstairs on the 1st floor for the second reward: 2,000 coins and 1,500 experience in Thieving.
+~ Siding with Hazeel gives you the full reward at once.
+~ After completion of this quest:
+~ Steal from the bakery stall in the Ardougne Market until you have one cake for an easy Ardougne Diary task and two breads for Merlin's Crystal and Below Ice Mountain.
+~ Optional: The bakery stall will be a great source of early food, as cake heals for a total of 12 hitpoints. Consider stocking up on some now before Fight Arena and Waterfall Quest.
+~ Buy 4 silver bars from the Ardougne Silver Stall (hop worlds to restock) for Nature Spirit, Shadow of the Storm, Creature of Fenkenstrain, and to craft a mind tiara later for an easy Falador Diary task.
 Early members' quests | Complete Clock Tower | quest:Clock Tower
+~ Pick up an extra bottle of rat poison for Ratcatchers.
 Early members' quests | Complete Monk's Friend | quest:Monk's Friend; need:Logs 1
+~ Get the bucket near Brother Cedric and fill it with water at the well. Use the bucket of water on the empty jug to get a jug of water for this quest.
+~ After completion of this quest:
+~ Take the lit candle from the Ardougne Monastery for retrieving boots of lightness later.
+~ Take the Battlefield spirit tree to the Tree Gnome Stronghold. Pick some nearby flax for Mourning's End Part II's item list, then retrieve your scrying orb and coins from the nearby bank.
+~ At Brimstail's cave in the south-western section of the stronghold, have Brimstail teleport you to the rune essence mine with the scrying orb in your inventory for the second Enter the Abyss task.
+~ Head to the north-western corner of the 1st floor of the Grand Tree and purchase two buckets of milk, two chocolate dust and four dwellberries from Grand Tree Groceries.
+~ Use the chocolate dust on the bucket of milk to create two lots of chocolatey milk. Use snape grass on each to create two hangover cures for Plague City and Skippy and the Mogres. Keep the dwellberries for Plague City and The Curse of Arrav.
+~ Note that you won't be able to return to the Battlefield via the spirit tree. Walk south-east from the stronghold into northern East Ardougne to start Plague City instead.
 Early members' quests | Complete Plague City | quest:Plague City; need:Dwellberries 1; need:Rope 1; need:Bucket of milk 1; need:Chocolate dust 1; need:Snape grass 1; need:Spade 1
+~ Allows use of the Ardougne teleport spell.
 Early members' quests | Complete Biohazard | quest:Biohazard
+~ After beginning the quest and when you are sent near the West Ardougne gate, enter the house to the north and pull the Wilderness lever to complete an easy Ardougne Diary task (pull it again to return).
+~ Before leaving Ardougne for Rimmington, take your scrying orb and teleport via Wizard Cromperty to the rune essence mine to complete an easy Ardougne Diary task, as well as the third location for Enter the Abyss. Take the orb along for the rest of the quest to complete Enter the Abyss during it.
+~ When in Rimmington, buy a sickle mould at Rommik's Crafty Supplies for Nature Spirit (it's useful to buy all available moulds here, like the holy mould).
+~ When visiting the Dancing Donkey Inn in Varrock, steal from the tea seller to the north for an easy Varrock Diary task. Keep the cup of tea for The Dig Site.
+~ During the Dancing Donkey Inn section, hand in your scrying orb to the Mage of Zamorak to complete Enter the Abyss.
+~ Keep both priest gown items for use in Shadow of the Storm.
+Early members' quests | Complete the Natural history quiz | optional
+~ Complete during Gertrude's Cat.
 Early members' quests | Complete Demon Slayer | quest:Demon Slayer
+~ Start the quest in the Varrock town square, and write down the incantation from the cutscene (differs per player).
+~ Complete the quest steps in the Varrock Palace to retrieve two of the three keys.
+~ Travel to Draynor Village. If you don't already have 25 bones, kill goblins by the jail east of the village.
+~ Take the bones and research notes from Rune Mysteries and head to the Wizards' Tower.
+~ Complete Rune Mysteries by talking to Archmage Sedridor in the basement.
+~ Teleport from Archmage Sedridor to the Rune Essence Mine for an easy Lumbridge Diary task.
+~ Retrieve the final key for this quest by giving the bones to Wizard Traiborn on the 1st floor.
+~ Return to Varrock, taking the three silverlight keys you gathered for Demon Slayer to Sir Prysin to retrieve Silverlight.
+~ Take food and silverlight to the stone circle by the southern entrance to Varrock and defeat Delrith with the incantation to complete Demon Slayer.
 Early members' quests | Buy a chronicle from Diango in Draynor Village | owned:Chronicle; go:3081,3250,0; npc:Diango
 ~ It teleports to the Champions' Guild. Fortunato next door sells jugs of wine for 1 coin each: cheap healing for questing
 Early members' quests | Reach 20 Attack, Strength and Defence on cows and goblins | skill:Attack 20; skill:Strength 20; skill:Defence 20
 ~ Bury the cow bones and tan the hides later: both count toward your stores
 Early members' quests | Complete Enter the Abyss | quest:Enter the Abyss
+~ Complete during Biohazard.
 Early members' quests | Finish the Ardougne easy diary and claim Ardougne cloak 1 | varbit:4499; diary:Ardougne Easy; npc:Two-pints
 ~ The cloak teleports to the Ardougne Monastery as often as you like
+~ Complete the remaining diary tasks in the following order:
+~ Enter the Combat Training Camp north of West Ardougne.
+~ Use the altar in the East Ardougne church.
+~ Check what pets you have insured with Probita.
+~ Sell silk to the silk trader in the Ardougne Market by offering to sell for 120 coins, then counter his bid with 60 coins.
+~ Obtain a rusty sword by entering the H.A.M. Hideout north-west of Lumbridge and pickpocketing H.A.M. members. Note: There is a 1/100 chance you will require an additional sword. If you receive buttons, uncut opal, uncut jade, cowhide, or any herbs, keep them for future quests.
+~ Use the Castle Wars Minigame Teleport and head to Yanille. Visit Aleck's Hunter Emporium for the task, and purchase a bird snare to be used later for an easy Desert Diary task.
+~ Head to Port Khazard and give your rusty sword and 100 coins to Tindel Marchant.
+~ Purchase swamp paste at the Khazard General Store for Sea Slug.
+~ At the mine to the south-west collect 18 copper ore, 14 tin ore and 2 iron ore.
+~ After mining the ore, board the Fishing Trawler. Once the trawler is out at sea, talk to Murphy to attempt to return to land. After capsizing, climb onto the nearby barrel to return to the mainland.
+~ Complete the diary by talking to Two-pints at the Flying Horse Inn. After completion, smelt 14 copper and 14 tin ore into bronze bars for Observatory Quest, Prince Ali Rescue, One Small Favour, The Tourist Trap, Creature of Fenkenstrain, Recipe for Disaster/Freeing Pirate Pete, Shilo Village, and Mourning's End Part II's item list. The rest of the ores are for Doric's Quest.
+~ Obtaining the Ardougne cloak 1 gives you the following main benefits:
+~ An infinite teleport to the Ardougne Monastery with close proximity to an altar, spirit tree and fairy ring.
+~ Double death runes (200) for trading in cats to civilians in West Ardougne.
+~ Best early obtainable combat stats in the cape slot.
+~ The antique lamp can only be used in a skill over 30 and cannot be banked. If following the guide exactly, it is recommended to put it on Prayer - you should hit level 30 at Priest in Peril.
 Early members' quests | Complete Fight Arena | quest:Fight Arena
 Early members' quests | Complete Sheep Herder | quest:Sheep Herder
+~ Good luck and do not lose your sanity!
+~ This is a good time to collect your boots of lightness:
+~ Take the lit candle from the Ardougne Monastery or your bank.
+~ Purchase the following from Aemad's Adventuring Supplies:
+~ Knife to collect the boots of lightness
+~ 12 balls of wool for Enlightened Journey, Recipe for Disaster/Freeing Skrach Uglogwee, Prince Ali Rescue, Monkey Madness I, Regicide, Making History, and Mourning's End Part II's item list.
+~ 12 papyrus for The Golem, Enlightened Journey, Legends' Quest, and While Guthix Sleeps.
+~ A water-filled vial pack. Vials of water are required for numerous quests, and can also be used to turn clay into soft clay. It will also be required to create a number of potions for future quests.
+~ An iron axe for Mourning's End Part II's item list.
+~ While near the sheep, take the knife and lit candle and head to the Temple of Ikov and enter it. Head directly west and descend the stairs. Slash the web at the other end of the room and pick up the boots.
+Early members' quests | Start Dwarf Cannon and take it as far as the guide says | started:Dwarf Cannon
+~ Complete up until Captain Lawgof asks you to visit Nulodion at the dwarven base; the quest will be completed next time the guide takes you near the Dwarven Mine.
+Early members' quests | Unlock the Barbarian Assault teleport | optional
+Early members' quests | Start Alfred Grimhand's Barcrawl and take it as far as the guide says | started:Alfred Grimhand's Barcrawl
+~ Visit the Barbarian Outpost to complete the Barbarian Assault tutorial for the minigame teleport.
+~ Start Alfred Grimhand's Barcrawl by talking to the Barbarian guard by the gate to the east of the Barbarian Assault building. This miniquest involves visiting bars with the barcrawl card and buying alcohol from the bartender, and can be passively completed while doing other quests.
+~ Visit The Flying Horse Inn in Ardougne and drink a Heart Stopper for Alfred Grimhand's Barcrawl.
 Early members' quests | Complete Waterfall Quest for 30 Attack and Strength | quest:Waterfall Quest; skill:Attack 30; skill:Strength 30; need:Rope 1; need:Air rune 6; need:Water rune 6; need:Earth rune 6
 ~ Bring a rope, six each of air, water and earth runes, and food. Glarial's amulet and pebble come from the tomb
 ~ Quests like this one and The Feud beat slow early training: their rewards come in one go
+~ After talking to Golrie near the Tree Gnome Village, use the spirit tree to visit the Blurberry Bar at the Grand Tree (also buy a Premade blurb' sp. for Death Plateau)
+~ Hardcore ironmen may choose to complete Witch's House first for the additional Hitpoints levels to make this quest safer.
+~ Keep the mithril seeds for Song of the Elves.
 Early members' quests | Complete Murder Mystery | quest:Murder Mystery
+~ While at the Poison Salesman step in the Forester's Arms, complete the Alfred Grimhand's Barcrawl step.
 Early members' quests | Complete Merlin's Crystal | quest:Merlin's Crystal; need:Bucket of wax 1; need:Bat bones 1
+~ While in Port Sarim visit The Rusty Anchor for Alfred Grimhand's Barcrawl.
 Early members' quests | Complete Holy Grail | quest:Holy Grail
+~ For the Entrana step:
+~ Purchase 11 buckets of sand from Trader Stan's Trading Post on the southernmost dock in Port Sarim.
+~ Either purchase 11 seaweed from the same shop, or pick up 11 pieces of seaweed in the north-western corner of Entrana.
+~ Pick up the glassblowing pipe from Fritz the Glassblower's house on Entrana.
+~ Use all of the seaweed on the cooking range to create soda ash.
+~ Use all of the soda ash on the furnace to the east to create molten glass.
+~ Use the glassblowing pipe on one piece of glass to create a candle lantern, a light source to be used in future quests that take you to the Lumbridge Swamp Caves. You can light it with the black candle you got from Merlin's Crystal. Save the remaining molten glass for use in the Observatory Quest, Horror from the Deep, Wanted!, Desert Treasure I and The Fremennik Exiles.
+~ Bring a spade with you to Galahad. After talking to him, enter McGrubor's Wood to dig up 3 red vine worms for Fishing Contest, Fairytale I - Growing Pains and Wanted!.
+~ When travelling to Draynor Manor:
+~ Take your garlic, stake, and hammer to the basement of the manor to kill Count Draynor and complete Vampyre Slayer.
+~ When travelling to Karamja for the Fisher Realm step:
+~ Travel from Port Sarim to Musa Point.
+~ Visit the Karamja Spirits Bar for Alfred Grimhand's Barcrawl.
+~ On the way to Brimhaven, enter the Karamja Dungeon and then enter the Fight Caves for an easy Karamja Diary step.
+~ Continue onwards to Brimhaven and visit the Dead Man's Chest for Alfred Grimhand's Barcrawl.
+~ Travel to Ardougne and back at the port for another easy Karamja Diary step.
+~ While heading to the gold mine to get to the Fisher Realm, use the rope swing to travel to the western island and back for another easy Karamja Diary step.
+~ The Black Knight Titan has very good Ranged and Magic defence, so attack with a melee weapon and quickly move away from the Titan and you will not be hit.
+Early members' quests | Start Merlin's Crystal and take it as far as the guide says | started:Merlin's Crystal
+~ While in Catherby, grab an extra bucket of wax for Troll Romance.
+~ Complete the quest up until you need to visit the Lady of the Lake in Taverley. Complete this step while completing the following three quests.
 Early members' quests | Complete Doric's Quest | quest:Doric's Quest
 ~ Mine the clay, copper and iron yourself at the Rimmington mine
+~ Before starting this quest, mine 16 clay from the mine by the Champions' Guild. 6 are required for this quest, and the rest can be turned into soft clay using vials of water when required for future quests.
+~ The Falador teleport tablet received from Daddy's Home may be used to get to the quest area. Bring the required items for this quest, Druidic Ritual and Witch's House (including combat gear) to quickly complete these three quests together. You can kill a black bear to the east of Doric on the hill for raw bear meat for Druidic Ritual.
+~ Visit the Dwarven Mine to the east of Taverley to receive the ammo mould and Nulodion's notes from Nulodion for the Dwarf Cannon step.
+~ Talk to the Lady of the Lake for the Merlin's Crystal step.
 Early members' quests | Complete Druidic Ritual to unlock Herblore | quest:Druidic Ritual; need:Raw beef 1; need:Raw rat meat 1; need:Raw bear meat 1; need:Raw chicken 1
+~ Grants access to the Herblore skill.
 Early members' quests | Complete Witch's House | quest:Witch's House; need:Cheese 1
 Early members' quests | Complete Dwarf Cannon | quest:Dwarf Cannon
+~ You should be at the step to bring the ammo mould and Nulodion's notes to Captain Lawgof to complete the quest.
+~ Completion of this quest allows the use of the dwarf multicannon and smithing of cannonballs.
 Early members' quests | Complete Below Ice Mountain | quest:Below Ice Mountain
+~ Black Knights' Fortress can be completed during this quest.
+~ While in Falador, start Black Knights' Fortress by talking to Sir Amik Varze on the 2nd floor of the White Knights' Castle's western tower.
+~ While in the Rising Sun Inn in Falador complete the Alfred Grimhand's Barcrawl step.
+~ Get a haircut from the Falador hairdresser next door for an easy Falador Diary task.
+~ Take a bucket and fill it with water from the pump by the hairdressers for another easy Falador Diary task.
+~ While in the Blue Moon Inn in Varrock complete the Alfred Grimhand's Barcrawl step.
+~ Pick a cabbage south of the inn and purchase an iron chainbody from Horvik's Armour Shop for Black Knights' Fortress.
+~ While in Barbarian Village, bring two soft clay to use on the potter's wheel to create two unfired bowls. One is required for Dragon Slayer I; use the other one on the pottery oven for an easy Varrock Diary task.
+~ Purchase a bronze med helm from the Barbarian Village Helmet Shop for Black Knights' Fortress. Purchase a second for Mourning's End Part II's item list.
+~ On your way back to Ice Mountain for the final step, bring food and go to the Black Knights' Fortress and complete that section of the Black Knights' Fortress quest.
+~ After completing Below Ice Mountain, return to Sir Amik Varze to complete Black Knights' Fortress.
 Early members' quests | Complete Black Knights' Fortress | quest:Black Knights' Fortress
+~ Complete during Below Ice Mountain.
 Early members' quests | Complete Pirate's Treasure | quest:Pirate's Treasure
+~ You should be at the final step to complete the quest in Falador Park.
+~ While there, kill a duck with a ranged weapon or magic for an easy Falador diary task.
+~ Keep the gold ring for Mourning's End Part II's item list, and the emerald for Legends' Quest.
 Early members' quests | Complete A Ruff Situation | varbit:15889>=120
+~ Allows raising of puppies.
 Early members' quests | Complete The Ides of Milk | quest:The Ides of Milk
+~ After finishing the quest, talk to Gillie Groats again to receive extra rewards. Use the magic lamp on Prayer.
 Early members' quests | Complete Observatory Quest | quest:Observatory Quest
+~ This quest has 12 variations of random rewards, which may include 875 experience in either Attack, Strength, or Defence. Note: If you are level 1 in a specific combat style, you will not be assigned a constellation that gives experience in that combat skill.
+~ Visit the Dragon Inn in Yanille for Alfred Grimhand's Barcrawl. While there, buy a greenman's ale, then pick up 2 rotten tomatoes from Pelters' Veg Stall for Recipe for Disaster/Another Cook's Quest and Mourning's End Part II's item list.
+~ Purchase 8 pots at Frenita's Cookery Shop for Rag and Bone Man I.
+~ Pick up the superantipoison (1) every time you walk past it (so that you have about a full vial); it will be very useful for Scorpion Catcher.
+~ After completion of this quest, use a silver bar and sickle mould at a furnace in Ardougne to craft a silver sickle for Nature Spirit.
 Early members' quests | Complete Priest in Peril to open Morytania | quest:Priest in Peril; need:Rune essence 50
 ~ Mine the 50 essence yourself after Rune Mysteries: the Aubury teleport is quickest
+~ Allows access to Morytania.
+~ On your way to the Paterdomus Temple:
+~ Visit the Jolly Boar Inn west of the Lumber yard for Alfred Grimhand's Barcrawl.
+~ Talk to the Odd Old Man at the mine west of the temple to start Rag and Bone Man I.
+~ After completion of this quest, use the antique lamp you have been holding since completing the easy Ardougne diary on Prayer.
+Early members' quests | Start Rag and Bone Man I and take it as far as the guide says | started:Rag and Bone Man I
+~ Start during Priest in Peril, but collect the bones during the following quests when recommended by the guide.
 Early members' quests | Complete Nature Spirit | quest:Nature Spirit
+~ You will need a ghostspeak amulet and a silver sickle.
+~ Before visiting the Nature Grotto, stop at Canifis:
+~ Bank all of the pies given by Drezel. The pie dishes will be used for future quests.
+~ Purchase 20-30 raw trout from Rufus' Meat Emporium for Death Plateau (10 cooked trout are needed, 54% chance to burn at Cooking 15 Cooking).
+~ Purchase a bag of salt from Mazchna for Icthlarin's Little Helper.
+~ After completion of this quest, restore your prayer points at the altar of nature in the Nature Grotto to complete an easy Morytania Diary task.
 Early members' quests | Complete Recruitment Drive | quest:Recruitment Drive
+~ Requires an empty inventory.
 Early members' quests | Complete Alfred Grimhand's Barcrawl | quest:Alfred Grimhand's Barcrawl
+~ You should now have visited all of the required bars. Return to the Barbarian Guard at the gate to the east of the Barbarian Assault building with the barcrawl card to complete the miniquest.
+~ Allows use of the Barbarian Outpost Agility Course, which is required for Scorpion Catcher and Horror from the Deep.
+Early members' quests | Unlock the Anti-dragon shield | owned:Anti-dragon shield
+~ Before starting Scorpion Catcher, partial completion of Dragon Slayer I will unlock the Anti-dragon shield to make this quest safer by protecting you from dragonfire in the Taverley Dungeon step.
+~ To collect the shield:
+~ Start the quest by speaking to the Guildmaster at the Champions' Guild south of Varrock. You may also jump over the fence to the south-east to complete an easy Varrock Diary task.
+~ Talk to Oziach in Edgeville.
+~ Return to the Guildmaster and ask him all the questions.
+~ Talk to Duke Horacio on the 1st floor of Lumbridge Castle to receive the shield.
 Early members' quests | Complete Scorpion Catcher | quest:Scorpion Catcher
+~ While at the Sorcerer's Tower complete the following Rag and Bone Man I tasks:
+~ At the sheep pen south-west of the tower, kill a ram and pick up the ram skull.
+~ At the mine south of the tower, kill a grizzly bear and pick up the bear ribs. Also pick up the bear fur for Mourning's End Part I.
+~ By Keep Le Faye east of the tower, kill a giant bat and pick up the giant bat wing.
+~ On your way to the Taverley Dungeon, cross the crumbling wall in western Falador for an easy Falador Diary task.
 Early members' quests | Complete Jungle Potion | quest:Jungle Potion
+~ Optional: Bring a small fishing net to catch stackable raw karambwanji for your kitten. You will need to train to 5 Fishing beforehand.
+~ (First herb) Collect two extra grimy snake weed, one for Zogre Flesh Eaters and another for Legends' Quest.
+~ (Second herb) Collect one extra ardrigal for Legends' Quest.
+~ (Fourth herb) Collect an extra grimy volencia moss for Fairytale I.
+~ Kill a nearby monkey and pick up the monkey paw for Rag and Bone Man I.
+~ (Fifth herb) Collect an extra grimy rogue's purse for Zogre Flesh Eaters.
+~ After completion of this quest:
+~ Purchase 15 breads from Jiminua's Jungle Store south of Brimhaven for Death Plateau, Enakhra's Lament, and two Recipe for Disaster subquests.
+~ Collect five seaweed from the west coast for an easy Karamja Diary task.
 Early members' quests | Complete Vampyre Slayer | quest:Vampyre Slayer
+~ Complete during Holy Grail.
 Early members' quests | Complete A Porcine of Interest | quest:A Porcine of Interest
+~ While talking to Sarah, buy 10 empty sacks for Enlightened Journey and Mourning's End Part II's item list.
+~ Pick 20 potatoes from the potato field to the east of Draynor Village and fill 2 sacks with them for Enlightened Journey and Mourning's End Part II's item list.
+~ After completion of this quest in Draynor Village, perform the following Rag and Bone Man I tasks:
+~ Buy 8 jugs of vinegar from the Wine Shop and use them on your 8 pots to create pots of vinegar for Rag and Bone Man I.
+~ Kill a level 2 goblin south of the village and pick up the goblin skull.
+~ Kill a unicorn in the swamp and pick up the unicorn bone. Keep the unicorn horn for Ratcatchers.
+~ Kill a giant rat in the swamp and pick up the giant rat bone.
+~ Kill a big frog in the swamp and pick up the big frog leg.
+~ While in the swamp, collect 6 swamp tar for Cold War, Eagles' Peak, Forgettable Tale..., Horror from the Deep, Tears of Guthix and Troll Romance.
 Early members' quests | Complete Rag and Bone Man I | quest:Rag and Bone Man I
+~ You should now have all of the bones required to complete the quest.
+~ After completion of this quest start Rag and Bone Man II.
+Early members' quests | Start Rag and Bone Man II and take it as far as the guide says | started:Rag and Bone Man II
+~ Start immediately after Rag and Bone Man I and pick up the bones during future quests. Note that completion of this quest will take a very long time, and you will not immediately have the requirements to collect every bone, with the highest requirement being 40 Slayer.
+~ You can begin by killing bats near the Odd Old Man until you obtain a bat wing.
+Early members' quests | Train Cooking to 15 | skill:Cooking 15
 Early members' quests | Complete Death Plateau for climbing boots | quest:Death Plateau
+~ Level 15 Cooking is required to cook the trout needed for this quest.
+~ You'll also need an iron bar, which you cannot smith yet. There is an iron bar spawn north-west of the Ferox Enclave accessible via a Clan Wars minigame teleport, and one at the Sunset Coast south of Civitas illa Fortis. They are also a drop from Paladins in Ardougne (safespottable) at a rate of 1/14.22 or from the White Knights in Falador at a rate of 1/16. Pick up two additional bars for The Knight's Sword.
 Early members' quests | Reach 10 Agility at the Draynor Village Rooftop Course | skill:Agility 10; go:3103,3279,0
 Early members' quests | Reach 20 Agility on the Draynor course | skill:Agility 20; go:3103,3279,0
 Early members' quests | Reach 30 Agility at the Varrock Rooftop Course | skill:Agility 30; go:3221,3414,0
@@ -85,48 +376,165 @@ Early members' quests | Reach 40 Agility at the Canifis Rooftop Course | skill:A
 ~ Marks of grace pay for graceful: 260 marks for the full set, usually by about 60 Agility
 Early members' quests | Buy the full graceful outfit from Grace | owned:Graceful hood; owned:Graceful top; owned:Graceful legs; owned:Graceful gloves; owned:Graceful boots; owned:Graceful cape; npc:Grace
 Early members' quests | Complete The Queen of Thieves | quest:The Queen of Thieves
+~ A stew is required, which was received as a quest reward from Gertrude's Cat or can be bought from Forester's Arms in Seers' Village for 20 coins.
+~ Kill seagulls on the southern docks until they drop a seagull wing for Rag and Bone Man II.
+~ While in The Warrens, trade the shopkeeper in the Warrens General Store to complete an easy Kourend & Kebos Diary task.
+~ After the Conrad King step, from Frankie's Fishing Emporium purchase three raw cod for Freeing Pirate Pete, a raw shark for The Fremennik Trials and a raw swordfish for the Ardougne medium diary Swordchick.
+Early members' quests | Train Agility to 18 | skill:Agility 18
 Early members' quests | Complete The Depths of Despair | quest:The Depths of Despair
+~ Bring a spade to mine some Saltpetre for an easy Kourend & Kebos Diary task on your way to the cave.
+~ Kill a sand crab whilst in the crab claw caves for an easy Kourend & Kebos Diary task.
+~ Steal a fruit from the Fruit Stall to the north for an easy Kourend & Kebos Diary task after completing the quest.
 Early members' quests | Complete The Forsaken Tower | quest:The Forsaken Tower
 Early members' quests | Complete Tale of the Righteous | quest:Tale of the Righteous
 Early members' quests | Complete Mountain Daughter | quest:Mountain Daughter
+~ Before starting the quest:
+~ Use the minigame teleport to Barbarian Assault. Take out two planks, 60 steel nails, a hammer and some food and cross the basalt rock to the north.
+~ Start Horror from the Deep by talking to Larrissa outside the Lighthouse.
+~ Head east and use two planks to fix the bridge for Horror from the Deep.
+~ Stop at Rellekka to complete that section of Making History.
+~ Head east past Rellekka, and kill bunnies by the swaying tree until you obtain a rabbit bone.
+~ Start The Giant Dwarf in the cave north-west of the camp to unlock the trapdoor shortcut from Grand Exchange and Blast Furnace minigame teleport. Completing the cutscene and conversation with Commander Veldaban unlocks it.
+~ While in Keldagrim, buy the following from Gunslik's Assorted Items:
+~ Charcoal for The Dig Site (you may consider purchasing 4 more for future quests).
+~ Pestle and mortar if you don't have one for The Dig Site.
+~ 4 vials for The Dig Site, The Golem, The Hand in the Sand and Land of the Goblins.
+~ 2 ropes for The Dig Site.
+~ Chisel for The Golem.
+~ Retrieve the quest items and combat gear, then leave the area by talking to the Dwarven Boatman north-east of the river. You can now head to the quest area.
+Early members' quests | Train Agility to 25 | skill:Agility 25
 Early members' quests | Complete The Grand Tree | quest:The Grand Tree
+~ Allows use of the gnome glider transportation system.
+~ Before starting the quest, kill terrorbirds to the south-west of the Grand Tree until they drop a terrorbird wing for Rag and Bone Man II.
+~ While in the Grand Tree, buy a gnome spice and an orange for Recipe for Disaster/Freeing the Goblin generals at the Grand Tree Groceries. Buy 3 vodkas from Heckel Funch on the east side of the 1st floor (east of the pub): 2 for Bone Voyage and 1 for Eadgar's Ruse.
+~ When on Karamja, kill Jogres by the Gnome glider west of the Ship Yard until you obtain a Jogre bone for Rag and Bone Man II. Keep the Jogre Bones for Tai Bwo Wannai Trio.
+~ After completion of this quest, start Making History by talking to Jorral at The Outpost south-west of the Tree Gnome Stronghold.
+Early members' quests | Train Thieving to 21 | skill:Thieving 21
 Early members' quests | Complete Tribal Totem | quest:Tribal Totem
+~ While in The Shrimp and Parrot to start the quest, purchase a tuna for Family Crest.
+~ Travel to Ardougne via Captain Barnaby with 30 coins after starting the quest to complete an easy Karamja Diary task.
+~ Keep one swordfish from the quest reward for Family Crest.
 Early members' quests | Complete The Dig Site | quest:The Dig Site
 ~ Its experience rewards are worth spending on Mining or Herblore
+~ Before beginning this quest, start The Golem in the Ruins of Uzer and complete that section of the quest.
+~ Both quests will require you to visit the Digsite and then the Varrock Museum, so complete those two steps together.
+~ On your way to the digsite, take a pickaxe and mine an iron ore from the South-east Varrock mine for an easy Varrock Diary task.
+~ After completion of this quest, return the level 3 certificate to Curator Haig Halen at the Varrock Museum for a fruit blast which can be used in Recipe for Disaster: Another Cook's Quest.
 Early members' quests | Complete The Golem | quest:The Golem
+~ You should be at the final step of this quest to return to the Ruins of Uzer. On the way, visit the Al Kharid mine and mine 12 coal for Elemental Workshop I and Elemental Workshop II, and 1 iron ore for an easy Lumbridge & Draynor Diary task.
+~ Start Prince Ali Rescue while passing through Al Kharid by talking to Chancellor Hassan, then Osman.
+~ Bring a bird snare, pickaxe, hammer, chisel and knife. While in the Shantay Pass, purchase a full set of desert clothing and an empty waterskin. Equip it when passing through the pass to for an easy Desert Diary task.
+~ On the way to Uzer use your knife on a Kharidian cactus for an easy Desert Diary task.
+~ When stealing the feather from the Desert phoenix, mine five clay nearby for another easy Desert Diary task.
+~ Use the bird snare to catch a nearby golden warbler for another easy Desert Diary task.
+~ Use the hammer and chisel to collect two sapphires, two rubies and two emeralds from the throne in the throne room. One sapphire is required for Tears of Guthix and Making History respectively.
 Early members' quests | Complete Recipe for Disaster - Another Cook's Quest | quest:Recipe for Disaster - Another Cook's Quest
 Early members' quests | Complete The Knight's Sword | quest:The Knight's Sword
+~ On the way to Thurgo, mine 16 iron ore at the Rimmington Mine for future quests to be used in iron bars. Note that you won't have the required Smithing level for the two iron bars required for this quest - you can obtain those from spawns if you haven't already.
+~ Mine an extra blurite ore for the easy Falador Diary.
+~ Completion of this quest grants you the Smithing level required to smith iron bars. Smelt both the iron ore and the blurite ore you have gathered at the Falador furnace.
 Early members' quests | Complete Elemental Workshop I | quest:Elemental Workshop I
+~ Bring supplies to kill one of each elemental (level 35) to complete an easy Kandarin Diary task. Note: Earth elementals in rock form do not count.
+~ Mine 2 additional elemental ore for part II (recommended: get a third for a mind shield after the quest if you ever plan on doing elite clue scrolls).
 Early members' quests | Complete Prince Ali Rescue | quest:Prince Ali Rescue
+~ Speak to Osman after completing the quest and ask him if there is anything you can help with to unlock the Sorceress's Garden Minigame Teleport.
 Early members' quests | Complete Shadow of the Storm | quest:Shadow of the Storm
+~ Flinch the quest boss with melee to avoid taking damage.
+~ For the black clothing required in the quest, you should have the black wizard hat and priest gown set.
+~ Use the experience reward on Ranged.
+Early members' quests | Train Sailing to 12 | skill:Sailing 12
 Early members' quests | Complete Prying Times | quest:Prying Times
 Early members' quests | Complete Imp Catcher | quest:Imp Catcher
 ~ Kill imps around Draynor and Falador for the four beads; it gives an amulet of accuracy
+~ Camp the spawns of imps on the east side of the Ardougne Monastery or in a basement in Kastori for beads.
+~ They also drop mind talismans which you should keep for the easy Falador Diary.
 Early members' quests | Complete Elemental Workshop II | quest:Elemental Workshop II
+~ Grants the ability to make and use elemental mind equipment.
+~ Bring an extra 4 coal if you plan on making a mind shield (recommended if you plan on doing elite clue scrolls).
 Early members' quests | Complete The Ribbiting Tale of a Lily Pad Labour Dispute | quest:The Ribbiting Tale of a Lily Pad Labour Dispute
+Getting around | Train Woodcutting to 36 | skill:Woodcutting 36
 Getting around | Complete Lost City for a dramen staff | quest:Lost City; owned:Dramen staff
 ~ Kill the tree spirit with magic or crush it in melee; bring a knife and an axe. Zanaris also sells the dragon dagger
+~ Cut a second dramen branch for Recipe for Disaster/Freeing Sir Amik Varze, and optionally a third one to make a step in The Fremennik Trials easier. Do not turn them into dramen staffs.
+~ You may get a zombie bone while trying to get a bronze axe from the zombies.
+~ Grants the ability to make cosmic runes and to use the dragon dagger and the dragon longsword.
 Getting around | Complete Fairytale I - Growing Pains | quest:Fairytale I - Growing Pains
+~ There is a small chance you may need either Fishing 28 Fishing or Fishing 38 Fishing to obtain a raw slimy eel or raw cave eel, respectively.
 Getting around | Start Fairytale II - Cure a Queen to use fairy rings | started:Fairytale II - Cure a Queen
 ~ Fairy rings make Zanaris, Fossil Island, Canifis and much more one click from home
 Getting around | Complete Goblin Diplomacy | quest:Goblin Diplomacy
 Getting around | Complete Recipe for Disaster - Wartface & Bentnoze | quest:Recipe for Disaster - Wartface & Bentnoze
+~ Use blue dye on the orange slices.
+~ Completing this quest unlocks access to the second tier of the Culinaromancer's Chest. Purchase the following from it (hop worlds to refresh stock):
+~ 7 buckets of milk for Ghosts Ahoy, A Tail of Two Cats, Ratcatchers, Recipe for Disaster (three subquests), and Mourning's End Part II's item list.
+~ 7 pots of flour for Prince Ali Rescue, Recipe for Disaster (two subquests), The Knight's Sword, The Giant Dwarf, Prying Times, and Mourning's End Part II's item list.
+~ 3 eggs for Recipe for Disaster (two subquests) and Mourning's End Part II's item list.
+~ 3 cake tins for Recipe for Disaster (one subquest), Troll Romance and Mourning's End Part II's item list.
+~ Grapes for Monkey Madness II.
+~ Pot of cream for Recipe for Disaster (one subquest).
+~ Spice for Desert Treasure I.
+~ Create 3 redberry pies for The Knight's Sword, The Giant Dwarf and Prying Times while in the cellar:
+~ Use a pot of flour on a bucket of water (a bucket spawns in the cellar and can be filled at the nearby sink) to create pastry dough.
+~ Use the pastry dough on a pie dish to create a pie shell.
+~ Use redberries on the pie shell to create an uncooked berry pie.
+~ Cook the uncooked berry pie on the kitchen range. If you fail to cook it, repeat the steps (purchase more flour as necessary). The burnt pie can be emptied to reclaim the pie dish. If you run out of redberries, you can purchase more from the Port Sarim Food Store and cook the pie nearby.
 Getting around | Complete Sleeping Giants | quest:Sleeping Giants
+~ Unlocks Giants' Foundry.
 Getting around | Complete Shield of Arrav | quest:Shield of Arrav
+~ The chat channel for finding a partner is 'osrs soa'.
 Getting around | Complete Creature of Fenkenstrain | quest:Creature of Fenkenstrain
+~ Before beginning the quest, create 7 bronze wire on an anvil. 3 will be used for this quest, and the remaining 4 are for Recipe for Disaster/Freeing Pirate Pete and Shilo Village.
+~ While in the experiment cave, kill experiments until you obtain an experiment bone for Rag and Bone Man II.
 Getting around | Complete A Soul's Bane | quest:A Soul's Bane
+~ After completion of this quest, re-enter the dungeon to complete a medium Varrock Diary task.
+~ Digsite
 Getting around | Complete The Lost Tribe | quest:The Lost Tribe
+~ Allows access to Nardok's Bone Weapons where players can purchase the Dorgeshuun crossbow and bone bolts for early Ranged training.
+~ After completion of this quest, talk to Mistag to start Death to the Dorgeshuun.
+~ Kill cave goblins until they drop a cave goblin skull for Rag and Bone Man II.
+~ Keep the ring of life quest reward for The Curse of Arrav if you do not plan to obtain more.
 Getting around | Complete Death to the Dorgeshuun | quest:Death to the Dorgeshuun
+~ Make sure to keep a set of polished buttons from H.A.M. members for Animal Magnetism later.
+~ Kill a Cave bug during the quest while travelling underground for an easy Lumbridge & Draynor Diary task.
+~ After completion of this quest:
+~ Enter Dorgesh-Kaan south of Mistag.
+~ At Miltog's Lamps in the central part of the Dorgesh-Kaan marketplace, purchase a bullseye lantern (empty).
+~ Use swamp tar on the nearby lamp still to fill it and use the empty lantern on the still to fill it with oil.
+~ Use a sapphire on the bullseye lantern to create a sapphire lantern.
+~ The sapphire lantern is required to complete Tears of Guthix. Consider completing this quest earlier if you have 49 Firemaking as it unlocks a useful weekly minigame for gathering experience in your lowest skill.
+Getting around | Train Magic to 33 | skill:Magic 33
 Getting around | Complete The Giant Dwarf | quest:The Giant Dwarf
+~ Join the Purple Pewter while wearing a full set of H.A.M. robes for a 20 point head start during the Consortium section of the quest.
+~ Purchase a steel warhammer at Vigr's Warhammers while in Keldagrim for In Search of the Myreque.
+~ Steal from the baker's stall on the eastern side of the Keldagrim Palace to complete an easy Fremennik Diary task.
+~ Browse the Stonemason shop just south of the bank to complete an easy Fremennik Diary task.
 Getting around | Complete Another Slice of H.A.M. | quest:Another Slice of H.A.M.
+~ If you already have a mind talisman, craft a tiara and bring both with you during the Goblin Village step of this quest to craft a mind tiara at the nearby Mind Altar for an easy Falador Diary task.
+~ The ancient mace is cheap protection for the God Wars Dungeon.
 Getting around | Complete Making History | quest:Making History
+~ You should have completed the Rellekka and Port Phasmatys steps of this quest. Complete the silver merchant step and then finish the quest by returning to Jorral with the journal and scroll.
 Getting around | Complete In Search of the Myreque | quest:In Search of the Myreque
+~ Before starting the quest, complete the following Rag and Bone Man II tasks:
+~ Kill werewolves in Canifis until you obtain a werewolf bone.
+~ Kill ghouls west of Canifis until you obtain a ghoul bone.
 Getting around | Complete Shades of Mort'ton | quest:Shades of Mort'ton
+~ It is recommended to make several doses of serum 208 to use on Razmire Keelgan to gain access to the building supplies store, or on the afflicted villagers to receive drops. (See "Cure rewards" under Serum 208.)
+~ Once done, purchase 11 swamp paste from the Mort'ton Builder's Store for The Slug Menace, Dragon Slayer II, and Mourning's End Part II's item list.
+~ After the quest bring the diary of Herbi Flax to the Apothecary in Varrock for 335 Herblore experience.
 Getting around | Complete In Aid of the Myreque | quest:In Aid of the Myreque; optional
+~ A good tip for lower levels: Using Efaritay's aid allows you to use weapons other than the silver sickle when equipped.
+~ A mithril bar is needed for this quest. One can be easily obtained by killing chaos dwarves in Taverley Dungeon.
 Getting around | Beat the TzHaar Fight Cave for a fire cape | owned:Fire cape; go:2438,5167,0
 Getting around | Get a black mask from cave horrors | owned:Black mask; optional; go:3740,9373,0
+Skilling base | Unlock the Varrock Museum Kudos | optional
+~ Talk to Historian Minas just up the stairs and tell him the information about the displays to get the kudos and three antique lamps from the quests you have done. Use them on Herblore.
+~ Complete the cleaning finds part of the Varrock Museum to earn another 50 kudos. Combining these 50 kudos, the 28 kudos from the Natural History Quiz, and the 50 kudos from Historian Minas, this should put you at 128 kudos in total.
+~ Finally, talk to the information clerk to claim Mining 3,500 Mining and Crafting 2,500 Crafting experience.
 Skilling base | Complete Bone Voyage to reach Fossil Island | quest:Bone Voyage
 ~ Kudos come from the Varrock Museum: clean finds and answer the display quizzes
+~ This quest requires you to earn 100 kudos from the Varrock museum, which you should have from the last step.
+~ Group ironmen with a party member with at least level 25 Construction (boostable) can now start doing birdhouse runs. Other ironmen can get level 23 Construction now to start doing the runs (boost with tea), or wait for The Fremennik Isles.
+~ Marrentill can be dropped by chaos druids in Taverley Dungeon.
 Skilling base | Start birdhouse runs on Fossil Island every 50 minutes | skill:Hunter 5
 ~ Birdhouses give Hunter experience and a steady stream of bird nests: tree, fruit tree and herb seeds
 Skilling base | Plant herb patches in Falador, Catherby and Ardougne | skill:Farming 15; go:3058,3311,0; need:Compost 3
@@ -137,54 +545,136 @@ Skilling base | Get a herb sack from Tithe Farm | owned:Herb sack; optional; go:
 Skilling base | Reach 35 Fishing and play Tempoross | skill:Fishing 35; go:3144,2818,0
 ~ Tempoross pays out jewellery, rune items, planks and uncut gems, dragonstone among them
 Skilling base | Complete Wanted! | quest:Wanted!
+~ While in the Taverley Dungeon, kill Baby blue dragons until you obtain a Baby dragon bone for Rag and Bone Man II. Keep 1 Babydragon bones for Mourning's End Part II's item list.
 Skilling base | Complete The Feud for Thieving | quest:The Feud
+~ While in Pollnivneach, collect 3 buckets of Ugthanki dung for My Arm's Big Adventure, and 1 extra bucket for Forgettable Tale... before you return to Al Kharid to complete The Feud.
 Skilling base | Complete Troll Stronghold | quest:Troll Stronghold
+~ Grants the ability to make law runes.
+~ Kill Mountain trolls by the Troll Stronghold entrance until you obtain a troll bone for Rag and Bone Man II.
+Skilling base | Train Woodcutting to 45 | skill:Woodcutting 45
 Skilling base | Complete Troll Romance | quest:Troll Romance
+~ Arrg attacks with melee and ranged. He can be safespotted at the west side entrance of the arena.
+Combat ready | Train Prayer to 43 | skill:Prayer 43
 Combat ready | Complete Dragon Slayer I | quest:Dragon Slayer I
 ~ The rune platebody and green d'hide body unlock with it; an anti-dragon shield is required
+~ Starting this quest unlocks dragon tasks for Slayer.
+~ While in the Port Sarim jail, talk to the Security Guard on the 1st floor to receive a Security book for the easy Falador Diary.
+~ Completing this quest allows you to use green d'hide body, rune platebody and dragon platebody.
 Combat ready | Get a fighter torso at Barbarian Assault | owned:Fighter torso; go:2531,3569,0; optional
 Combat ready | Reach 60 Attack, Strength and Defence | skill:Attack 60; skill:Strength 60; skill:Defence 60
 ~ Slayer tasks from Vannaka or Chaeldar train combat and give drops worth keeping
 Combat ready | Get a dragon defender at the Warriors' Guild | owned:Dragon defender; go:2877,3546,0
 Combat ready | Complete Horror from the Deep for a god book | quest:Horror from the Deep
 ~ The Book of War is the Bandos book; Another Slice of H.A.M. later gives the ancient mace
+~ Completing this quest allows you to buy God books. The book of war is cheap protection for the God Wars Dungeon.
+~ After completion of this quest, kill Dagannoth in the Lighthouse dungeon until you obtain Dagannoth ribs for Rag and Bone Man II.
 Combat ready | Complete Ernest the Chicken | quest:Ernest the Chicken
+~ Prepare quest items for Animal Magnetism as well before heading to Draynor Manor.
 Combat ready | Complete Animal Magnetism for Ava's attractor or accumulator | quest:Animal Magnetism
+~ A Holy Symbol can be blessed by the monk in the monastery near Edgeville.
+~ A mithril axe can be bought from Lunami's Axe Shop in Auburnvale.
+~ While in Alice's cow pen, kill undead cows until you obtain undead cow ribs for Rag and Bone Man II.
 Combat ready | Get Ava's accumulator | owned:Ava's accumulator; need:Steel arrow 75
 Combat ready | Complete Shilo Village | quest:Shilo Village
+~ After completing the quest, you can sell every item you obtained during the quest to Yanni Salika in Shilo Village for 2,000 — 100 each for the stone-plaque, tattered scroll, crumpled scroll, Bervirius notes and the bone key, 500 for the locating crystal, and 1000 for the Beads of the Dead. If you kept the black prism from Zogre Flesh Eaters, you can exchange it for 5,000.
+Combat ready | Train Ranged to 37 | skill:Ranged 37
 Combat ready | Complete Spirits of the Elid | quest:Spirits of the Elid
+~ Bring 10-15 ice coolers to the Water Ravine Dungeon step, and kill level 42 lizards south of the dungeon until they drop a desert lizard bone for Rag and Bone Man II (drop rate is 1/4).
+~ When heading to the genie's crevice, complete the following Rag and Bone Man II tasks:
+~ Kill jackals outside the crevice until they drop a jackal bone.
+~ Inside the crevice, kill desert snakes until they drop a snake spine.
+~ South-west of the crevice, kill vultures until they drop a vulture wing.
+Combat ready | Train Woodcutting to 30 | skill:Woodcutting 30
+Combat ready | Train Firemaking to 30 | skill:Firemaking 30
 Combat ready | Complete Icthlarin's Little Helper | quest:Icthlarin's Little Helper
+~ Train to 30 Woodcutting for the willow log required for this quest, and obtain a second one for Enakhra's Lament. When obtaining a bucket of sap, get a second one for The Eyes of Glouphrie.
+~ It is possible to obtain an agility potion(4) from the Possessed Priest at the end of the quest, which may be saved for use in Tai Bwo Wannai Trio.
 Combat ready | Complete Ethically Acquired Antiquities | quest:Ethically Acquired Antiquities
+~ Travel to Varlamore for this quest via Regulus Cento at Varrock's eastern entrance. While in Civitas illa Fortis buy an iron spear from the Fortis Blacksmith for Tai Bwo Wannai Trio.
 Combat ready | Complete Twilight's Promise | quest:Twilight's Promise
+~ After the quest, use the Quetzal Transport System to travel to Tal Teklan. At the Dyes to Die For shop purchase the following dyes for future quests. Consider buying a few extra dyes of each colour for safety. The purchase list assumes blue dye is used for Freeing the Goblin generals and 3x yellow/red/blue are used for Ghosts Ahoy.
+~ 7 blue dyes
+~ 2 orange dyes
+~ 8 yellow dyes
+~ 8 red dyes
+~ 1 green dye
+~ 2 purple dyes
+~ Purchase an oak longbow from Arcuani's Archery Supplies for Ghosts Ahoy.
+Combat ready | Train Thieving to 34 | skill:Thieving 34
+Combat ready | Train Agility to 32 | skill:Agility 32
 Combat ready | Complete Death on the Isle | quest:Death on the Isle
+~ After the quest, make sure to claim your costume needle, which doesn't require thread to craft, from the costumer down in the cellar out back.
+Combat ready | Start Fairytale II - Cure a Queen and take it as far as the guide says | started:Fairytale II - Cure a Queen
+~ Continue with this quest until you unlock fairy rings.
 Combat ready | Complete Ratcatchers | quest:Ratcatchers
+~ The rat poison required for this quest can be obtained from the Clock Tower dungeon if you didn't pick up an extra one during Clock Tower. Making it yourself is not required to complete the quest.
+~ When in the Varrock Sewers, complete the following Rag and Bone Man II tasks:
+~ Kill rats until you obtain a rat bone.
+~ Kill zombies until you obtain a zombie bone.
+~ After completing this quest you can start growing your adult cat into a wily cat, which is the best cat for catching hellrats.
 Combat ready | Complete The Garden of Death | quest:The Garden of Death
 Combat ready | Complete Enlightened Journey | quest:Enlightened Journey
+~ Allows use of the balloon transport system.
+~ If the 12 willow branches are obtained from planting Auguste's sapling, you will need to wait 4 hours for the willow tree to grow and then 5 more minutes per branch after checking its health. It may be more desirable to grow your own willow tree before even starting the quest.
+~ If you're growing your own willow tree during this quest, you should obtain an extra 6 willow branches so that you may complete the medium Falador Diary task of crafting a basket on the Falador farm loom.
 Combat ready | Unlock the Crafting Guild balloon route with Auguste's balloons | varbit:2871>=1; optional
+~ Requires 10 oak logs.
 Combat ready | Complete Sea Slug | quest:Sea Slug; need:Swamp paste 1
+~ Complete a medium task for the Ardougne diary by fishing on the platform. You can buy a small fishing net from a shop near the quest start in Witchaven.
+Combat ready | Train Sailing to 22 | skill:Sailing 22
 Combat ready | Complete Current Affairs | quest:Current Affairs
 Combat ready | Complete Fishing Contest | quest:Fishing Contest; need:Garlic 1; need:Spade 1
 Combat ready | Complete Recipe for Disaster - Mountain Dwarf | quest:Recipe for Disaster - Mountain Dwarf
+~ When talking to Kaylee in the Falador pub, purchase a Wizard's mind bomb for Dragon Slayer I.
 Combat ready | Complete Ghosts Ahoy | quest:Ghosts Ahoy
+~ This quest unlocks the ectophial for an unlimited teleport to the Ectofuntus, and gives free access to Port Phasmatys.
+~ When gathering the ecto-tokens, get an additional 20 for Animal Magnetism.
+~ Make an additional Nettle tea for Skippy and the Mogres.
+~ While in Port Phasmatys, create a sapphire amulet by using a gold bar on the nearby furnace while also carrying a cut sapphire and an amulet mould, then string it with a ball of wool.
+~ Talk to Droalak for Making History, then give the sapphire amulet to Melina east of the general store. Return to Drolak to receive a scroll.
 Combat ready | Complete Forgettable Tale... | quest:Forgettable Tale...
+~ If you don't intend to brew more, save 1 dwarven stout (m) from the Quest Reward to boost for Making Friends with My Arm.
 Combat ready | Complete Garden of Tranquillity | quest:Garden of Tranquillity
+~ You can use a hammer on some essence and grind the essence shards into dust before starting the quest to save yourself some space.
+~ After completion, wait up to 5 minutes and pick up a white tree fruit for a medium Varrock Diary task.
 Combat ready | Complete Recipe for Disaster - Evil Dave | quest:Recipe for Disaster - Evil Dave
+~ Gain access to spicy stews during the quest, which can be useful for boosting stats. The 9 required stews can be obtained from The Cloak and Stagger in Shayzien. Ensure you have raised a kitten into a cat first before completing this quest and the following quest Ratcatchers.
 Combat ready | Complete Big Chompy Bird Hunting | quest:Big Chompy Bird Hunting
+~ Completion of this quest allows you to make ogre arrows.
+~ While in the Feldip Hills, kill wolves and ogres until you obtain a wolf bone and ogre ribs for Rag and Bone Man II.
+~ Head south-west of the glider and pick up the skull found on the coast for Mourning's End Part II's item list.
+~ Keep the Ogre bow for Recipe for Disaster/Freeing Skrach Uglogwee.
 Combat ready | Complete Zogre Flesh Eaters | quest:Zogre Flesh Eaters
+~ Keep the black prism to exchange for 5,000 after completing Shilo Village later
+~ Kill Zogres until you obtain a Zogre bone for Rag and Bone Man II.
 Combat ready | Finish the Varrock easy diary and claim Varrock armour 1 | varbit:4519; diary:Varrock Easy; npc:Toby
+~ Use the  on Herblore.
 Combat ready | Finish the Desert easy diary and claim Desert amulet 1 | varbit:4523; diary:Desert Easy; npc:Jarr
+~ Use the  on Herblore.
+~ Keep a potato cactus for Mourning's End Part II's item list.
+Combat ready | Train Herblore to 30 | skill:Herblore 30
 Combat ready | Complete Darkness of Hallowvale | quest:Darkness of Hallowvale
+~ Use all three experience rewards on Herblore.
 Combat ready | Complete Tower of Life | quest:Tower of Life
 Combat ready | Complete Recipe for Disaster - Pirate Pete | quest:Recipe for Disaster - Pirate Pete
 Combat ready | Finish the Falador easy diary and claim Falador shield 1 | varbit:4503; diary:Falador Easy; optional
+~ Use the  on Herblore.
 Combat ready | Make or find a games necklace and a ring of dueling | owned:Games necklace; owned:Ring of dueling
 ~ The games necklace reaches Wintertodt, Barbarian Assault and the Burthorpe games room; the ring of dueling reaches Ferox Enclave
 Combat ready | Complete Tai Bwo Wannai Trio for karambwans | quest:Tai Bwo Wannai Trio
 ~ Dr Jekyll in Tai Bwo Wannai turns an irit leaf into a four-dose Agility potion, and a torstol into a stamina potion, before you can brew them
+~ Warning: If the one raw karambwan obtained during the quest is burned, 65 Fishing is required to fish more and continue the quest.
+~ You must return to the brothers after completing the quest to claim all experience rewards.
+~ An Agility potion(4) is needed for the quest so 2 toadflax are required if you're making the potion yourself. You can acquire toadflax from the Brimhaven Agility Arena for 3 vouchers each if you lack the Farming level/seeds required to grow them. You can alternatively obtain the potion from the Jekyll and Hyde random event by giving an irit leaf.
+~ While near Brimhaven, enter the Brimhaven Dungeon and kill Moss giants and Fire giants until you obtain a Moss giant bone and Fire giant bone for Rag and Bone Man II.
+~ While near Tai Bwo Wannai, get 100% favour in the Tai Bwo Wannai Cleanup minigame for a medium Karamja Diary task. This will also satisfy the 60% favour requirement for My Arm's Big Adventure; it's best to get 100% now for the diary task, as that quest consumes the 60% favour.
 Combat ready | Take the boots of lightness from the Temple of Ikov cellar | owned:Boots of lightness; go:2676,3404,0
 ~ Bring a light source and a slash weapon or a knife for the webs
 Combat ready | Complete The Tourist Trap | quest:The Tourist Trap
+~ Choose Agility for both experience rewards.
+~ The boss can be safespotted by talking to a guard and using said guard as an object to hide behind.
 Combat ready | Complete Eadgar's Ruse | quest:Eadgar's Ruse
+~ Pick up two extra goutweed herbs from the storage for use in Dream Mentor and Dragon Slayer II.
 Combat ready | Complete My Arm's Big Adventure | quest:My Arm's Big Adventure
 Combat ready | Complete The Fremennik Trials | quest:The Fremennik Trials
 Combat ready | Reach 43 Prayer for the protection prayers | skill:Prayer 43; need:Big bones 150
@@ -192,16 +682,31 @@ Combat ready | Reach 43 Prayer for the protection prayers | skill:Prayer 43; nee
 Combat ready | Get a rune crossbow from the Crazy archaeologist | owned:Rune crossbow; optional
 ~ Broad bolts follow from the Broader fletching Slayer reward
 Combat ready | Get a zombie axe from armoured zombies | owned:Zombie axe; optional
+Combat ready | Train Construction to 20 | skill:Construction 20
+Combat ready | Train Woodcutting to 56 | skill:Woodcutting 56
+Combat ready | Train Crafting to 46 | skill:Crafting 46
 Combat ready | Complete The Fremennik Isles | quest:The Fremennik Isles
+~ Start doing birdhouse runs after this quest.
+~ Put both experience rewards on Strength.
 Combat ready | Complete Getting Ahead | quest:Getting Ahead
+Combat ready | Train Cooking to 41 | skill:Cooking 41
 Combat ready | Complete Recipe for Disaster - Lumbridge Guide | quest:Recipe for Disaster - Lumbridge Guide
 Combat ready | Complete Recipe for Disaster - Skrach Uglogwee | quest:Recipe for Disaster - Skrach Uglogwee
 Combat ready | Complete Haunted Mine | quest:Haunted Mine
+~ Alternatively, this quest can be left until you have 60+ combat stats as this quest has a difficult boss and unlocks no others.
+Combat ready | Train Mining to 40 | skill:Mining 40
 Combat ready | Finish the Karamja easy diary and claim Karamja gloves 1 | varbit:3577; diary:Karamja Easy; npc:Pirate Jackie the Fruit
+~ If you followed the guide closely, you should be at the last step to mine some gold from the rocks north of Brimhaven.
+~ Use the  on Herblore.
 Combat ready | Complete Watchtower | quest:Watchtower
 Combat ready | Complete Contact! | quest:Contact!
+~ Use  on Magic twice.
+Combat ready | Train Magic to 46 | skill:Magic 46
 Combat ready | Complete The Eyes of Glouphrie | quest:The Eyes of Glouphrie
+~ Requires a mud rune for completion which can be obtained from the Mage Training Arena shop. An alternative is to train Runecraft to 13 in order to craft it (consider doing Temple of the Eye at 10). This will require obtaining a water talisman and an earth talisman from water wizards and earth wizards respectively.
+~ If you have not already, kill terrorbirds to the south-west of the Grand Tree until they drop a terrorbird wing for Rag and Bone Man II.
 Combat ready | Complete Temple of the Eye and play Guardians of the Rift | quest:Temple of the Eye; optional
+~ Unlocks Guardians of the Rift.
 Combat ready | Reach 58 Fishing, then barbarian fish at Otto's Grotto | skill:Fishing 58; go:2500,3488,0
 ~ Barbarian fishing trains Agility and Strength too. Good stops: 74 Fishing (50 Agility and Strength), 84 (60), 94 (70)
 Combat ready | Reach 35 Herblore for super attack and combat-boosting potions | skill:Herblore 35
@@ -216,24 +721,58 @@ Combat ready | Reach 50 Cooking | skill:Cooking 50
 Combat ready | Reach 55 Magic and start High Level Alchemy | skill:Magic 55; need:Nature rune 100
 ~ Sell to the West Ardougne general store, or at full alchemy value to Martin Thwait's Lost and Found in the Rogues' Den
 Combat ready | Unlock the Varrock balloon route with Auguste's balloons | varbit:2872>=1; optional
+~ Requires 10 willow logs.
 Barrows gloves | Complete Olaf's Quest | quest:Olaf's Quest
+Barrows gloves | Train Firemaking to 50 | skill:Firemaking 50
 Barrows gloves | Complete Tears of Guthix | quest:Tears of Guthix
+~ Also allows access to the Tears of Guthix minigame, which provides experience in your lowest skill.
+Barrows gloves | Train Prayer to 37 | skill:Prayer 37
 Barrows gloves | Complete Temple of Ikov, siding with the Guardians of Armadyl | quest:Temple of Ikov
 ~ The Armadyl pendant you keep counts for the Armadyl god items in the God Wars Dungeon
+~ Equip the ice arrows obtained during the quest alongside darts or throwing knives to avoid needing a yew shortbow. Both black knives and black darts are a common drop from Burthorpe soldiers. Alternatively to killing soldiers, you can purchase steel knives from Martin Thwait's Lost and Found. if you have 50 Agility and Thieving. Pray Protect from Magic when fighting the Fire Warrior of Lesarkus.
+~ The 20 required limpwurt roots can be obtained as drops from hobgoblins or hill giants.
+~ Side with the Guardians of Armadyl for the Armadyl pendant for cheap God Wars Dungeon protection.
+Barrows gloves | Train Ranged to 40 | skill:Ranged 40
 Barrows gloves | Complete One Small Favour | quest:One Small Favour
+~ Use  on Herblore.
 Barrows gloves | Complete A Tail of Two Cats | quest:A Tail of Two Cats
+~ Use  on Herblore.
+Barrows gloves | Train Smithing to 50 | skill:Smithing 50
+Barrows gloves | Train Slayer to 30 | skill:Slayer 30
 Barrows gloves | Complete The Slug Menace | quest:The Slug Menace
 Barrows gloves | Complete Between a Rock... | quest:Between a Rock...
 Barrows gloves | Complete Monkey Madness I | quest:Monkey Madness I
 ~ Unlocks dragon scimitars and Ape Atoll; bring prayer potions and a ranged or magic option for the demon
+~ Get four additional Monkey talismans from the Monkey child by telling him you have lost the talisman. After world hopping, he will give you another one.
+~ Before returning to Zooknock in the Ape Atoll Dungeon, kill a Monkey Guard, Monkey Archer and Monkey Zombie and pick up their bones.
+~ Create three additional greegrees from Zooknock, which are required for Recipe for Disaster/Freeing King Awowogei. The fourth monkey talisman will be used for Monkey Madness II, but you cannot craft this greegree yet.
+~ After quest completion, talk to Daero for 35,000 experience in Attack and Defence and 20,000 experience in Strength and Hitpoints.
+~ Ape Atoll
+~ Train Firemaking from level 34 to level 40 (consider training to level 50 for efficiency)
+Barrows gloves | Train Construction to 34 | skill:Construction 34
 Barrows gloves | Complete Cold War | quest:Cold War
+~ While training Construction, consider building a workshop and crafting table 3 in your PoH to save time for this quest.
+Barrows gloves | Train Hunter to 12 | skill:Hunter 12
 Barrows gloves | Complete The Ascent of Arceuus | quest:The Ascent of Arceuus
 Barrows gloves | Complete Eagles' Peak | quest:Eagles' Peak
 Barrows gloves | Complete Underground Pass and take Iban's staff | quest:Underground Pass; owned:Iban's staff
 ~ Zamorak robes drop from Iban's disciples, but only until you finish the quest
+~ Disciples of Iban always drop Zamorak robes. Stock up now as they will no longer be there after you complete the quest.
+~ Cheap protection for the God Wars Dungeon.
+Barrows gloves | Train Slayer to 42 | skill:Slayer 42
 Barrows gloves | Complete Skippy and the Mogres | quest:Skippy and the Mogres
+~ Kill Mogres until they drop a Mogre bone for Rag and Bone Man II.
+~ Head north to the Asgarnian Ice Dungeon and kill Ice giants until they drop ice giant ribs for the same quest.
 Barrows gloves | Complete Rag and Bone Man II | quest:Rag and Bone Man II
+~ Travel to the Fremennik Slayer Dungeon with a mirror shield. Enter the dungeon and kill basilisks until you obtain a basilisk bone.
+~ You should now have all of the bones required to finish the quest.
 Barrows gloves | Complete Lair of Tarn Razorlor | quest:Lair of Tarn Razorlor
+~ Kill a Terror dog for a medium Morytania Diary task.
+Barrows gloves | Train Sailing to 40 | skill:Sailing 40
+Barrows gloves | Complete Crab Quest | quest:Crab Quest
+Barrows gloves | Train Fishing to 50 | skill:Fishing 50
+Barrows gloves | Train Prayer to 47 | skill:Prayer 47
+Barrows gloves | Train Farming to 40 | skill:Farming 40
 Barrows gloves | Complete Rum Deal | quest:Rum Deal
 Barrows gloves | Complete Cabin Fever to halve charter ship fares | quest:Cabin Fever; optional
 ~ A ring of charos(a) cuts the fares again
@@ -247,11 +786,20 @@ Barrows gloves | Reach 60 Woodcutting at Wintertodt for the Woodcutting Guild | 
 Barrows gloves | Reach 45 Thieving at the Ardougne cake stall and on master farmers | skill:Thieving 45; go:2668,3311,0
 ~ Master farmers in Draynor and Ardougne are your best early source of herb seeds. At 45, blackjacking in Pollnivneach pays well
 Barrows gloves | Complete His Faithful Servants | quest:His Faithful Servants
+~ Provides a large amount of Prayer experience. The melee Barrows brothers can be kited in their sarcophagus room.
 Barrows gloves | Complete The Great Brain Robbery | quest:The Great Brain Robbery
+~ Use  on Herblore.
+Barrows gloves | Train Construction to 38 | skill:Construction 38
 Barrows gloves | Complete Scrambled! | quest:Scrambled!
+Barrows gloves | Train Crafting to 50 | skill:Crafting 50
 Barrows gloves | Complete The Hand in the Sand | quest:The Hand in the Sand
+Barrows gloves | Train Mining to 45 | skill:Mining 45
 Barrows gloves | Complete Enakhra's Lament | quest:Enakhra's Lament
+~ Mine an additional piece of granite (any size) for King's Ransom.
 Barrows gloves | Complete Meat and Greet | quest:Meat and Greet
+Barrows gloves | Train Mining to 50 | skill:Mining 50
+Barrows gloves | Train Cooking to 53 | skill:Cooking 53
+Barrows gloves | Train Fishing to 53 | skill:Fishing 53
 Barrows gloves | Complete Heroes' Quest | quest:Heroes' Quest
 Barrows gloves | Complete Throne of Miscellania and start managing the kingdom | quest:Throne of Miscellania
 ~ Herbs or hardwood are the iron's picks. Keep the coffer topped up for the daily maximum
@@ -260,14 +808,33 @@ Barrows gloves | Get an imbued god cape from Mage Arena II | any:Imbued saradomi
 Barrows gloves | Get a berserker ring from Dagannoth Rex | owned:Berserker ring; optional; go:2913,4449,0
 ~ Rex can be safespotted with ranged or magic
 Barrows gloves | Get void knight equipment at Pest Control | owned:Void knight top; optional; go:3041,3202,0
+Barrows gloves | Train Thieving to 53 | skill:Thieving 53
 Barrows gloves | Complete Desert Treasure I for ancient magicks | quest:Desert Treasure I
 ~ The final Recipe for Disaster fight needs it done, and ancient magicks speed up much of what follows
+~ If you are lower than 75 Woodcutting or 58 Hunter and have yet to obtain magic logs, skip forward to Legends' Quest and chop dead yommi tree saplings to obtain them. Magic logs may also be obtained through hunters' rumour loot sacks from level 46 hunter.
+Mid game | Train Magic to 59 | skill:Magic 59
+Mid game | Train Mining to 52 | skill:Mining 52
+Mid game | Train Agility to 50 | skill:Agility 50
 Mid game | Complete A Taste of Hope | quest:A Taste of Hope
+~ Use the tome of experience on Herblore.
 Mid game | Complete Family Crest | quest:Family Crest
+~ While en route to kill Chronozon, grab 5 red spiders' eggs from the Edgeville Wilderness Dungeon for the Wilderness Diary.
 Mid game | Complete Legends' Quest | quest:Legends' Quest
+~ Use all the experience rewards on Herblore.
+~ If using yommi trees to obtain magic logs, approximately 200 seeds are needed. Use the drop trick to obtain these from Ungadulu.
+~ To prevent a return trip, grab a vanilla pod for Recipe for Disaster/Freeing Sir Amik Varze.
 Mid game | Complete Recipe for Disaster - Sir Amik Varze | quest:Recipe for Disaster - Sir Amik Varze
 Mid game | Complete Curse of the Empty Lord | quest:Curse of the Empty Lord
+~ Talk to Historian Minas and use the  antique lamp on Herblore.
 Mid game | Complete The General's Shadow | quest:The General's Shadow
+~ Requires the ring of visibility.
+~ Rellekka
+~ Train Farming from level 41 to level 44 (boost to 47)
+~ All Easy Achievement Diaries
+~ Use all  on Herblore.
+~ Medium Ardougne Diary
+~ A mith grapple, which requires 59 Fletching and 59 Smithing to make, is required to complete this diary as well as the medium Falador and Kandarin diaries. An alternative is to kill certain monsters in the Ancient Cavern, which requires the Firemaking portion of the Barbarian Training miniquest. All variants of Skeletons and Barbarian spirits found in the Caverns drop the grapple at a 1/42.67 rate. These monsters also drop yew logs; 11 are needed to complete the diary (the alternative is 60 Woodcutting).
+~ Use  on Herblore.
 Mid game | Finish the Fremennik easy diary and claim Fremennik sea boots 1 | varbit:4531; diary:Fremennik Easy; npc:Thorodin
 Mid game | Finish the Kandarin easy diary and claim Kandarin headgear 1 | varbit:4515; diary:Kandarin Easy; npc:The 'Wedge'
 Mid game | Finish the Kourend easy diary and claim Rada's blessing 1 | varbit:7929; diary:Kourend Easy; npc:Elise
@@ -279,12 +846,23 @@ Mid game | Finish the Ardougne medium diary and claim Ardougne cloak 2 | varbit:
 Mid game | Finish the Falador medium diary and claim Falador shield 2 | varbit:4504; diary:Falador Medium; npc:Sir Rebral
 Mid game | Finish the Varrock medium diary and claim Varrock armour 2 | varbit:4520; diary:Varrock Medium; npc:Toby
 Mid game | Finish the Kandarin medium diary and claim Kandarin headgear 2 | varbit:4516; diary:Kandarin Medium; npc:The 'Wedge'
+Mid game | Train Fletching to 50 | skill:Fletching 50
 Mid game | Complete Land of the Goblins | quest:Land of the Goblins
+~ Dorgesh-Kaan
+~ Train Farming from level 44 to level 46 (boost to 49)
 Mid game | Complete Fairytale II - Cure a Queen | quest:Fairytale II - Cure a Queen
+~ Boost Farming with a garden pie purchased from the Cooks' Guild Pie Shop for 24 coins. Requires a chef's hat to enter.
+Mid game | Train Agility to 54 | skill:Agility 54
 Mid game | Complete A Kingdom Divided | quest:A Kingdom Divided
+~ Use the antique lamp on Herblore.
+Mid game | Train Slayer to 48 | skill:Slayer 48
+Mid game | Train Mining to 55 | skill:Mining 55
 Mid game | Complete The Heart of Darkness | quest:The Heart of Darkness
+Mid game | Train Hunter to 20 | skill:Hunter 20
 Mid game | Complete Perilous Moons and kill the Moons of Peril | quest:Perilous Moons
 ~ Blood moon armour is a Strength set before Bandos; eclipse moon armour and the atlatl are a ranged set
+~ Cam Torum
+~ Train Cooking from level 53 to level 65 (boost to 70)
 Mid game | Reach 70 Agility | skill:Agility 70
 Mid game | Reach 70 Herblore | skill:Herblore 70
 ~ The Make tab shows which potions your stored herbs and secondaries become, and what is short
@@ -297,57 +875,143 @@ Mid game | Make an amulet of fury at 90 Crafting | owned:Amulet of fury; optiona
 Mid game | Get a dragon warhammer from lizardman shamans | owned:Dragon warhammer; optional; go:1312,3686,0
 Mid game | Complete Recipe for Disaster - King Awowogei | quest:Recipe for Disaster - King Awowogei
 Mid game | Reach 175 quest points | qp:175
+Mid game | Train Agility to 56 | skill:Agility 56
 Mid game | Complete Regicide | quest:Regicide
+~ Pick up white berries north of the Elf Tracker for Mourning's End Part II's item list.
+~ Make an additional barrel of naphtha (not a completed Barrel bomb) for Mourning's End Part I.
 Mid game | Complete Roving Elves | quest:Roving Elves
+Mid game | Train Ranged to 60 | skill:Ranged 60
 Mid game | Complete Mourning's End Part I | quest:Mourning's End Part I
 Mid game | Complete Mourning's End Part II | quest:Mourning's End Part II
+~ You should have most of the items for the item list. The alternative would be to obtain a catalytic talisman from Guardians of the Rift which is a 1/200 drop from the Rewards Guardian.
+Mid game | Train Magic to 65 | skill:Magic 65
+Mid game | Train Crafting to 61 | skill:Crafting 61
+Mid game | Train Mining to 60 | skill:Mining 60
 Mid game | Complete Lunar Diplomacy for the Lunar spellbook | quest:Lunar Diplomacy
 ~ Spellbook swap, NPC contact and humidify make many iron chores quicker
 Mid game | Complete What Lies Below | quest:What Lies Below
+~ After the completion of this quest, you should have enough kudos to claim 4,000 experience each in Crafting, Hunter, Prayer, Slayer and Smithing at the information clerk in the Varrock Museum.
+Mid game | Train Defence to 65 | skill:Defence 65
 Mid game | Complete King's Ransom | quest:King's Ransom
+~ Use the antique lamp on Herblore.
 Mid game | Complete Knight Waves Training Grounds | varbit:3909>=8
+Mid game | Train Magic to 66 | skill:Magic 66
 Mid game | Complete Swan Song | quest:Swan Song
 Mid game | Complete Recipe for Disaster - Culinaromancer | quest:Recipe for Disaster - Culinaromancer
+~ Use the antique lamp on Herblore.
 Mid game | Buy Barrows gloves from the Culinaromancer's chest | owned:Barrows gloves; npc:Culinaromancer's chest
 ~ The chest also sells every lower glove tier, if you want a spare pair
+Mid game | Train Woodcutting to 71 | skill:Woodcutting 71
+Mid game | Train Thieving to 58 | skill:Thieving 58
 Mid game | Complete Grim Tales | quest:Grim Tales
+~ Taverley
+~ Train Combat level Combat to 85 (Use Slayer to 69 for efficiency)
 Mid game | Complete Dream Mentor | quest:Dream Mentor
+~ Use the dreamy lamp on Magic.
+Mid game | Train Hunter to 47 | skill:Hunter 47
 Mid game | Complete At First Light | quest:At First Light
+~ Varlamore
+~ Medium Western Provinces Diary
+Mid game | Train Hunter to 52 | skill:Hunter 52
+Mid game | Train Smithing to 55 | skill:Smithing 55
 Mid game | Complete Defender of Varrock | quest:Defender of Varrock
+~ Speak to Historian Minas in the Varrock Museum and put the antique lamp on Herblore.
+~ Varrock
+~ Medium Wilderness Diary
+~ Requires level 50 Slayer.
+~ Medium Karamja Diary
+~ Requires Fishing 60 Fishing to boost to 65.
+~ Medium Kourend & Kebos Diary
+~ Medium Lumbridge & Draynor Diary
 Mid game | Finish the Wilderness medium diary and claim Wilderness sword 2 | varbit:4508; diary:Wilderness Medium; npc:Lesser Fanatic
 Mid game | Finish the Karamja medium diary and claim Karamja gloves 2 | varbit:3598; diary:Karamja Medium; npc:Pirate Jackie the Fruit
 Mid game | Finish the Kourend medium diary and claim Rada's blessing 2 | varbit:7930; diary:Kourend Medium; npc:Elise
 Mid game | Finish the Lumbridge medium diary and claim Explorer's ring 2 | varbit:4536; diary:Lumbridge Medium; npc:Hatius Cosaintus
 Mid game | Finish the Morytania medium diary and claim Morytania legs 2 | varbit:4528; diary:Morytania Medium; npc:Le-sabrè
+Mid game | Train Smithing to 65 | skill:Smithing 65
+Mid game | Train Runecraft to 50 | skill:Runecraft 50
 Mid game | Complete Devious Minds | quest:Devious Minds
+Mid game | Train Runecraft to 52 | skill:Runecraft 52
+Mid game | Train Fletching to 52 | skill:Fletching 52
+Mid game | Train Thieving to 66 | skill:Thieving 66
 Mid game | Complete The Final Dawn | quest:The Final Dawn
+~ Use the lamp on Magic.
+Mid game | Train Sailing to 45 | skill:Sailing 45
+Mid game | Train Construction to 48 | skill:Construction 48
 Mid game | Complete Troubled Tortugans | quest:Troubled Tortugans
+Mid game | Train Sailing to 52 | skill:Sailing 52
 Mid game | Complete The Red Reef | quest:The Red Reef
+Mid game | Train Sailing to 62 | skill:Sailing 62
 Mid game | Complete Fallen From Grace | quest:Fallen From Grace
+Mid game | Train Slayer to 54 | skill:Slayer 54
 Mid game | Complete Shadows of Custodia | quest:Shadows of Custodia
+Mid game | Train Slayer to 56 | skill:Slayer 56
 Mid game | Complete The Path of Glouphrie | quest:The Path of Glouphrie
+Mid game | Train Crafting to 65 | skill:Crafting 65
+Mid game | Train Slayer to 60 | skill:Slayer 60
+Mid game | Train Runecraft to 55 | skill:Runecraft 55
+Mid game | Train Fishing to 60 | skill:Fishing 60
 Mid game | Complete The Fremennik Exiles | quest:The Fremennik Exiles
+Mid game | Train Fletching to 60 | skill:Fletching 60
 Mid game | Complete Sins of the Father | quest:Sins of the Father
+~ Use the tome of experience on Herblore six times.
+Mid game | Train Agility to 62 | skill:Agility 62
+Mid game | Train Firemaking to 55 | skill:Firemaking 55
 Mid game | Complete Beneath Cursed Sands for the Tombs of Amascut | quest:Beneath Cursed Sands
 ~ Low invocations make it a gentle first raid
+Mid game | Train Mining to 64 | skill:Mining 64
+Mid game | Train Ranged to 62 | skill:Ranged 62
+Mid game | Train Strength to 58 | skill:Strength 58
 Mid game | Complete The Curse of Arrav | quest:The Curse of Arrav
+Mid game | Train Agility to 68 | skill:Agility 68
+Mid game | Train Firemaking to 66 | skill:Firemaking 66
 Mid game | Complete Making Friends with My Arm | quest:Making Friends with My Arm
+Mid game | Train Crafting to 70 | skill:Crafting 70
+Mid game | Train Hunter to 60 | skill:Hunter 60
+Mid game | Train Slayer to 69 | skill:Slayer 69
 Mid game | Complete Monkey Madness II | quest:Monkey Madness II
+~ Use both rewards on Magic.
+~ Tree Gnome Stronghold
 Mid game | Finish the Fremennik medium diary and claim Fremennik sea boots 2 | varbit:4532; diary:Fremennik Medium; npc:Thorodin
 Mid game | Complete A Night at the Theatre | quest:A Night at the Theatre
+~ Use all four antique lamps on Magic.
+Toward the late game | Train Magic to 75 | skill:Magic 75
+Toward the late game | Train Smithing to 70 | skill:Smithing 70
+Toward the late game | Train Construction to 50 | skill:Construction 50
 Toward the late game | Complete Dragon Slayer II for Vorkath | quest:Dragon Slayer II
+~ Use all experience rewards on Strength.
 Toward the late game | Complete Regicide and get a toxic blowpipe from Zulrah | owned:Toxic blowpipe; optional; go:2215,3057,0
 Toward the late game | Complete Secrets of the North | quest:Secrets of the North
+Toward the late game | Train Farming to 65 | skill:Farming 65
+Toward the late game | Train Thieving to 72 | skill:Thieving 72
 Toward the late game | Complete While Guthix Sleeps | quest:While Guthix Sleeps
+Toward the late game | Train Construction to 70 | skill:Construction 70
+Toward the late game | Train Farming to 70 | skill:Farming 70
+Toward the late game | Train Herblore to 70 | skill:Herblore 70
+Toward the late game | Train Hunter to 70 | skill:Hunter 70
 Toward the late game | Complete Song of the Elves to reach Prifddinas | quest:Song of the Elves
 ~ The Gauntlet is free to try again and again; the Corrupted Gauntlet gives the Bow of Faerdhinen's seed
+~ To obtain a runite bar, get one as a guaranteed drop from rune dragons, or exchange rune platelegs at the Aldarin windmill nest. Rune platelegs can be purchased at Scavvo's Rune Store in the Champions' Guild for 64,000.
+Toward the late game | Train Firemaking to 75 | skill:Firemaking 75
+Toward the late game | Train Runecraft to 60 | skill:Runecraft 60
 Toward the late game | Complete Desert Treasure II - The Fallen Empire | quest:Desert Treasure II - The Fallen Empire
+~ Use the ancient lamps on any combat skill: it is generally recommended to put them on Prayer, as this is the hardest skill to train.
 Toward the late game | Get a Bow of Faerdhinen from the Corrupted Gauntlet | owned:Bow of faerdhinen; optional
 Toward the late game | Reach 95 Slayer for the Alchemical Hydra | skill:Slayer 95; optional; go:1312,10215,0
 Toward the late game | Complete every quest for the quest point cape | owned:Quest point cape; optional
 Toward the late game | Get an infernal cape from the Inferno | owned:Infernal cape; optional
+Toward the late game | Train Slayer to 74 | skill:Slayer 74
+Toward the late game | Train Woodcutting to 74 | skill:Woodcutting 74
+Toward the late game | Train Smithing to 72 | skill:Smithing 72
+Toward the late game | Train Cooking to 72 | skill:Cooking 72
+Toward the late game | Train Fletching to 70 | skill:Fletching 70
 Toward the late game | Complete The Blood Moon Rises | quest:The Blood Moon Rises
+~ Use the six experience tomes on any skill(s) of your choosing above level 70. Herblore is selected here.
+~ Meiyerditch
+~ All Skills quest XP rewards from this point do not impact any other quests, and therefore require no specific order of completion.
 Toward the late game | Complete The Corsair Curse | quest:The Corsair Curse
+~ Port Sarim
+~ Quest point cape!
 Toward the late game | Complete In Search of Knowledge | quest:In Search of Knowledge
 Toward the late game | Complete Hopespear's Will | quest:Hopespear's Will
 Toward the late game | Complete Vale Totems | quest:Vale Totems
