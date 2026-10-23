@@ -232,6 +232,16 @@ public final class View
 		public List<NeedView> needs = Collections.emptyList();
 		/** "212 tiles north-east" to the step in hand, or null. */
 		public String way;
+		/** Every supply the steps not yet done use up, in route order, for Find. */
+		public List<UseView> uses = Collections.emptyList();
+	}
+
+	/** A supply one step of the route uses up. */
+	public static final class UseView
+	{
+		public String item;
+		public long qty;
+		public String step;
 	}
 
 	/** One step of the route. */
