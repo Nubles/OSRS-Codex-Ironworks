@@ -124,6 +124,20 @@ public class GuidesTest
 	}
 
 	@Test
+	public void readyNowListsOnlyQuestsWhoseNeedsAreMet()
+	{
+		View.GuideView g = Guides.build(route, new HashSet<>(), account(new HashSet<>(), 30), false,
+			Collections.emptyList(), Workshop.empty(), Collections.emptyMap());
+		assertTrue(g.ready.size() > 0);
+		for (View.StepView s : g.ready)
+		{
+			assertTrue(s.text, !s.text.contains("Regicide") && !s.text.contains("Dragon Slayer II"));
+		}
+		assertTrue(Guides.met("Cook's Assistant", account(new HashSet<>(), 1)));
+		assertTrue(!Guides.met("Regicide", account(new HashSet<>(), 99)));
+	}
+
+	@Test
 	public void bankedExperienceIsNamedTowardALevel()
 	{
 		Set<String> quests = new HashSet<>();

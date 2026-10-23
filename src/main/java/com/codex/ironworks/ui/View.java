@@ -232,6 +232,10 @@ public final class View
 		public List<NeedView> needs = Collections.emptyList();
 		/** "212 tiles north-east" to the step in hand, or null. */
 		public String way;
+		/** Route quests further on whose every requirement the account already meets. */
+		public List<StepView> ready = Collections.emptyList();
+		/** Other quests, off the route, the account could start now. */
+		public List<String> readyElse = Collections.emptyList();
 		/** Every supply the steps not yet done use up, in route order, for Find. */
 		public List<UseView> uses = Collections.emptyList();
 	}

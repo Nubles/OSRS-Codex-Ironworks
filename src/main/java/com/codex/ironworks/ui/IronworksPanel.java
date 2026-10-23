@@ -872,6 +872,25 @@ public class IronworksPanel extends PluginPanel
 			p.add(card);
 		}
 
+		if (!g.ready.isEmpty() || !g.readyElse.isEmpty())
+		{
+			p.add(new SectionHeader("Ready now", "needs all met"));
+			Card card = new Card(new BorderLayout());
+			StackPanel in = new StackPanel(2, 0);
+			for (View.StepView s : g.ready)
+			{
+				in.add(new Line(s.text, null, Theme.GREEN, Theme.TEXT_MUTED, Theme.TEXT_MUTED));
+			}
+			if (!g.readyElse.isEmpty())
+			{
+				List<String> names = g.readyElse.subList(0, Math.min(3, g.readyElse.size()));
+				String more = g.readyElse.size() > 3 ? " and " + (g.readyElse.size() - 3) + " more" : "";
+				in.add(new Line("Off the route: " + String.join(", ", names) + more, null, Theme.TEAL, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+			card.add(in, BorderLayout.CENTER);
+			p.add(card);
+		}
+
 		if (!g.sections.isEmpty())
 		{
 			p.add(new SectionHeader("The route", g.done + " of " + g.total));

@@ -146,8 +146,8 @@ public interface CodexIronworksConfig extends Config
 
 	@ConfigItem(
 		keyName = "guidePeople",
-		name = "Outline people",
-		description = "Outline in gold the people the step in hand names",
+		name = "Highlight clicks",
+		description = "Outline in gold what the step in hand asks you to click: people, objects, items to pick up, buy or use, and the chat option to choose",
 		section = GUIDE,
 		position = 22
 	)
