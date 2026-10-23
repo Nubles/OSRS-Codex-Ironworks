@@ -81,13 +81,15 @@ public class GuidesTest
 		int current = 0;
 		for (View.SectionView sv : g.sections)
 		{
-			assertEquals(sv.all, sv.steps.size());
+			assertTrue(sv.all <= sv.steps.size());
+			assertEquals(sv.steps.stream().filter(st -> !st.optional).count(), sv.all);
 			steps += sv.steps.size();
 			current += sv.current ? 1 : 0;
 		}
 		assertEquals(route.size(), steps);
 		assertEquals(1, current);
 		assertTrue(g.sections.get(0).current);
+		assertEquals(route.steps().stream().filter(st -> !st.optional).count(), g.total);
 	}
 
 	@Test
