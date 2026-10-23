@@ -66,7 +66,7 @@ final class Guides
 					View.NeedView n = needs.computeIfAbsent(e.getKey().toLowerCase(Locale.ENGLISH), k ->
 					{
 						View.NeedView v = new View.NeedView();
-						View.Found f = owned.get(k);
+						View.Found f = find(owned, k);
 						v.item = e.getKey();
 						v.have = f == null ? 0 : f.total;
 						v.icon = f == null ? -1 : f.icon;
@@ -170,12 +170,46 @@ final class Guides
 		items.addAll(s.items);
 		for (String i : items)
 		{
-			View.Found f = owned.get(i.toLowerCase(Locale.ENGLISH));
+			View.Found f = find(owned, i);
 			checks.add(new View.CheckView(i, f != null ? "Owned" : "Not yet", f != null));
+		}
+		for (List<String> names : s.anyOf)
+		{
+			String have = null;
+			for (String i : names)
+			{
+				View.Found f = find(owned, i);
+				if (f != null)
+				{
+					have = f.name;
+					break;
+				}
+			}
+			checks.add(new View.CheckView(have != null ? have : String.join(" or ", names), have != null ? "Owned" : "Not yet", have != null));
 		}
 		v.checks = checks;
 		v.hints = hints;
 		return v;
+	}
+
+	/** The owned entry for a name, or for a charged or dosed form of it. */
+	static View.Found find(Map<String, View.Found> owned, String name)
+	{
+		String key = name.toLowerCase(Locale.ENGLISH);
+		View.Found f = owned.get(key);
+		if (f != null)
+		{
+			return f;
+		}
+		String prefix = key + " (";
+		for (Map.Entry<String, View.Found> e : owned.entrySet())
+		{
+			if (e.getKey().startsWith(prefix))
+			{
+				return e.getValue();
+			}
+		}
+		return null;
 	}
 
 	private static Skill skill(String name)

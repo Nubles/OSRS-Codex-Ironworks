@@ -72,6 +72,8 @@ public final class Route
 		// moment checks
 		public final List<String> items = new ArrayList<>();
 		public final List<String> owned = new ArrayList<>();
+		/** Each entry is a choice of names: owning any one of them will do. */
+		public final List<List<String>> anyOf = new ArrayList<>();
 		public final List<String> gone = new ArrayList<>();
 		/** x, y, plane, reach. */
 		public int[] at;
@@ -123,7 +125,7 @@ public final class Route
 		/** True when the step has a check that only holds in the moment. */
 		public boolean moment()
 		{
-			return !items.isEmpty() || !owned.isEmpty() || !gone.isEmpty() || at != null || area != null || emptyBut != null
+			return !items.isEmpty() || !owned.isEmpty() || !anyOf.isEmpty() || !gone.isEmpty() || at != null || area != null || emptyBut != null
 				|| coins >= 0 || !chat.isEmpty() || deathbank != null || house >= 0 || !built.isEmpty();
 		}
 
@@ -370,6 +372,22 @@ public final class Route
 				case "owned":
 					step.owned.add(value);
 					break;
+				case "any":
+				{
+					List<String> names = new ArrayList<>();
+					for (String n : value.split(","))
+					{
+						if (!n.trim().isEmpty())
+						{
+							names.add(n.trim());
+						}
+					}
+					if (!names.isEmpty())
+					{
+						step.anyOf.add(names);
+					}
+					break;
+				}
 				case "gone":
 					step.gone.add(value);
 					break;
@@ -552,6 +570,27 @@ public final class Route
 		return s.tier == null || a.tierDone(s.tier);
 	}
 
+	/**
+	 * True when a set of lower-case item names holds the name asked for, or a charged or dosed form of it:
+	 * "black mask" is matched by "black mask (10)".
+	 */
+	public static boolean holds(java.util.Collection<String> names, String item)
+	{
+		if (names.contains(item))
+		{
+			return true;
+		}
+		String prefix = item + " (";
+		for (String n : names)
+		{
+			if (n.startsWith(prefix))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/** True when the game confirms a step for good: lasting checks only, all holding. */
 	public static boolean met(Step s, Account a)
 	{
@@ -575,6 +614,18 @@ public final class Route
 		for (String i : s.owned)
 		{
 			if (!m.owned(i.toLowerCase(Locale.ENGLISH)))
+			{
+				return false;
+			}
+		}
+		for (List<String> names : s.anyOf)
+		{
+			boolean one = false;
+			for (String i : names)
+			{
+				one |= m.owned(i.toLowerCase(Locale.ENGLISH));
+			}
+			if (!one)
 			{
 				return false;
 			}

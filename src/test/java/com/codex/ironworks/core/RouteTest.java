@@ -20,7 +20,7 @@ public class RouteTest
 {
 	private static final Set<String> TAGS = new HashSet<>(Arrays.asList("quest", "started", "skill", "qp", "combat", "varbit", "varp",
 		"ca", "item", "owned", "gone", "at", "area", "empty", "coins", "chat", "deathbank", "nodeathbank", "built", "house", "go", "npc",
-		"optional", "need"));
+		"optional", "need", "any"));
 
 	private final Route route = Route.load();
 
@@ -113,6 +113,64 @@ public class RouteTest
 			}
 		}
 		assertNull(route.current(ticked, a));
+	}
+
+	@Test
+	public void anyOfAndChargedNamesTick()
+	{
+		Route r = Route.parse(Arrays.asList("A | Get a god cape | any:Imbued saradomin cape,Imbued zamorak cape",
+			"A | Get a black mask | owned:Black mask"));
+		Route.Account a = account(new HashSet<>(), 1);
+		Route.Step cape = r.steps().get(0);
+		Route.Step mask = r.steps().get(1);
+		assertTrue(cape.moment());
+		assertFalse(Route.now(cape, a, owning("saradomin cape")));
+		assertTrue(Route.now(cape, a, owning("imbued zamorak cape")));
+		assertTrue(Route.now(mask, a, owning("black mask (10)")));
+		assertFalse(Route.now(mask, a, owning("black masks", "mask")));
+	}
+
+	private static Route.Moment owning(String... names)
+	{
+		List<String> all = Arrays.asList(names);
+		return new Route.Moment()
+		{
+			@Override
+			public boolean held(String name)
+			{
+				return Route.holds(all, name);
+			}
+
+			@Override
+			public int[] here()
+			{
+				return null;
+			}
+
+			@Override
+			public List<String> inventory()
+			{
+				return all;
+			}
+
+			@Override
+			public long coins()
+			{
+				return 0;
+			}
+
+			@Override
+			public boolean heard(String text)
+			{
+				return false;
+			}
+
+			@Override
+			public boolean deathbank()
+			{
+				return false;
+			}
+		};
 	}
 
 	static Route.Account account(Set<String> quests, int level)
