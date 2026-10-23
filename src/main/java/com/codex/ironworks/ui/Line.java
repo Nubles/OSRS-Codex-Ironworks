@@ -13,7 +13,6 @@ import java.util.List;
  */
 public class Line extends Fitted
 {
-	private static final int ROW = 13;
 	private final String label;
 	private final String figure;
 	private final Color dot;
@@ -47,6 +46,12 @@ public class Line extends Fitted
 		return (dot != null ? 11 : 0) + fm.stringWidth(label.substring(0, n));
 	}
 
+	/** The distance between rows: 13 pixels for the small font, more for a larger one. */
+	private static int row(FontMetrics fm)
+	{
+		return Math.max(13, fm.getAscent() + 4);
+	}
+
 	private List<String> rows(FontMetrics fm, int width)
 	{
 		int fw = figure == null ? 0 : fm.stringWidth(figure) + 6;
@@ -56,8 +61,10 @@ public class Line extends Fitted
 	@Override
 	int heightFor(int width)
 	{
-		int n = rows(getFontMetrics(getFont()), width).size();
-		return n == 1 ? 15 : n * ROW + 2;
+		FontMetrics fm = getFontMetrics(getFont());
+		int n = rows(fm, width).size();
+		int one = Math.max(15, fm.getAscent() + 6);
+		return n == 1 ? one : n * row(fm) + 2;
 	}
 
 	@Override
@@ -82,7 +89,7 @@ public class Line extends Fitted
 		int x = indent(fm);
 		for (int i = 0; i < rows.size(); i++)
 		{
-			Ui.shadowed(g, rows.get(i), x, base + i * ROW, labelColor);
+			Ui.shadowed(g, rows.get(i), x, base + i * row(fm), labelColor);
 		}
 		g.dispose();
 	}

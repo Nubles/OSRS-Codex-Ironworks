@@ -60,6 +60,10 @@ public final class Works
 	Map<Integer, String> names = new HashMap<>();
 	/** The last death's items not yet taken back, or null. */
 	Death death;
+	/** Guide steps ticked by hand or seen done in the moment, by step key. */
+	List<String> ticked = new ArrayList<>();
+	/** True while the player follows the guide, so the game points the way. */
+	boolean following;
 
 	public Works()
 	{
@@ -209,6 +213,42 @@ public final class Works
 	public void forgetDeath()
 	{
 		death = null;
+	}
+
+	// ---- guide ----
+
+	/** The guide steps ticked by hand or in the moment. */
+	public java.util.Set<String> ticked()
+	{
+		return new java.util.HashSet<>(ticked);
+	}
+
+	public boolean isFollowing()
+	{
+		return following;
+	}
+
+	public void setFollowing(boolean following)
+	{
+		this.following = following;
+	}
+
+	/** Ticks or unticks a guide step; returns true when that changed anything. */
+	public boolean tick(String key, boolean done)
+	{
+		if (key == null || done == ticked.contains(key))
+		{
+			return false;
+		}
+		if (done)
+		{
+			ticked.add(key);
+		}
+		else
+		{
+			ticked.remove(key);
+		}
+		return true;
 	}
 
 	// ---- rates ----
@@ -621,6 +661,12 @@ public final class Works
 				case "death":
 					death = gson.fromJson(value, Death.class);
 					break;
+				case "following":
+					following = value.getAsBoolean();
+					break;
+				case "ticked":
+					ticked = readList(gson, value, String.class);
+					break;
 				default:
 					break;
 			}
@@ -800,6 +846,18 @@ public final class Works
 			});
 		}
 		holdings = h;
+		List<String> tk = new ArrayList<>();
+		if (ticked != null)
+		{
+			for (String k : ticked)
+			{
+				if (k != null && !k.isEmpty() && !tk.contains(k))
+				{
+					tk.add(k);
+				}
+			}
+		}
+		ticked = tk;
 		death = death == null ? null : death.repair();
 		if (death != null && death.items.isEmpty())
 		{

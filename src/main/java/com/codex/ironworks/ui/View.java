@@ -48,6 +48,9 @@ public final class View
 	public Map<Skill, Integer> xp = Collections.emptyMap();
 	public Altar altar = Altar.GILDED;
 
+	/** The route and where the player is on it. */
+	public GuideView guide = new GuideView();
+
 	/** Every item the account owns, wherever it is kept, by name. */
 	public List<Found> found = Collections.emptyList();
 	public List<SpotView> spots = Collections.emptyList();
@@ -213,5 +216,72 @@ public final class View
 		/** The player's own pace of getting it, units an hour, and how, when there is one. */
 		public double perHour;
 		public String how;
+	}
+
+	/** The guide: the step in hand, what comes next, and the supplies ahead. */
+	public static final class GuideView
+	{
+		public boolean following;
+		public int done;
+		public int total;
+		/** The step in hand, or null when the route is finished. */
+		public StepView current;
+		public List<StepView> next = Collections.emptyList();
+		public List<SectionView> sections = Collections.emptyList();
+		/** Supplies the next steps use up, against what the account owns. */
+		public List<NeedView> needs = Collections.emptyList();
+		/** "212 tiles north-east" to the step in hand, or null. */
+		public String way;
+	}
+
+	/** One step of the route. */
+	public static final class StepView
+	{
+		public String key;
+		public String section;
+		public String text;
+		public List<String> tips = Collections.emptyList();
+		public boolean done;
+		/** The game confirms it for good. */
+		public boolean met;
+		public boolean optional;
+		/** Each thing the game checks for it, and where the player stands. */
+		public List<CheckView> checks = Collections.emptyList();
+		/** What Ironworks knows that helps: banked experience toward a level, an item already in the bank. */
+		public List<String> hints = Collections.emptyList();
+	}
+
+	/** One thing a step checks: "Agility", "43 / 50". */
+	public static final class CheckView
+	{
+		public String label;
+		public String figure;
+		public boolean ok;
+
+		public CheckView(String label, String figure, boolean ok)
+		{
+			this.label = label;
+			this.figure = figure;
+			this.ok = ok;
+		}
+	}
+
+	/** How far through one part of the route the player is. */
+	public static final class SectionView
+	{
+		public String name;
+		public int done;
+		public int all;
+	}
+
+	/** A supply the next steps use up. */
+	public static final class NeedView
+	{
+		public String item;
+		public int icon = -1;
+		public long need;
+		public long have;
+		/** The first step that needs it, counted from the step in hand (0). */
+		public int stepsAway;
 	}
 }

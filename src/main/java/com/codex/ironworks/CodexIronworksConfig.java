@@ -20,6 +20,13 @@ public interface CodexIronworksConfig extends Config
 	)
 	String STORES = "stores";
 
+	@ConfigSection(
+		name = "Guide",
+		description = "How the Guide tab points you to the step in hand",
+		position = 20
+	)
+	String GUIDE = "guide";
+
 	@ConfigItem(
 		keyName = "target",
 		name = "Runway target",
@@ -123,5 +130,41 @@ public interface CodexIronworksConfig extends Config
 	default String hidden()
 	{
 		return "";
+	}
+
+	@ConfigItem(
+		keyName = "guideArrow",
+		name = "Hint arrow",
+		description = "Point the game's hint arrow at the person or place the step in hand needs, when it is near",
+		section = GUIDE,
+		position = 21
+	)
+	default boolean guideArrow()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "guidePeople",
+		name = "Outline people",
+		description = "Outline in gold the people the step in hand names",
+		section = GUIDE,
+		position = 22
+	)
+	default boolean guidePeople()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "guidePath",
+		name = "Shortest Path",
+		description = "Ask the Shortest Path plugin, if you have it, to draw the way to the step in hand",
+		section = GUIDE,
+		position = 23
+	)
+	default boolean guidePath()
+	{
+		return false;
 	}
 }
