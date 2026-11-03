@@ -709,7 +709,7 @@ Combat ready | Complete Temple of the Eye and play Guardians of the Rift | quest
 ~ Unlocks Guardians of the Rift.
 Combat ready | Reach 58 Fishing, then barbarian fish at Otto's Grotto | skill:Fishing 58; go:2500,3488,0
 ~ Barbarian fishing trains Agility and Strength too. Good stops: 74 Fishing (50 Agility and Strength), 84 (60), 94 (70)
-Combat ready | Reach 35 Herblore for super attack and combat-boosting potions | skill:Herblore 35
+Combat ready | Reach 45 Herblore for super attack and combat-boosting potions | skill:Herblore 45
 Combat ready | Reach 50 Agility and run the Agility Pyramid for coins | skill:Agility 50; go:3347,2827,0
 ~ Each pyramid top sells to Simon Templeton for 10,000 coins
 Combat ready | Reach 40 Mining | skill:Mining 40
@@ -719,7 +719,7 @@ Combat ready | Smelt steel at the Blast Furnace to 50 Smithing | skill:Smithing 
 ~ Steel bars go on to cannonballs, darts and other skills
 Combat ready | Reach 50 Cooking | skill:Cooking 50
 Combat ready | Reach 55 Magic and start High Level Alchemy | skill:Magic 55; need:Nature rune 100
-~ Sell to the West Ardougne general store, or at full alchemy value to Martin Thwait's Lost and Found in the Rogues' Den
+~ Sell to the West Ardougne general store, or to Martin Thwait's Lost and Found in the Rogues' Den, which pays high alchemy value for the first of each item
 Combat ready | Unlock the Varrock balloon route with Auguste's balloons | varbit:2872>=1; optional
 ~ Requires 10 willow logs.
 Barrows gloves | Complete Olaf's Quest | quest:Olaf's Quest
@@ -776,7 +776,7 @@ Barrows gloves | Train Farming to 40 | skill:Farming 40
 Barrows gloves | Complete Rum Deal | quest:Rum Deal
 Barrows gloves | Complete Cabin Fever to halve charter ship fares | quest:Cabin Fever; optional
 ~ A ring of charos(a) cuts the fares again
-Barrows gloves | Move your house to Pollnivneach or Brimhaven, and buy law runes for Teleport to House | skill:Construction 20; optional
+Barrows gloves | Move your house to Pollnivneach (20 Construction) or Brimhaven (40), and buy law runes for Teleport to House | skill:Construction 20; optional
 ~ Minigame teleports are free every 20 minutes: Burthorpe, Castle Wars and Ferox Enclave
 Barrows gloves | Reach 50 Firemaking at Wintertodt | skill:Firemaking 50; go:1630,3958,0; need:Cake 10
 ~ Bring a hammer, a knife, a tinderbox and an axe. Wintertodt crates are an iron's first big supply of seeds, herbs and ores
