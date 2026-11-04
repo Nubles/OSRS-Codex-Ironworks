@@ -415,6 +415,7 @@ public class IronworksPanel extends PluginPanel
 			herbiboar(p);
 			woodcutting(p);
 			mining(p);
+			stars(p);
 			trawling(p);
 			return p;
 		}
@@ -426,6 +427,7 @@ public class IronworksPanel extends PluginPanel
 		herbiboar(p);
 		woodcutting(p);
 		mining(p);
+		stars(p);
 		trawling(p);
 		if (!s.skills.isEmpty())
 		{
@@ -1030,6 +1032,127 @@ public class IronworksPanel extends PluginPanel
 		p.add(foot("Your own ore, timed ore to ore at the rock: waiting for a rock to come back counts, a bank trip does not. "
 			+ "Times over mined rocks are estimates from the OSRS Wiki's respawn times until you have seen three come back in one place. "
 			+ "The Motherlode Mine is left to Codex Minigame Pilot."));
+	}
+
+	/**
+	 * Shooting stars as this account mines them: the star by the player now with its layer, stardust
+	 * and Mining experience an hour on the size mined last, the size that pays best at their level,
+	 * their stardust toward the Dusuri shop item they chose, the layers they watched end, and the
+	 * stars they found themselves.
+	 */
+	private void stars(StackPanel p)
+	{
+		View.StarView v = view.stars;
+		if (v == null)
+		{
+			return;
+		}
+		p.add(new SectionHeader("Shooting stars", Format.amount(v.dust) + " dust"));
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.GOLD_BRIGHT);
+		StackPanel in = new StackPanel(2, 0);
+		View.StarNow n = v.now;
+		if (n != null)
+		{
+			in.add(new Line("By you now: size " + n.size + ", W" + n.world, "needs " + n.level, null, Theme.GOLD_BRIGHT,
+				v.level > 0 && v.level < n.level ? Theme.BLOCKED : Theme.TEXT_MUTED));
+			if (n.leftSeconds >= 0)
+			{
+				in.add(new Meter("Layer left, estimate (" + (n.own ? "your layers" : "wiki 7 min") + ")",
+					"~" + Format.estimate((long) (n.leftSeconds * 1000)), Math.max(0, Math.min(1, n.mined)), Theme.progressColor(n.mined)));
+			}
+			if (n.prospected >= 0)
+			{
+				in.add(new Line("      prospected " + n.prospected + "% mined, " + Format.ago((long) (n.prospectAgoSeconds * 1000)), null, null,
+					Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+			else if (n.leftSeconds < 0)
+			{
+				in.add(new Line("      prospect it to see how far its layer is mined", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+		}
+		if (v.size > 0)
+		{
+			if (v.perHour > 0)
+			{
+				in.add(new Figure(Words.rate(v.perHour), "stardust an hour at your pace", Theme.GREEN));
+				in.add(new Line("      size-" + v.size + " stars, over " + Format.duration(v.timedMs), null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+				in.add(new Line("Mining an hour", Words.rate(v.xpPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.TEXT));
+			}
+			else
+			{
+				long left = Math.max(60_000L, com.codex.ironworks.core.Starlog.LEARN_MS - v.timedMs);
+				in.add(new Line("Timing your size-" + v.size + " stars", "~" + Format.duration(left) + " to go", null,
+					Theme.GOLD_BRIGHT, Theme.TEXT_FAINT));
+			}
+		}
+		if (v.tiers.size() > 1 || v.best != null && v.best.size != v.size)
+		{
+			in.add(new Line(v.level > 0 ? "By size, at " + v.level + " Mining" : "By size", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.TierView t : v.tiers)
+			{
+				boolean best = t == v.best;
+				boolean closed = v.level > 0 && t.level > v.level;
+				String figure = closed ? "from " + t.level : t.xpPerHour > 0 ? Words.rate(t.xpPerHour) + " xp/h" : Format.amount(t.dust) + " dust";
+				String label = "      Size " + t.size + (t.perHour > 0 ? ", " + Words.rate(t.perHour) + " dust/h" : "");
+				in.add(new Line(label, figure, null, best ? Theme.GOLD_BRIGHT : Theme.TEXT,
+					closed ? Theme.BLOCKED : best ? Theme.GREEN : t.xpPerHour > 0 ? Theme.TEAL : Theme.TEXT_MUTED));
+			}
+		}
+		if (v.largest > 0)
+		{
+			in.add(Ui.wrapped("At " + v.level + " you mine layers up to size " + v.largest + ". Every size gives 32 xp a dust and your "
+				+ "chance comes from your level (wiki), so gaps between sizes are your own pace.",
+				Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+		}
+		if (v.bonus > 0)
+		{
+			in.add(new Line("Discovery bonus dust", Format.amount(v.bonus), null, Theme.TEXT_MUTED, Theme.GOLD_BRIGHT));
+		}
+		if (v.goal != null)
+		{
+			double share = v.goalPrice <= 0 ? 0 : Math.min(1, v.held / (double) v.goalPrice);
+			in.add(new Line("Toward " + v.goal, null, null, Theme.GOLD, Theme.TEXT));
+			in.add(new Meter("      " + Format.amount(v.held) + " of " + Format.amount(v.goalPrice) + " stardust held",
+				Format.percent(share), share, Theme.progressColor(share)));
+			if (share >= 1)
+			{
+				in.add(new Line("      enough to buy it from Dusuri", null, null, Theme.GREEN, Theme.TEXT_FAINT));
+			}
+			else if (v.goalHours > 0)
+			{
+				in.add(new Line("      at your pace", "~" + Format.estimate((long) (v.goalHours * 3_600_000)) + " of mining", null,
+					Theme.TEXT_FAINT, Theme.TEAL));
+			}
+		}
+		if (v.layers > 0)
+		{
+			in.add(new Line("Layers you watched end", null, null, Theme.GOLD, Theme.TEXT));
+			in.add(new Line("      " + Format.amount(v.layers) + " seen, start to end", Format.seconds(v.layerSeconds * 1000)
+				+ " (wiki " + Format.seconds(v.wikiLayerSeconds * 1000) + ")", null, Theme.TEXT_MUTED, Theme.TEXT));
+		}
+		if (!v.finds.isEmpty())
+		{
+			in.add(new Line("Stars you found", Format.amount(v.found), null, Theme.GOLD, Theme.TEXT_MUTED));
+			int shown = 0;
+			for (View.FindView f : v.finds)
+			{
+				if (shown++ >= 6)
+				{
+					break;
+				}
+				String sizes = "size " + f.size + (f.gone ? " to gone" : f.lowest < f.size ? " to " + f.lowest : "");
+				in.add(new Line("W" + f.world + ", " + sizes + (f.discovered ? ", first" : ""), Format.ago(view.now - f.first), null,
+					f.discovered ? Theme.GOLD_BRIGHT : Theme.TEXT, Theme.TEXT_FAINT));
+				in.add(new Line("      " + f.where + (f.dust > 0 ? ", " + Format.amount(f.dust) + " dust" : ""), null, null,
+					Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+		}
+		card.add(in, BorderLayout.CENTER);
+		p.add(card);
+		p.add(foot("Your own stardust, timed dust to dust at the star; discovery bonus dust is counted but left out of your pace. "
+			+ "A layer lasts 7 minutes while anyone mines it (OSRS Wiki), so time left is an estimate from the last prospect. "
+			+ "Only stars you prospected or mined are logged, with \"first\" where the game said you found it first; nothing is shared."));
 	}
 
 	/**

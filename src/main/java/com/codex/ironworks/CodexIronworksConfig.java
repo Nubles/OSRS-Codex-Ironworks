@@ -1,6 +1,7 @@
 package com.codex.ironworks;
 
 import com.codex.ironworks.core.Altar;
+import com.codex.ironworks.core.Stars;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -150,6 +151,28 @@ public interface CodexIronworksConfig extends Config
 	default boolean mineCoach()
 	{
 		return true;
+	}
+
+	@ConfigItem(
+		keyName = "starCoach",
+		name = "Star layer estimate",
+		description = "While you mine or prospect a shooting star, show its size, the level it needs and an estimate of the time left on its layer",
+		position = 13
+	)
+	default boolean starCoach()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "starGoal",
+		name = "Stardust goal",
+		description = "A Dusuri's Star Shop item to save stardust toward: the stars card shows your stardust against its price and the time at your pace",
+		position = 14
+	)
+	default Stars.Reward starGoal()
+	{
+		return Stars.Reward.NONE;
 	}
 
 	@ConfigItem(

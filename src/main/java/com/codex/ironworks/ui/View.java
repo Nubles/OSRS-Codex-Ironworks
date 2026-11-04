@@ -339,6 +339,89 @@ public final class View
 		public List<ComebackView> comebacks = Collections.emptyList();
 	}
 
+	/** Shooting stars: the player's own stardust an hour by size; null when no star has been found. */
+	public StarView stars;
+
+	/** Shooting stars as this account mines them. */
+	public static final class StarView
+	{
+		/** Stardust mined in all, discovery bonus among it, and the stars found. */
+		public long dust;
+		public long bonus;
+		public int found;
+		/** The Mining level, when known; 0 when not. */
+		public int level;
+		/** The size mined last. */
+		public int size;
+		/** Stardust and Mining experience an hour at the player's pace on it, and the time timed over; 0 until timed. */
+		public double perHour;
+		public double xpPerHour;
+		public long timedMs;
+		/** Every size mined, largest first. */
+		public List<TierView> tiers = Collections.emptyList();
+		/** The size with the most Mining experience an hour at the player's own pace, open at their level. */
+		public TierView best;
+		/** The largest size the level opens. */
+		public int largest;
+		/** Layers watched from start to end, their average seconds, and the wiki's. */
+		public long layers;
+		public double layerSeconds;
+		public double wikiLayerSeconds;
+		/** The stars found, the latest first. */
+		public List<FindView> finds = Collections.emptyList();
+		/** The Dusuri shop item chosen, its picture and price; null when none. */
+		public String goal;
+		public int goalIcon = -1;
+		public int goalPrice;
+		/** Stardust held now (pack and bank as last seen), and hours to the goal at the player's pace; 0 when not timed. */
+		public long held;
+		public double goalHours;
+		/** The star by the player now; null when not at one. */
+		public StarNow now;
+	}
+
+	/** One size of star as this account mines it. */
+	public static final class TierView
+	{
+		public int size;
+		public int level;
+		public long dust;
+		public double perHour;
+		public double xpPerHour;
+	}
+
+	/** One star the player found. */
+	public static final class FindView
+	{
+		public int world;
+		public int size;
+		public int lowest;
+		public long dust;
+		public long first;
+		public long last;
+		public boolean discovered;
+		public boolean gone;
+		/** Where it was: near a teleport the account owns when Wayfinder knows one, else its map tile. */
+		public String where;
+	}
+
+	/** The star the player stands by. */
+	public static final class StarNow
+	{
+		public int world;
+		public int size;
+		public int level;
+		/** The share of the layer mined, 0 to 1, or -1 when not known. */
+		public double mined = -1;
+		/** Estimated seconds left on the layer, or -1 when not known. */
+		public double leftSeconds = -1;
+		/** The share the game gave when last prospected, or -1, and seconds since. */
+		public int prospected = -1;
+		public double prospectAgoSeconds;
+		/** Whether the layer time is the player's own average rather than the wiki's 7 minutes. */
+		public boolean own;
+	}
+
 	/** Deep sea trawling: the player's own fish an hour by kind; null when nothing has been trawled. */
 	public TrawlView trawling;
 
