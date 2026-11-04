@@ -1016,7 +1016,8 @@ public class IronworksPanel extends PluginPanel
 			{
 				figure = null;
 			}
-			String label = r.optional ? r.product + " at the sawmill" : r.usesUp() ? usedUp(r) : r.product;
+			String label = r.optional && r.inputs.containsKey("Coins") ? r.product + " at the sawmill"
+				: r.usesUp() ? usedUp(r) : r.product;
 			in.add(option(label, figure, r.product.equals(picked), () -> actions.method(store, r.product)));
 		}
 		in.add(option("Keep them as they are", null, Workshop.KEEP.equals(picked), () -> actions.method(store, Workshop.KEEP)));
@@ -1082,6 +1083,8 @@ public class IronworksPanel extends PluginPanel
 				return "Offer them";
 			case FARMING:
 				return "Plant them";
+			case SAILING:
+				return "Sort it at a salvaging station";
 			default:
 				return "Build with them";
 		}
