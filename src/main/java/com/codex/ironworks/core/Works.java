@@ -78,6 +78,8 @@ public final class Works
 	Trawls trawls = new Trawls();
 	/** The player's shooting stars: stardust and experience an hour by size, and the stars they found. */
 	Starlog stars = new Starlog();
+	/** The player's own fishing: fish an hour by way and tool, what else turned up, and spots seen move. */
+	Fishing fishing = new Fishing();
 
 	public Works()
 	{
@@ -330,6 +332,12 @@ public final class Works
 	public Starlog stars()
 	{
 		return stars;
+	}
+
+	/** The player's fishing log. */
+	public Fishing fishing()
+	{
+		return fishing;
 	}
 
 	/** The player's deep sea trawling log. */
@@ -781,6 +789,9 @@ public final class Works
 				case "stars":
 					stars = gson.fromJson(value, Starlog.class);
 					break;
+				case "fishing":
+					fishing = gson.fromJson(value, Fishing.class);
+					break;
 				default:
 					break;
 			}
@@ -990,6 +1001,7 @@ public final class Works
 		mines = mines == null ? new Mines() : mines.repair();
 		trawls = trawls == null ? new Trawls() : trawls.repair();
 		stars = stars == null ? new Starlog() : stars.repair();
+		fishing = fishing == null ? new Fishing() : fishing.repair();
 		death = death == null ? null : death.repair();
 		if (death != null && death.items.isEmpty())
 		{

@@ -1,6 +1,7 @@
 package com.codex.ironworks.ui;
 
 import com.codex.ironworks.core.Death;
+import com.codex.ironworks.core.Fish;
 import com.codex.ironworks.core.Family;
 import com.codex.ironworks.core.Runway;
 import com.codex.ironworks.core.Source;
@@ -417,6 +418,7 @@ public class IronworksPanel extends PluginPanel
 			mining(p);
 			stars(p);
 			trawling(p);
+			fishing(p);
 			return p;
 		}
 		if (s.gained > 0)
@@ -429,6 +431,7 @@ public class IronworksPanel extends PluginPanel
 		mining(p);
 		stars(p);
 		trawling(p);
+		fishing(p);
 		if (!s.skills.isEmpty())
 		{
 			Card hands = new Card(new BorderLayout());
@@ -1245,6 +1248,175 @@ public class IronworksPanel extends PluginPanel
 		p.add(foot("Your own fish, counted as they land in the net and timed catch to catch while you keep with a shoal; "
 			+ "a gap over three minutes is not timed. Experience is what came in between catches. "
 			+ "Your net and boat are not told apart. The same pace times trawling wherever Ironworks ranks ways to get these fish."));
+	}
+
+	/**
+	 * Fishing as this account does it: fish and Fishing experience an hour on the way fished last, the
+	 * way that pays best at the player's level and the best one they have not tried, how long the fish
+	 * their plans are short of take, what else turned up with big fish and Molch pearls against the
+	 * wiki's chances, their pearls toward the Alry shop item they chose, and the spots they saw move.
+	 */
+	private void fishing(StackPanel p)
+	{
+		View.FishView v = view.fishing;
+		if (v == null)
+		{
+			return;
+		}
+		String sub = Format.amount(v.fish) + " fish";
+		if (v.clues > 0)
+		{
+			sub += ", " + Format.amount(v.clues) + (v.clues == 1 ? " clue" : " clues");
+		}
+		p.add(new SectionHeader("Fishing", sub));
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.TEAL);
+		StackPanel in = new StackPanel(2, 0);
+		if (v.method != null)
+		{
+			String how = v.method.toLowerCase(Locale.ENGLISH) + (v.tool == null ? "" : ", " + v.tool.toLowerCase(Locale.ENGLISH));
+			if (v.perHour > 0)
+			{
+				in.add(new Figure(Words.rate(v.perHour), "fish an hour at your pace", Theme.GREEN));
+				in.add(new Line("      " + how + ", over " + Format.duration(v.timedMs), null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+				in.add(new Line("Fishing an hour", Words.rate(v.xpPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.TEXT));
+			}
+			else
+			{
+				long left = Math.max(60_000L, com.codex.ironworks.core.Fishing.LEARN_MS - v.timedMs);
+				in.add(new Line("Timing your " + v.method.toLowerCase(Locale.ENGLISH), "~" + Format.duration(left) + " to go", null,
+					Theme.GOLD_BRIGHT, Theme.TEXT_FAINT));
+				in.add(new Line("      " + how, null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+		}
+		if (v.best != null || v.untried != null)
+		{
+			in.add(new Line(v.level > 0 ? "Best for you at " + v.level : "Best for you", null, null, Theme.GOLD, Theme.TEXT));
+			if (v.best != null)
+			{
+				in.add(new IconLine(v.best.icon, v.best.method + (v.best.tool == null ? "" : ", " + shortTool(v.best.tool)),
+					Words.rate(v.best.xpPerHour) + " xp/h", icons, Theme.TEXT, Theme.GREEN));
+			}
+			if (v.untried != null)
+			{
+				in.add(Ui.wrapped(v.untried + " is open: " + v.untriedFish.toLowerCase(Locale.ENGLISH) + " from " + v.untriedLevel + ", "
+					+ xp(v.untriedXp) + " xp a fish (wiki); fish it a while to compare.", Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+			}
+		}
+		if (!v.plans.isEmpty())
+		{
+			in.add(new Line("For your plans", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.CatchPlan o : v.plans)
+			{
+				String figure;
+				Color tint;
+				if (o.needs > 0)
+				{
+					figure = "from " + o.needs;
+					tint = Theme.BLOCKED;
+				}
+				else if (o.perHour > 0)
+				{
+					figure = Format.estimate((long) (o.hours * 3_600_000));
+					tint = Theme.TEAL;
+				}
+				else
+				{
+					figure = "not timed";
+					tint = Theme.TEXT_MUTED;
+				}
+				in.add(new IconLine(o.icon, Format.amount(o.need) + " " + o.store.toLowerCase(Locale.ENGLISH) + " short", figure, icons,
+					Theme.TEXT, tint));
+			}
+		}
+		if (v.casts.size() > 1 || v.method == null)
+		{
+			in.add(new Line("By way and tool", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.CastView c : v.casts)
+			{
+				String figure = c.xpPerHour > 0 ? Words.rate(c.xpPerHour) + " xp/h" : Format.amount(c.count);
+				String label = c.method + (c.tool == null ? "" : ", " + shortTool(c.tool));
+				in.add(new IconLine(c.icon, label, figure, icons, Theme.TEXT, c.xpPerHour > 0 ? Theme.TEAL : Theme.TEXT_MUTED));
+			}
+		}
+		if (!v.found.isEmpty())
+		{
+			in.add(new Line("Turned up", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.FoundView f : v.found)
+			{
+				in.add(new IconLine(f.icon, f.name, Format.amount(f.count), icons, Theme.TEXT, f.clue ? Theme.VIOLET : Theme.GOLD_BRIGHT));
+			}
+		}
+		for (View.LuckView l : v.luck)
+		{
+			if (l.seen == 0 && l.expected < 0.25)
+			{
+				continue;
+			}
+			in.add(new Line("      " + l.name + " 1/" + Format.amount(l.oneIn),
+				l.seen + ", wiki " + String.format(Locale.ENGLISH, "%.1f", l.expected), null, Theme.TEXT_MUTED,
+				l.seen >= l.expected ? Theme.GREEN : Theme.TEXT));
+		}
+		if (v.aerialCatches > 0)
+		{
+			in.add(new Line("Molch pearls", Format.amount(v.pearls) + " from " + Format.amount(v.aerialCatches) + " catches", null,
+				Theme.GOLD, Theme.TEXT_MUTED));
+			if (v.pearls > 0)
+			{
+				double oneIn = v.aerialCatches / (double) v.pearls;
+				String luck = oneIn < Fish.PEARL_ONE_IN_HIGH_LEVELS ? "luckier than wiki"
+					: oneIn > Fish.PEARL_ONE_IN_LOW_LEVELS ? "drier than wiki" : "in the wiki's range";
+				in.add(new Line("      1 per " + Format.amount(Math.round(oneIn)), luck, null, Theme.TEXT_MUTED,
+					oneIn > Fish.PEARL_ONE_IN_LOW_LEVELS ? Theme.EMBER : Theme.GREEN));
+			}
+			if (v.pearlsPerHour > 0)
+			{
+				in.add(new Line("      pearls an hour at your pace", Words.rate(v.pearlsPerHour), null, Theme.TEXT_MUTED, Theme.TEXT));
+			}
+			in.add(Ui.wrapped("The wiki gives 1/66.9 to 1/42 a catch, better with higher Fishing and Hunter, and notes the rate changed lately.",
+				Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+		}
+		if (v.pearlGoal != null)
+		{
+			double share = v.pearlGoalPrice <= 0 ? 0 : Math.min(1, v.pearlsHeld / (double) v.pearlGoalPrice);
+			in.add(new Line("Toward " + v.pearlGoal, null, null, Theme.GOLD, Theme.TEXT));
+			in.add(new Meter("      " + Format.amount(v.pearlsHeld) + " of " + Format.amount(v.pearlGoalPrice) + " pearls held",
+				Format.percent(share), share, Theme.progressColor(share)));
+			if (share >= 1)
+			{
+				in.add(new Line("      enough to buy it from Alry", null, null, Theme.GREEN, Theme.TEXT_FAINT));
+			}
+			else if (v.pearlGoalHours > 0)
+			{
+				in.add(new Line("      at your pace", "~" + Format.estimate((long) (v.pearlGoalHours * 3_600_000)) + " aerial", null,
+					Theme.TEXT_FAINT, Theme.TEAL));
+			}
+		}
+		if (!v.stays.isEmpty())
+		{
+			in.add(new Line("Spots you saw move", null, null, Theme.GOLD, Theme.TEXT));
+			java.util.Set<String> windows = new java.util.LinkedHashSet<>();
+			for (View.StayView st : v.stays)
+			{
+				in.add(new Line("      " + st.spot + " (" + Format.amount(st.seen) + ")", Format.seconds(st.seconds * 1000), null,
+					Theme.TEXT_MUTED, Theme.TEXT));
+				windows.add(Format.seconds(st.wikiMinSeconds * 1000) + " to " + Format.seconds(st.wikiMaxSeconds * 1000));
+			}
+			in.add(Ui.wrapped("Average stay seen from arrival to move; the wiki gives " + String.join(", or ", windows) + ".",
+				Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+		}
+		card.add(in, BorderLayout.CENTER);
+		p.add(card);
+		p.add(foot("Your own fish, timed catch to catch at the spot: following a spot that moved counts, a bank trip does not. "
+			+ "Experience is the wiki's for each fish, before the angler outfit's bonus. Times over the spot you fish are estimates "
+			+ "from the wiki's 2.5 to about 5 minutes a spot stays. Trawling at sea has its own card."));
+	}
+
+	/** "Dragon harpoon" as "dragon"; "Small fishing net" as "small net"; a plain harpoon stays "harpoon". */
+	private static String shortTool(String tool)
+	{
+		String t = tool.endsWith(" harpoon") ? tool.substring(0, tool.length() - " harpoon".length()) : tool;
+		return t.replace(" fishing net", " net").toLowerCase(Locale.ENGLISH);
 	}
 
 	/** "Dragon pickaxe" as "dragon". */

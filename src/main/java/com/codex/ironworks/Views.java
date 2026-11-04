@@ -9,6 +9,8 @@ import com.codex.ironworks.core.Trees;
 import com.codex.ironworks.core.Woodcuts;
 import com.codex.ironworks.core.Mines;
 import com.codex.ironworks.core.Shoals;
+import com.codex.ironworks.core.Fish;
+import com.codex.ironworks.core.Fishing;
 import com.codex.ironworks.core.Trawls;
 import com.codex.ironworks.core.Starlog;
 import com.codex.ironworks.core.Stars;
@@ -292,6 +294,7 @@ final class Views
 		v.woodcutting = woodcutting(works, levels);
 		v.mining = mining(works, levels, v.wants);
 		v.trawling = trawling(works, levels, v.wants);
+		v.fishing = fishing(works, levels, v.wants);
 		v.stars = stars(works, levels, travel);
 		v.shortWays = shortWays(v.workshop, works, lookup, levels, shops, travel, here);
 		long listCoins = 0;
@@ -471,6 +474,11 @@ final class Views
 		{
 			// Trawled fish timed catch to catch while following the shoal.
 			return works.trawls().perHour(store);
+		}
+		if (src == Source.GATHERED && Fish.byStore(store) != null && works.fishing().perHour(store) > 0)
+		{
+			// Fish timed catch to catch at the spot, walking after a spot that moved counted in.
+			return works.fishing().perHour(store);
 		}
 		if ((src == Source.MADE || src == Source.GATHERED) && Catalogue.family(store) == Family.RUNES)
 		{
@@ -997,6 +1005,207 @@ final class Views
 		}
 		v.plans = plans;
 		return v;
+	}
+
+	/**
+	 * The fishing card on the Sources tab: the player's own fish and Fishing experience an hour by way
+	 * of fishing and tool, the way that pays them best at their level, the best way their level opens
+	 * that they have not tried, how long the fish their plans are short of take at their pace, what
+	 * else turned up (with big fish against the wiki's chance and Molch pearls against aerial
+	 * catches), and how long the spots they watched stayed put. Null until something has been caught.
+	 */
+	static View.FishView fishing(Works works, Map<Skill, Integer> levels, List<View.Want> wants)
+	{
+		Fishing log = works.fishing();
+		if (log.isEmpty())
+		{
+			return null;
+		}
+		View.FishView v = new View.FishView();
+		v.level = levels.getOrDefault(Skill.FISHING, 0);
+		int hunter = levels.getOrDefault(Skill.HUNTER, 0);
+		v.fish = log.caught();
+		List<View.CastView> casts = new ArrayList<>();
+		for (Map.Entry<String, Fishing.Spot> e : log.byLatest())
+		{
+			Fish.Method m = Fishing.methodOf(e.getKey());
+			Fishing.Spot s = e.getValue();
+			if (m == null || s.count() == 0)
+			{
+				continue;
+			}
+			View.CastView c = new View.CastView();
+			c.method = m.name;
+			c.spot = m.spot;
+			c.tool = Fishing.toolOf(e.getKey());
+			Fish.Kind top = null;
+			long most = -1;
+			for (Map.Entry<String, Long> f : s.getFish().entrySet())
+			{
+				Fish.Kind k = Fish.byStore(f.getKey());
+				if (k != null && (f.getValue() > most || f.getValue() == most && k.xp > top.xp))
+				{
+					most = f.getValue();
+					top = k;
+				}
+			}
+			c.fish = top == null ? null : top.store;
+			c.icon = top == null ? -1 : top.item;
+			c.count = s.count();
+			c.perHour = s.perHour();
+			c.xpPerHour = s.xpPerHour();
+			casts.add(c);
+			boolean open = v.level == 0 || m.level() <= v.level;
+			if (open && c.xpPerHour > 0 && (v.best == null || c.xpPerHour > v.best.xpPerHour))
+			{
+				v.best = c;
+			}
+		}
+		v.casts = casts;
+		if (!casts.isEmpty())
+		{
+			View.CastView last = casts.get(0);
+			v.method = last.method;
+			v.tool = last.tool;
+			v.fishName = last.fish;
+			v.icon = last.icon;
+			v.perHour = last.perHour;
+			v.xpPerHour = last.xpPerHour;
+			v.timedMs = log.spots().get(log.latest()).getMs();
+		}
+		if (v.level > 0)
+		{
+			// The way open at this level, to any account, with the most experience for its best fish, if never fished.
+			Fish.Method topMethod = null;
+			Fish.Kind topFish = null;
+			for (Fish.Method m : Fish.methods())
+			{
+				Fish.Kind k = m.best(v.level);
+				if (!m.plain || k == null || k.hunter > 0 && hunter < k.hunter)
+				{
+					continue;
+				}
+				if (topFish == null || k.xp > topFish.xp)
+				{
+					topMethod = m;
+					topFish = k;
+				}
+			}
+			if (topMethod != null && !log.tried(topMethod))
+			{
+				v.untried = topMethod.name;
+				v.untriedFish = topFish.store;
+				v.untriedLevel = topFish.level;
+				v.untriedXp = topFish.xp;
+				v.untriedIcon = topFish.item;
+			}
+		}
+		List<View.CatchPlan> plans = new ArrayList<>();
+		for (View.Want w : wants)
+		{
+			Fish.Kind k = Fish.byStore(w.store);
+			if (k == null || w.need <= 0)
+			{
+				continue;
+			}
+			View.CatchPlan p = new View.CatchPlan();
+			p.store = w.store;
+			p.icon = k.item;
+			p.need = w.need;
+			p.method = k.method.name;
+			p.needs = v.level > 0 && v.level < k.level ? k.level : 0;
+			p.perHour = log.perHour(k.store);
+			p.hours = p.perHour > 0 ? w.need / p.perHour : 0;
+			plans.add(p);
+		}
+		v.plans = plans;
+		List<View.FoundView> found = new ArrayList<>();
+		List<View.LuckView> luck = new ArrayList<>();
+		for (Map.Entry<String, Long> e : log.found().entrySet())
+		{
+			View.FoundView f = new View.FoundView();
+			f.name = e.getKey();
+			f.icon = Fish.extraItem(e.getKey());
+			f.count = e.getValue();
+			f.clue = Fish.isClue(e.getKey());
+			if (f.clue)
+			{
+				v.clues += f.count;
+			}
+			found.add(f);
+		}
+		for (Map.Entry<String, Integer> b : Fish.BIG_FISH_ONE_IN.entrySet())
+		{
+			long from = log.caught(Fish.bigFrom(b.getKey()));
+			if (from == 0)
+			{
+				continue;
+			}
+			View.LuckView l = new View.LuckView();
+			l.name = b.getKey();
+			l.icon = Fish.extraItem(b.getKey());
+			l.seen = log.found().getOrDefault(b.getKey(), 0L);
+			l.from = from;
+			l.oneIn = b.getValue();
+			l.expected = from / (double) b.getValue();
+			luck.add(l);
+		}
+		found.sort((a, b) -> a.clue != b.clue ? (a.clue ? 1 : -1) : Long.compare(b.count, a.count));
+		v.found = found;
+		v.luck = luck;
+		v.aerialCatches = log.aerialCatches();
+		v.pearls = log.found().getOrDefault(Fish.PEARL_NAME, 0L);
+		v.pearlsPerHour = log.pearlsPerHour();
+		v.pearlsHeld = held(works, Fish.PEARL);
+		List<View.StayView> stays = new ArrayList<>();
+		for (Map.Entry<String, Fishing.Stays> e : log.stays().entrySet())
+		{
+			if (e.getValue().getSeen() == 0)
+			{
+				continue;
+			}
+			Fish.Stay wiki = "Anglerfish".equals(e.getKey()) ? Fish.Stay.ANGLERFISH
+				: "Sacred eel".equals(e.getKey()) || "Infernal eel".equals(e.getKey()) ? Fish.Stay.EELS : Fish.Stay.MOST;
+			View.StayView sv = new View.StayView();
+			sv.spot = e.getKey();
+			sv.seen = e.getValue().getSeen();
+			sv.seconds = e.getValue().average() * 0.6;
+			sv.wikiMinSeconds = wiki.minTicks * 0.6;
+			sv.wikiMaxSeconds = wiki.maxTicks * 0.6;
+			stays.add(sv);
+		}
+		stays.sort((a, b) -> Long.compare(b.seen, a.seen));
+		v.stays = stays;
+		return v;
+	}
+
+	/** An item in the pack and the bank, as last seen. */
+	static long held(Works works, int itemId)
+	{
+		long n = 0;
+		for (Spot s : new Spot[]{Spot.INVENTORY, Spot.BANK})
+		{
+			Holding h = works.holding(s);
+			if (h != null)
+			{
+				n += h.getItems().getOrDefault(itemId, 0L);
+			}
+		}
+		return n;
+	}
+
+	/** The Alry shop item the player chose, and how long their own aerial fishing takes to it. */
+	static void pearlGoal(View.FishView v, Fish.PearlGoal goal, Works works)
+	{
+		if (v == null || goal == null || goal == Fish.PearlGoal.NONE)
+		{
+			return;
+		}
+		v.pearlGoal = goal.item;
+		v.pearlGoalIcon = goal.itemId;
+		v.pearlGoalPrice = goal.price;
+		long missing = Math.max(0, goal.price - v.pearlsHeld);
+		v.pearlGoalHours = v.pearlsPerHour > 0 ? missing / v.pearlsPerHour : 0;
 	}
 
 	/**

@@ -152,6 +152,15 @@ public final class Ways
 		add("Raw tuna", Kind.GATHER, "Harpoon them at Catherby or Karamja", Skill.FISHING, 35);
 		add("Raw salmon", Kind.GATHER, "Fly fish at Barbarian Village or Shilo", Skill.FISHING, 30);
 		add("Raw trout", Kind.GATHER, "Fly fish at Barbarian Village or Lumbridge", Skill.FISHING, 20);
+		// The lower fish, by the tool and spot each fish's wiki page and the Fishing spot page give.
+		add("Raw bass", Kind.GATHER, "Big-net them at a Big Net/Harpoon spot", Skill.FISHING, 46);
+		add("Raw pike", Kind.GATHER, "Bait them with a fishing rod at a Lure/Bait spot", Skill.FISHING, 25);
+		add("Raw cod", Kind.GATHER, "Big-net them at a Big Net/Harpoon spot", Skill.FISHING, 23);
+		add("Raw mackerel", Kind.GATHER, "Big-net them at a Big Net/Harpoon spot", Skill.FISHING, 16);
+		add("Raw anchovies", Kind.GATHER, "Net them at a Net/Bait spot", Skill.FISHING, 15);
+		add("Raw herring", Kind.GATHER, "Bait them with a fishing rod at a Net/Bait spot", Skill.FISHING, 10);
+		add("Raw sardine", Kind.GATHER, "Bait them with a fishing rod at a Net/Bait spot", Skill.FISHING, 5);
+		add("Raw shrimps", Kind.GATHER, "Net them at a Net/Bait spot", Skill.FISHING, 1);
 		// Prayer
 		add("Dragon bones", Kind.LOOT, "Every dragon drops them", null, 0);
 		add("Superior dragon bones", Kind.LOOT, "Vorkath drops two a kill", null, 0);
