@@ -28,9 +28,21 @@ public final class Recipe
 	public final int tier;
 	/** Store to units per making, the first being the one the recipe is made for. */
 	public final Map<String, Integer> inputs;
+	/**
+	 * Only made when the player picks it for its main input, such as logs taken to the sawmill for
+	 * coins: a choice the best-first order should not make for them.
+	 */
+	public final boolean optional;
 
 	Recipe(Skill skill, int level, double xp, String product, int productItem, int count, int tier, Map<String, Integer> inputs)
 	{
+		this(skill, level, xp, product, productItem, count, tier, inputs, false);
+	}
+
+	Recipe(Skill skill, int level, double xp, String product, int productItem, int count, int tier, Map<String, Integer> inputs,
+		boolean optional)
+	{
+		this.optional = optional;
 		this.skill = skill;
 		this.level = level;
 		this.xp = xp;

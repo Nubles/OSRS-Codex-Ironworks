@@ -55,6 +55,32 @@ public class SavesTest
 	}
 
 	@Test
+	public void picksOnTheMakeTabAreSavedAndAnOlderSaveHasNone()
+	{
+		Works w = sample();
+		assertTrue(w.method("Oak logs", "Oak plank"));
+		assertFalse(w.method("Oak logs", "Oak plank"));
+		assertTrue(w.method("Yew logs", "-"));
+		Works.Loaded back = Works.read(gson, w.write(gson), 99);
+		assertFalse(back.damaged);
+		assertEquals("Oak plank", back.works.methods().get("Oak logs"));
+		assertEquals("-", back.works.methods().get("Yew logs"));
+		assertTrue(back.works.method("Oak logs", null));
+		assertFalse(back.works.methods().containsKey("Oak logs"));
+
+		String older = sample().write(gson).replace(",\"methods\":{}", "");
+		Works.Loaded old = Works.read(gson, older, 99);
+		assertFalse(old.damaged);
+		assertTrue(old.works.methods().isEmpty());
+
+		String cut = w.write(gson);
+		Works.Loaded damaged = Works.read(gson, "{\"methods\":{\"Oak logs\":\"Oak plank\",\"\":\"x\"},\"account\":2", 99);
+		assertTrue(damaged.damaged);
+		assertEquals(Collections.singletonMap("Oak logs", "Oak plank"), damaged.works.methods());
+		assertTrue(cut.contains("methods"));
+	}
+
+	@Test
 	public void nothingSavedStartsFresh()
 	{
 		Works.Loaded fresh = Works.read(gson, null, 7);

@@ -35,7 +35,9 @@ public final class Catalogue
 			"Sea turtle", "Tuna potato", "Pineapple pizza", "Cooked moonlight antelope", "Cooked dashing kebbit",
 			"Cooked sunlight antelope", "Cooked pyre fox", "Raw shark", "Raw manta ray", "Raw anglerfish", "Raw dark crab",
 			"Raw karambwan", "Raw monkfish", "Raw lobster", "Raw swordfish", "Raw sea turtle", "Tuna", "Salmon", "Trout",
-			"Raw tuna", "Raw salmon", "Raw trout");
+			"Raw tuna", "Raw salmon", "Raw trout", "Bass", "Pike", "Cod", "Mackerel", "Herring", "Sardine", "Anchovies",
+			"Shrimps", "Raw bass", "Raw pike", "Raw cod", "Raw mackerel", "Raw herring", "Raw sardine", "Raw anchovies",
+			"Raw shrimps");
 		shelf(Family.POTIONS,
 			"Prayer potion", "Super restore", "Saradomin brew", "Super combat potion", "Divine super combat potion",
 			"Ranging potion", "Divine ranging potion", "Bastion potion", "Divine bastion potion", "Magic potion",
@@ -85,7 +87,7 @@ public final class Catalogue
 			"Ensouled dragon head", "Ensouled giant head");
 		shelf(Family.MATERIALS,
 			"Coal", "Iron ore", "Mithril ore", "Adamantite ore", "Runite ore", "Gold ore", "Silver ore", "Iron bar",
-			"Steel bar", "Mithril bar", "Adamantite bar", "Runite bar", "Gold bar", "Silver bar", "Logs", "Oak logs",
+			"Copper ore", "Tin ore", "Bronze bar", "Steel bar", "Mithril bar", "Adamantite bar", "Runite bar", "Gold bar", "Silver bar", "Logs", "Oak logs",
 			"Willow logs", "Teak logs", "Maple logs", "Mahogany logs", "Yew logs", "Magic logs", "Redwood logs", "Plank",
 			"Oak plank", "Teak plank", "Mahogany plank", "Pure essence", "Daeyalt essence", "Feather", "Bucket of sand",
 			"Soda ash", "Seaweed", "Giant seaweed", "Molten glass", "Flax", "Bow string", "Green dragonhide",
@@ -96,7 +98,8 @@ public final class Catalogue
 		shelf(Family.CURRENCY,
 			"Coins", "Tokkul", "Trading sticks", "Numulite");
 		for (String name : new String[]{
-			"Coal", "Iron ore", "Mithril ore", "Adamantite ore", "Runite ore", "Gold ore", "Silver ore", "Logs", "Oak logs",
+			"Coal", "Iron ore", "Mithril ore", "Adamantite ore", "Runite ore", "Gold ore", "Silver ore", "Copper ore", "Tin ore",
+			"Logs", "Oak logs",
 			"Willow logs", "Teak logs", "Maple logs", "Mahogany logs", "Yew logs", "Magic logs", "Redwood logs", "Pure essence",
 			"Daeyalt essence", "Feather", "Seaweed", "Giant seaweed", "Flax", "Green dragonhide", "Blue dragonhide",
 			"Red dragonhide", "Black dragonhide", "Uncut sapphire", "Uncut emerald", "Uncut ruby", "Uncut diamond",

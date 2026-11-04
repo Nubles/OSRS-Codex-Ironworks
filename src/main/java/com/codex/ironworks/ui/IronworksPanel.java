@@ -12,6 +12,7 @@ import com.codex.ironworks.core.Workshop;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
@@ -29,6 +30,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import net.runelite.api.Experience;
@@ -91,6 +93,11 @@ public class IronworksPanel extends PluginPanel
 
 		/** Asks Codex Wayfinder to plot the way to a place. */
 		default void route(View.Goto spot)
+		{
+		}
+
+		/** Picks what a store is made into on the Make tab; null goes back to its best use. */
+		default void method(String store, String product)
 		{
 		}
 	}
@@ -204,6 +211,13 @@ public class IronworksPanel extends PluginPanel
 	{
 		open.add("route:" + section);
 		rebuild(GUIDE);
+	}
+
+	/** For the screenshot harness: opens the chooser for a store on the Make tab. */
+	public void openMake(String store)
+	{
+		open.add("make:" + store);
+		rebuild(MAKE);
 	}
 
 	/** For the screenshot harness: picks the Sources period. */
@@ -815,7 +829,7 @@ public class IronworksPanel extends PluginPanel
 		StackPanel p = new StackPanel(6, 8);
 		View v = view;
 		Workshop w = v.workshop;
-		if (w.plans().isEmpty())
+		if (w.plans().isEmpty() && v.methods.isEmpty())
 		{
 			p.add(note(v.stores.isEmpty()
 				? "Log in and open your bank, and Ironworks works out the experience waiting in your stores."
@@ -830,6 +844,15 @@ public class IronworksPanel extends PluginPanel
 		{
 			top.add(new Line("More above your levels", "+" + Format.amount(Math.round(w.lockedTotal())), null, Theme.TEXT_MUTED, Theme.TEXT_FAINT));
 		}
+		double short1 = 0;
+		for (Workshop.Plan plan : w.plans())
+		{
+			short1 += plan.shorts.isEmpty() ? 0 : plan.shorts.get(0).xp;
+		}
+		if (short1 > 0)
+		{
+			top.add(new Line("Waiting on second ingredients", "+" + Format.amount(Math.round(short1)), null, Theme.TEXT_MUTED, Theme.EMBER));
+		}
 		top.add(new Line("Bones counted at", v.altar.toString(), null, Theme.TEXT_MUTED, Theme.TEXT_FAINT));
 		hero.add(top, BorderLayout.CENTER);
 		p.add(hero);
@@ -837,7 +860,12 @@ public class IronworksPanel extends PluginPanel
 		{
 			p.add(skillCard(plan));
 		}
-		p.add(foot("Each store goes to its best use first, and unfinished potions and bars count toward what they make. Choose where bones go in the settings."));
+		if (!v.methods.isEmpty())
+		{
+			p.add(picks());
+		}
+		p.add(foot("Each store goes to its best use first, and what it makes counts toward what that makes next. Levels the stores "
+			+ "reach on the way open the recipes above them. Click a line to choose what its store goes to. Choose where bones go in the settings."));
 		return p;
 	}
 
@@ -851,36 +879,217 @@ public class IronworksPanel extends PluginPanel
 		String total = plan.xp > 0 ? Format.amount(Math.round(plan.xp)) + " xp" : "+" + Format.amount(Math.round(plan.lockedXp)) + " later";
 		in.add(new Line(name, total, null, Theme.GOLD_BRIGHT, plan.xp > 0 ? Theme.GOLD : Theme.TEXT_FAINT));
 		Integer xpNow = v.xp.get(plan.skill);
-		if (xpNow != null && plan.xp > 0)
+		if (xpNow != null && plan.xp > 0 && plan.from > 0)
 		{
-			int from = Experience.getLevelForXp(xpNow);
-			int to = Experience.getLevelForXp((int) Math.min(Experience.MAX_SKILL_XP, xpNow + Math.round(plan.xp)));
+			int from = plan.from;
+			int to = plan.to;
 			in.add(new Line(to > from ? "Level " + from + " to " + to : "Level " + from + ", toward " + Math.min(99, from + 1), null, null,
 				Theme.TEXT_MUTED, Theme.TEXT_MUTED));
 		}
 		int shown = 0;
+		Set<String> chosen = new HashSet<>();
 		for (Workshop.Make m : plan.makes)
 		{
 			if (shown++ == 4)
 			{
 				break;
 			}
+			String store = m.recipe.primary();
+			boolean picked = v.methods.containsKey(store);
+			boolean choosable = picked || Workshop.methods(store).size() > 1;
 			String label = Format.amount(m.times) + " × " + m.recipe.product;
 			String figure = m.locked ? "needs " + m.recipe.level : Format.amount(Math.round(m.xp));
-			in.add(new IconLine(m.recipe.productItem, label, figure, icons, m.locked ? Theme.TEXT_FAINT : Theme.TEXT,
-				m.locked ? Theme.TEXT_FAINT : Theme.TEXT_MUTED));
+			Color labelColor = m.locked ? Theme.TEXT_FAINT : picked ? Theme.GOLD_BRIGHT : Theme.TEXT;
+			IconLine line = new IconLine(m.recipe.productItem, label, figure, icons, labelColor,
+				m.locked ? Theme.TEXT_FAINT : Theme.TEXT_MUTED);
+			in.add(line);
+			if (m.reached > 0)
+			{
+				in.add(new Line("      opens at " + m.reached + " on the way", null, null, Theme.TEAL, Theme.TEAL));
+			}
+			if (choosable)
+			{
+				String key = "make:" + store;
+				clickable(line, "Choose what " + store.toLowerCase(Locale.ENGLISH) + " goes to", () ->
+				{
+					if (!open.remove(key))
+					{
+						open.add(key);
+					}
+					rebuild(MAKE);
+				});
+				if (open.contains(key) && chosen.add(store))
+				{
+					in.add(chooser(store));
+				}
+			}
 		}
 		if (plan.makes.size() > 4)
 		{
 			in.add(new Line("and " + (plan.makes.size() - 4) + " more", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
 		}
-		for (Workshop.Short s : plan.shorts.subList(0, Math.min(2, plan.shorts.size())))
+		for (Workshop.Short s : plan.shorts.subList(0, Math.min(View.SHORTS_SHOWN, plan.shorts.size())))
 		{
 			in.add(new Line("Short " + Format.amount(s.need) + " " + s.input.toLowerCase(Locale.ENGLISH),
 				"+" + Format.amount(Math.round(s.xp)), Theme.EMBER, Theme.EMBER, Theme.EMBER));
+			if (xpNow != null && plan.to > 0)
+			{
+				int with = Experience.getLevelForXp((int) Math.min(Experience.MAX_SKILL_XP, xpNow + Math.round(plan.xp + s.xp)));
+				if (with > plan.to)
+				{
+					in.add(new Line("      level " + with + " with them", null, null, Theme.TEXT_MUTED, Theme.TEXT_MUTED));
+				}
+			}
+			getMore(in, s.input);
 		}
 		card.add(in, BorderLayout.CENTER);
 		return card;
+	}
+
+	/** The fastest way to get more of a short ingredient, from the Sources tab's ranking, with the way there. */
+	private void getMore(StackPanel in, String store)
+	{
+		View v = view;
+		View.Getting g = v.shortWays.get(store);
+		if (g == null)
+		{
+			return;
+		}
+		View.PathView best = null;
+		for (View.PathView pv : g.plan)
+		{
+			if (!pv.locked)
+			{
+				best = pv;
+				break;
+			}
+		}
+		if (best != null)
+		{
+			in.add(new Line("      " + best.text, best.figure, null, Theme.TEAL, best.timed ? Theme.GOLD : Theme.TEXT_MUTED));
+			if (best.basis != null)
+			{
+				in.add(new Line("      " + best.basis, null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+			if (v.wayfinder && best.spot != null)
+			{
+				View.Goto spot = best.spot;
+				JPanel holder = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+				holder.setOpaque(false);
+				holder.add(new CodexButton("Route to " + Ui.clip(spot.name, getFontMetrics(Theme.small()), 110), false, () -> actions.route(spot)));
+				in.add(holder);
+			}
+			return;
+		}
+		for (View.WayView w : g.ways)
+		{
+			if (w.open)
+			{
+				in.add(new Line("      " + w.text, w.perHour > 0 ? Words.rate(w.perHour) + "/h" : null, null, Theme.TEAL, Theme.TEAL));
+				return;
+			}
+		}
+	}
+
+	/** What a store can go to, to pick one: its best use first, each recipe, or kept as it is. */
+	private JComponent chooser(String store)
+	{
+		View v = view;
+		String picked = v.methods.get(store);
+		StackPanel in = new StackPanel(1, 0);
+		in.setBorder(new EmptyBorder(2, 12, 4, 0));
+		in.add(new Line("Use " + store.toLowerCase(Locale.ENGLISH) + " for", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+		in.add(option("Its best use first", null, picked == null, () -> actions.method(store, null)));
+		for (com.codex.ironworks.core.Recipe r : Workshop.methods(store))
+		{
+			int level = v.levels.getOrDefault(r.skill, 99);
+			String figure;
+			if (r.xp > 0)
+			{
+				figure = (level < r.level ? Ui.skill(r.skill) + " " + r.level + ", " : "") + xpEach(r.xp) + " xp";
+			}
+			else if (r.inputs.containsKey("Coins"))
+			{
+				figure = Format.amount(r.inputs.get("Coins")) + " coins";
+			}
+			else
+			{
+				figure = null;
+			}
+			String label = r.optional ? r.product + " at the sawmill" : r.usesUp() ? usedUp(r) : r.product;
+			in.add(option(label, figure, r.product.equals(picked), () -> actions.method(store, r.product)));
+		}
+		in.add(option("Keep them as they are", null, Workshop.KEEP.equals(picked), () -> actions.method(store, Workshop.KEEP)));
+		return in;
+	}
+
+	private JComponent option(String label, String figure, boolean on, Runnable pick)
+	{
+		Line line = new Line(label, figure, on ? Theme.GOLD : Theme.STROKE, on ? Theme.GOLD_BRIGHT : Theme.TEXT, on ? Theme.GOLD : Theme.TEXT_FAINT);
+		if (!on)
+		{
+			clickable(line, null, pick);
+		}
+		return line;
+	}
+
+	/** The stores the player picked a use for, each one a click from going back to its best use. */
+	private JComponent picks()
+	{
+		Card card = new Card(new BorderLayout());
+		StackPanel in = new StackPanel(2, 0);
+		in.add(new Line("Your picks", "click to undo", null, Theme.GOLD, Theme.TEXT_FAINT));
+		for (Map.Entry<String, String> e : new java.util.TreeMap<>(view.methods).entrySet())
+		{
+			String store = e.getKey();
+			String to = Workshop.KEEP.equals(e.getValue()) ? "kept" : e.getValue();
+			Line line = new Line(store + ": " + to, null, Theme.GOLD_DIM, Theme.TEXT, Theme.TEXT_MUTED);
+			clickable(line, "Back to the best use of " + store.toLowerCase(Locale.ENGLISH), () -> actions.method(store, null));
+			in.add(line);
+		}
+		card.add(in, BorderLayout.CENTER);
+		return card;
+	}
+
+	private static void clickable(JComponent c, String tip, Runnable action)
+	{
+		c.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		if (tip != null)
+		{
+			c.setToolTipText(tip);
+		}
+		c.addMouseListener(new java.awt.event.MouseAdapter()
+		{
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent e)
+			{
+				if (SwingUtilities.isLeftMouseButton(e))
+				{
+					action.run();
+				}
+			}
+		});
+	}
+
+	/** What a recipe that makes nothing does with its store, in a word or two. */
+	private static String usedUp(com.codex.ironworks.core.Recipe r)
+	{
+		switch (r.skill)
+		{
+			case FIREMAKING:
+				return "Burn them";
+			case PRAYER:
+				return "Offer them";
+			case FARMING:
+				return "Plant them";
+			default:
+				return "Build with them";
+		}
+	}
+
+	private static String xpEach(double xp)
+	{
+		return Math.abs(xp - Math.round(xp)) < 0.05 ? String.valueOf(Math.round(xp)) : String.format(Locale.ENGLISH, "%.1f", xp);
 	}
 
 	// ---- guide ----

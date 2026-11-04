@@ -262,7 +262,8 @@ final class Views
 		v.levels = levels;
 		v.xp = xp;
 		v.altar = altar;
-		v.workshop = Workshop.plan(stocks, lookup, levels, altar);
+		v.methods = new HashMap<>(works.methods());
+		v.workshop = Workshop.plan(stocks, lookup, levels, xp, altar, v.methods);
 		Map<String, View.Getting> getting = new HashMap<>();
 		for (View.StoreView sv : stores)
 		{
@@ -275,6 +276,7 @@ final class Views
 			}
 		}
 		v.getting = getting;
+		v.shortWays = shortWays(v.workshop, works, lookup, levels, shops, travel, here);
 		long listCoins = 0;
 		for (View.Want w : wants)
 		{
@@ -491,6 +493,34 @@ final class Views
 			out.add(pv);
 		}
 		g.plan = out;
+	}
+
+	/**
+	 * For each second ingredient that stops a skill's stores being used up, the fastest ways to get
+	 * the units still wanted, as the Sources tab costs them.
+	 */
+	static Map<String, View.Getting> shortWays(Workshop workshop, Works works, Catalogue.Lookup lookup,
+		Map<Skill, Integer> levels, List<View.ShopView> shops, Travel travel, int[] here)
+	{
+		Map<String, Long> wanted = new HashMap<>();
+		for (Workshop.Plan p : workshop.plans())
+		{
+			for (Workshop.Short s : p.shorts.subList(0, Math.min(View.SHORTS_SHOWN, p.shorts.size())))
+			{
+				if (!Catalogue.money(s.input))
+				{
+					wanted.merge(s.input, s.need, Math::max);
+				}
+			}
+		}
+		Map<String, View.Getting> out = new HashMap<>();
+		wanted.forEach((store, need) ->
+		{
+			View.Getting g = getting(store, works.icon(store), works, lookup, levels);
+			plan(g, need, works, levels, shops, travel, here);
+			out.put(store, g);
+		});
+		return out;
 	}
 
 	/** The ways to get more of a store: the player's own paces first, then what they have the levels for. */

@@ -64,6 +64,8 @@ public final class Works
 	List<String> ticked = new ArrayList<>();
 	/** True while the player follows the guide, so the game points the way. */
 	boolean following;
+	/** The recipe the player picked for a store on the Make tab, by store: a product's name, or "-" to keep it. */
+	Map<String, String> methods = new HashMap<>();
 
 	public Works()
 	{
@@ -249,6 +251,32 @@ public final class Works
 			ticked.remove(key);
 		}
 		return true;
+	}
+
+	// ---- make ----
+
+	/** The recipes picked for stores on the Make tab. */
+	public Map<String, String> methods()
+	{
+		return Collections.unmodifiableMap(methods);
+	}
+
+	/**
+	 * Picks what a store is made into, or with null goes back to its best use.
+	 *
+	 * @return true when that changed anything
+	 */
+	public boolean method(String store, String product)
+	{
+		if (store == null || store.isEmpty())
+		{
+			return false;
+		}
+		if (product == null || product.isEmpty())
+		{
+			return methods.remove(store) != null;
+		}
+		return !product.equals(methods.put(store, product));
 	}
 
 	// ---- rates ----
@@ -599,6 +627,9 @@ public final class Works
 	private static final Type NAMES = new TypeToken<Map<Integer, String>>()
 	{
 	}.getType();
+	private static final Type METHODS = new TypeToken<Map<String, String>>()
+	{
+	}.getType();
 	private static final Type DAYS_TYPE = new TypeToken<Map<String, Day>>()
 	{
 	}.getType();
@@ -666,6 +697,9 @@ public final class Works
 					break;
 				case "ticked":
 					ticked = readList(gson, value, String.class);
+					break;
+				case "methods":
+					methods = gson.fromJson(value, METHODS);
 					break;
 				default:
 					break;
@@ -858,6 +892,18 @@ public final class Works
 			}
 		}
 		ticked = tk;
+		Map<String, String> mt = new HashMap<>();
+		if (methods != null)
+		{
+			methods.forEach((k, v) ->
+			{
+				if (k != null && !k.isEmpty() && v != null && !v.isEmpty())
+				{
+					mt.put(k, v);
+				}
+			});
+		}
+		methods = mt;
 		death = death == null ? null : death.repair();
 		if (death != null && death.items.isEmpty())
 		{

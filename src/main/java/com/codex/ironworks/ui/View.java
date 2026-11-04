@@ -47,6 +47,12 @@ public final class View
 	public Map<Skill, Integer> levels = Collections.emptyMap();
 	public Map<Skill, Integer> xp = Collections.emptyMap();
 	public Altar altar = Altar.GILDED;
+	/** Second ingredients shown short on each skill's Make card. */
+	public static final int SHORTS_SHOWN = 2;
+	/** The recipe picked for a store on the Make tab, by store. */
+	public Map<String, String> methods = Collections.emptyMap();
+	/** The fastest ways to get more of each second ingredient the Make tab is short of, by store. */
+	public Map<String, Getting> shortWays = Collections.emptyMap();
 
 	/** The route and where the player is on it. */
 	public GuideView guide = new GuideView();
