@@ -111,7 +111,7 @@ import org.slf4j.LoggerFactory;
 @PluginDescriptor(
 	name = "Codex Ironworks",
 	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources, shops and a guide",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "mining", "ore", "respawn", "codex"}
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "mining", "ore", "respawn", "trawling", "sailing", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -207,6 +207,7 @@ public class CodexIronworksPlugin extends Plugin
 	private TreeWatch treeWatch;
 	private com.codex.ironworks.overlay.MineCoach mineCoach;
 	private RockWatch rockWatch;
+	private final TrawlWatch trawlWatch = new TrawlWatch();
 	/** The tick of the Woodcutting experience the tree coach last took as a log. */
 	private int lastCutTick = Integer.MIN_VALUE;
 	private StepItems stepItems;
@@ -460,6 +461,7 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			rockWatch.reset();
 		}
+		trawlWatch.reset();
 	}
 
 	@Subscribe
@@ -512,6 +514,7 @@ public class CodexIronworksPlugin extends Plugin
 			{
 				rockWatch.reset();
 			}
+			trawlWatch.reset();
 			if (tracker != null)
 			{
 				tracker.hop();
@@ -650,6 +653,7 @@ public class CodexIronworksPlugin extends Plugin
 		if (was != null && xp > was && settle.isSettled())
 		{
 			xpTick.put(skill, ticks);
+			trawlWatch.xp(skill, xp - was);
 			recentXp.addLast(new long[]{System.currentTimeMillis(), skill.ordinal(), xp - was});
 		}
 	}
@@ -699,6 +703,12 @@ public class CodexIronworksPlugin extends Plugin
 			return;
 		}
 		int id = event.getContainerId();
+		if (id == InventoryID.SAILING_TRAWLING_NET)
+		{
+			// The boat's trawling net, where trawled fish land before they are taken out.
+			trawlWatch.net(contents(event.getItemContainer()));
+			return;
+		}
 		long now = System.currentTimeMillis();
 		Place place;
 		Spot spot;
@@ -905,6 +915,11 @@ public class CodexIronworksPlugin extends Plugin
 			unsaved = true;
 			dirty = true;
 		}
+		if (trawlWatch.tick(nowMs, works.trawls()))
+		{
+			unsaved = true;
+			dirty = true;
+		}
 		if (lastUnits == null || !lastUnits.equals(carriedUnits))
 		{
 			dirty = true;
@@ -959,9 +974,14 @@ public class CodexIronworksPlugin extends Plugin
 				notes.note("chat", chatNote);
 			}
 		}
-		if (guide != null && (event.getType() == ChatMessageType.GAMEMESSAGE || event.getType() == ChatMessageType.SPAM))
+		if (event.getType() == ChatMessageType.GAMEMESSAGE || event.getType() == ChatMessageType.SPAM)
 		{
-			guide.heard(Text.removeTags(event.getMessage()));
+			String plain = Text.removeTags(event.getMessage());
+			trawlWatch.heard(plain);
+			if (guide != null)
+			{
+				guide.heard(plain);
+			}
 		}
 	}
 

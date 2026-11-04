@@ -339,6 +339,65 @@ public final class View
 		public List<ComebackView> comebacks = Collections.emptyList();
 	}
 
+	/** Deep sea trawling: the player's own fish an hour by kind; null when nothing has been trawled. */
+	public TrawlView trawling;
+
+	/** Deep sea trawling as this account does it. */
+	public static final class TrawlView
+	{
+		/** Fish trawled in all, and the catches they came in. */
+		public long fish;
+		public long catches;
+		/** The Fishing level, when known; 0 when not. */
+		public int level;
+		/** The fish trawled last, its shoal and picture. */
+		public String shoal;
+		public String fishName;
+		public int icon = -1;
+		/** Fish an hour at the player's pace on it, and the time that is timed over; 0 until timed. */
+		public double perHour;
+		public long timedMs;
+		/** Fishing and Sailing experience an hour on it, as it came in; 0 until timed. */
+		public double fishingPerHour;
+		public double sailingPerHour;
+		/** Every fish trawled, the latest first. */
+		public List<HaulView> hauls = Collections.emptyList();
+		/** The fish with the most Fishing experience an hour at the player's own pace, open at their level. */
+		public HaulView best;
+		/** The best shoal open at their level that gives more experience for each catch, never trawled. */
+		public String untried;
+		public int untriedLevel;
+		public double untriedXp;
+		/** Trawled fish the plans are short of, and how long the player's own pace takes to cover each. */
+		public List<FishPlan> plans = Collections.emptyList();
+	}
+
+	/** One fish as this account trawls it. */
+	public static final class HaulView
+	{
+		public String shoal;
+		public String fish;
+		public int icon = -1;
+		public long count;
+		public double perHour;
+		public double fishingPerHour;
+		public double sailingPerHour;
+	}
+
+	/** One trawled fish the plans are short of. */
+	public static final class FishPlan
+	{
+		public String store;
+		public int icon = -1;
+		public long need;
+		public String shoal;
+		/** The Fishing level the shoal needs, when the player is short of it; 0 when open. */
+		public int needs;
+		/** The player's own pace on it; 0 when never timed. */
+		public double perHour;
+		public double hours;
+	}
+
 	/** One rock with one pickaxe, as this account mines it. */
 	public static final class SeamView
 	{

@@ -8,6 +8,8 @@ import com.codex.ironworks.core.Herbiboars;
 import com.codex.ironworks.core.Trees;
 import com.codex.ironworks.core.Woodcuts;
 import com.codex.ironworks.core.Mines;
+import com.codex.ironworks.core.Shoals;
+import com.codex.ironworks.core.Trawls;
 import com.codex.ironworks.core.Rocks;
 
 import com.codex.ironworks.core.Altar;
@@ -287,6 +289,7 @@ final class Views
 		v.herbiboar = herbiboar(works, levels);
 		v.woodcutting = woodcutting(works, levels);
 		v.mining = mining(works, levels, v.wants);
+		v.trawling = trawling(works, levels, v.wants);
 		v.shortWays = shortWays(v.workshop, works, lookup, levels, shops, travel, here);
 		long listCoins = 0;
 		for (View.Want w : wants)
@@ -460,6 +463,11 @@ final class Views
 		{
 			// Ore timed at the rock, the wait for a mined rock to come back counted in.
 			return works.mines().perHour(store);
+		}
+		if (src == Source.GATHERED && Shoals.byStore(store) != null && works.trawls().perHour(store) > 0)
+		{
+			// Trawled fish timed catch to catch while following the shoal.
+			return works.trawls().perHour(store);
 		}
 		if ((src == Source.MADE || src == Source.GATHERED) && Catalogue.family(store) == Family.RUNES)
 		{
@@ -746,6 +754,100 @@ final class Views
 			comebacks.add(b);
 		}
 		v.comebacks = comebacks;
+		return v;
+	}
+
+	/**
+	 * The trawling card on the Sources tab: the player's own fish an hour by kind, the Fishing and
+	 * Sailing experience that came with them, the fish that gives the most Fishing experience an hour
+	 * at their level, and how long the trawled fish their plans are short of take at their pace. Null
+	 * until something has been trawled.
+	 */
+	static View.TrawlView trawling(Works works, Map<Skill, Integer> levels, List<View.Want> wants)
+	{
+		Trawls log = works.trawls();
+		if (log.isEmpty())
+		{
+			return null;
+		}
+		View.TrawlView v = new View.TrawlView();
+		v.level = levels.getOrDefault(Skill.FISHING, 0);
+		Trawls.Haul all = log.all();
+		v.fish = all.getFish();
+		v.catches = all.getCatches();
+		List<View.HaulView> hauls = new ArrayList<>();
+		for (Map.Entry<String, Trawls.Haul> e : log.byLatest())
+		{
+			Shoals.Kind k = Shoals.byStore(e.getKey());
+			Trawls.Haul h = e.getValue();
+			if (k == null || h.getFish() == 0)
+			{
+				continue;
+			}
+			View.HaulView t = new View.HaulView();
+			t.shoal = k.shoal;
+			t.fish = k.fish;
+			t.icon = k.item;
+			t.count = h.getFish();
+			t.perHour = h.perHour();
+			t.fishingPerHour = h.fishingPerHour();
+			t.sailingPerHour = h.sailingPerHour();
+			hauls.add(t);
+			boolean open = v.level == 0 || k.level <= v.level;
+			if (open && t.fishingPerHour > 0 && (v.best == null || t.fishingPerHour > v.best.fishingPerHour))
+			{
+				v.best = t;
+			}
+		}
+		v.hauls = hauls;
+		if (!hauls.isEmpty())
+		{
+			View.HaulView last = hauls.get(0);
+			v.shoal = last.shoal;
+			v.fishName = last.fish;
+			v.icon = last.icon;
+			v.perHour = last.perHour;
+			v.timedMs = log.haul(Shoals.byStore(last.fish)).getMs();
+			v.fishingPerHour = last.fishingPerHour;
+			v.sailingPerHour = last.sailingPerHour;
+		}
+		if (v.level > 0)
+		{
+			// The shoal with the most experience for each catch the level opens, if never trawled.
+			Shoals.Kind top = null;
+			for (Shoals.Kind k : Shoals.all())
+			{
+				if (k.level <= v.level && (top == null || k.xp > top.xp))
+				{
+					top = k;
+				}
+			}
+			if (top != null && !log.tried(top))
+			{
+				v.untried = top.shoal;
+				v.untriedLevel = top.level;
+				v.untriedXp = top.xp;
+			}
+		}
+		List<View.FishPlan> plans = new ArrayList<>();
+		for (View.Want w : wants)
+		{
+			Shoals.Kind k = Shoals.byStore(w.store);
+			if (k == null || w.need <= 0)
+			{
+				continue;
+			}
+			View.FishPlan p = new View.FishPlan();
+			p.store = w.store;
+			p.icon = k.item;
+			p.need = w.need;
+			p.shoal = k.shoal;
+			p.needs = v.level > 0 && v.level < k.level ? k.level : 0;
+			p.perHour = log.perHour(k.fish);
+			p.hours = p.perHour > 0 ? w.need / p.perHour : 0;
+			plans.add(p);
+		}
+		v.plans = plans;
 		return v;
 	}
 
