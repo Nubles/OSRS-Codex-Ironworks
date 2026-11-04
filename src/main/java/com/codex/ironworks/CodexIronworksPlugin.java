@@ -1,7 +1,7 @@
 package com.codex.ironworks;
 
+import com.codex.ironworks.notes.FieldNotes;
 import com.codex.ironworks.core.Travel;
-
 import com.codex.ironworks.core.Catalogue;
 import com.codex.ironworks.core.Classify;
 import com.codex.ironworks.core.Family;
@@ -172,6 +172,9 @@ public class CodexIronworksPlugin extends Plugin
 	@Inject
 	private CodexIronworksConfig config;
 
+	/** The optional local record of what the plugin read and decided. */
+	private FieldNotes notes;
+
 	@Inject
 	private ItemTips tips;
 
@@ -251,6 +254,11 @@ public class CodexIronworksPlugin extends Plugin
 	@Override
 	protected void startUp()
 	{
+		notes = new FieldNotes(this::getPluginDirectory, gson);
+		if (config.fieldNotes())
+		{
+			notes.open();
+		}
 		Arrivals arrivals = new Arrivals();
 		ItemIcons icons = (itemId, onLoaded) ->
 		{
@@ -359,6 +367,11 @@ public class CodexIronworksPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
+		if (notes != null)
+		{
+			notes.shutdown();
+			notes = null;
+		}
 		overlayManager.remove(plaque);
 		overlayManager.remove(stepPlaque);
 		overlayManager.remove(tips);
@@ -480,6 +493,18 @@ public class CodexIronworksPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
+		if (CodexIronworksConfig.GROUP.equals(event.getGroup()) && "fieldNotes".equals(event.getKey()) && notes != null)
+		{
+			if (config.fieldNotes())
+			{
+				notes.open();
+			}
+			else
+			{
+				notes.close();
+			}
+			return;
+		}
 		if (CodexIronworksConfig.GROUP.equals(event.getGroup()))
 		{
 			clientThread.invokeLater(() ->
@@ -810,6 +835,19 @@ public class CodexIronworksPlugin extends Plugin
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
+		if (notes != null && notes.isOpen())
+		{
+			net.runelite.api.ChatMessageType chatType = event.getType();
+			// Only the game's own lines: other players' chat is never written down.
+			if (chatType == net.runelite.api.ChatMessageType.GAMEMESSAGE || chatType == net.runelite.api.ChatMessageType.SPAM
+				|| chatType == net.runelite.api.ChatMessageType.MESBOX)
+			{
+				com.google.gson.JsonObject chatNote = new com.google.gson.JsonObject();
+				chatNote.addProperty("type", chatType.name());
+				chatNote.addProperty("text", event.getMessage());
+				notes.note("chat", chatNote);
+			}
+		}
 		if (guide != null && (event.getType() == ChatMessageType.GAMEMESSAGE || event.getType() == ChatMessageType.SPAM))
 		{
 			guide.heard(Text.removeTags(event.getMessage()));
@@ -1483,6 +1521,41 @@ public class CodexIronworksPlugin extends Plugin
 				Route.Step step = route.steps().get(indexOf(built.guide.current.key));
 				built.guide.way = RouteGuide.way(here(), guide.target(step));
 			}
+		}
+		if (notes.isOpen() && built.guide != null)
+		{
+			// The step in hand and what the game's checks said about it, so a wrong tick can be traced.
+			com.google.gson.JsonObject n = new com.google.gson.JsonObject();
+			n.addProperty("following", built.guide.following);
+			n.addProperty("done", built.guide.done);
+			n.addProperty("total", built.guide.total);
+			n.add("current", built.guide.current == null ? null : notes.safe(built.guide.current));
+			n.addProperty("way", built.guide.way);
+			notes.noteChanged("guide", n);
+		}
+		if (notes.isOpen() && built.getting != null && !built.getting.isEmpty())
+		{
+			// The fastest way chosen for each store, and what it was timed by, so a strange pick can be traced.
+			com.google.gson.JsonObject n = new com.google.gson.JsonObject();
+			for (Map.Entry<String, View.Getting> e : built.getting.entrySet())
+			{
+				View.Getting g = e.getValue();
+				View.PathView first = g == null || g.plan.isEmpty() ? null : g.plan.get(0);
+				if (first == null)
+				{
+					continue;
+				}
+				com.google.gson.JsonObject p = new com.google.gson.JsonObject();
+				p.addProperty("need", g.need);
+				p.addProperty("verb", first.verb);
+				p.addProperty("text", first.text);
+				p.addProperty("figure", first.figure);
+				p.addProperty("basis", first.basis);
+				p.addProperty("travel", first.travel);
+				p.addProperty("paths", g.plan.size());
+				n.add(e.getKey(), p);
+			}
+			notes.noteChanged("getting", n);
 		}
 		stepPlaque.show(loggedIn && built.guide != null && built.guide.following && config.guidePlaque() ? built.guide : null);
 		view = built;

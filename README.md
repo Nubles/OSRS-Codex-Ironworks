@@ -74,7 +74,7 @@ Before Ironworks has seen your bank, it starts from the shared copy Codex Bank S
 
 The inventory, worn items and rune pouch are read every tick and saved item by item when they change; the bank, seed vault, looting bag and group storage as they change, and the bank's potion storage with the game's own dose script while the bank is open. Shop stock is read from the shop window while it is open. Experience comes from `StatChanged`, menu clicks from `MenuOptionClicked`, deaths from `ActorDeath`, and the account type from the ironman varbit. Worth comes from RuneLite's item manager. Levels come from the client, and ground item ownership from the tile's items when a Take option is added. Everything is stored per account in the RuneLite profile config as one compact entry: lifetime totals for every store, 45 days of daily detail, each place item by item, the last death, your paces, up to 60 shops with their last 16 purchases and the last 40 runs. A damaged save never stops the panel: whatever still reads is used, and the save as it was is set aside in your profile before it is written over.
 
-It is guidance only. It does not automate any input, send any data off the client, or read or write files. The only menu change is the optional one above, which moves a Take option down the menu and never removes or adds one.
+It is guidance only. It does not automate any input, send any data off the client, or read or write files apart from the optional field notes below. The only menu change is the optional one above, which moves a Take option down the menu and never removes or adds one.
 
 ## Building
 
@@ -83,6 +83,10 @@ It is guidance only. It does not automate any input, send any data off the clien
 ```
 
 `./gradlew run` starts a development client with the plugin loaded.
+
+## Field notes
+
+An optional setting, **Keep field notes** (under Field notes, off by default), writes a plain record of what Ironworks reads and decides to its own folder in `.runelite/plugin-data` on your computer, one line at a time. It is for checking the plugin's guesses against real play: when something looks wrong, the notes show what it saw and why it chose what it did. Other players' chat is never written down, it stays on your computer, and nothing is sent anywhere.
 
 ## License
 
