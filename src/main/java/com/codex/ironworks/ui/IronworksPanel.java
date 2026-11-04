@@ -415,6 +415,7 @@ public class IronworksPanel extends PluginPanel
 			herbiboar(p);
 			woodcutting(p);
 			mining(p);
+			trawling(p);
 			return p;
 		}
 		if (s.gained > 0)
@@ -425,6 +426,7 @@ public class IronworksPanel extends PluginPanel
 		herbiboar(p);
 		woodcutting(p);
 		mining(p);
+		trawling(p);
 		if (!s.skills.isEmpty())
 		{
 			Card hands = new Card(new BorderLayout());
@@ -1028,6 +1030,98 @@ public class IronworksPanel extends PluginPanel
 		p.add(foot("Your own ore, timed ore to ore at the rock: waiting for a rock to come back counts, a bank trip does not. "
 			+ "Times over mined rocks are estimates from the OSRS Wiki's respawn times until you have seen three come back in one place. "
 			+ "The Motherlode Mine is left to Codex Minigame Pilot."));
+	}
+
+	/**
+	 * Deep sea trawling as this account does it: fish an hour on the fish trawled last, the Fishing
+	 * and Sailing experience that came with it, the fish that gives the most Fishing experience an
+	 * hour at the player's level, and how long the trawled fish their plans are short of take.
+	 */
+	private void trawling(StackPanel p)
+	{
+		View.TrawlView v = view.trawling;
+		if (v == null)
+		{
+			return;
+		}
+		p.add(new SectionHeader("Trawling", Format.amount(v.fish) + " fish, " + Format.amount(v.catches)
+			+ (v.catches == 1 ? " catch" : " catches")));
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.TEAL);
+		StackPanel in = new StackPanel(2, 0);
+		if (v.shoal != null)
+		{
+			if (v.perHour > 0)
+			{
+				in.add(new Figure(Words.rate(v.perHour), v.fishName.toLowerCase(Locale.ENGLISH) + " an hour at your pace", Theme.GREEN));
+				in.add(new Line("      " + v.shoal.toLowerCase(Locale.ENGLISH) + ", over " + Format.duration(v.timedMs), null, null,
+					Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+				in.add(new Line("Fishing an hour", Words.rate(v.fishingPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.TEXT));
+				if (v.sailingPerHour > 0)
+				{
+					in.add(new Line("Sailing an hour", Words.rate(v.sailingPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.TEXT));
+				}
+			}
+			else
+			{
+				long left = Math.max(60_000L, com.codex.ironworks.core.Trawls.LEARN_MS - v.timedMs);
+				in.add(new Line("Timing your " + v.shoal.toLowerCase(Locale.ENGLISH), "~" + Format.duration(left) + " to go", null,
+					Theme.GOLD_BRIGHT, Theme.TEXT_FAINT));
+			}
+		}
+		if (v.best != null || v.untried != null)
+		{
+			in.add(new Line(v.level > 0 ? "Best for you at " + v.level : "Best for you", null, null, Theme.GOLD, Theme.TEXT));
+			if (v.best != null)
+			{
+				in.add(new IconLine(v.best.icon, v.best.shoal, Words.rate(v.best.fishingPerHour) + " xp/h", icons, Theme.TEXT, Theme.GREEN));
+			}
+			if (v.untried != null)
+			{
+				in.add(Ui.wrapped(v.untried + "s open at " + v.untriedLevel + " Fishing, " + xp(v.untriedXp)
+					+ " xp a catch (wiki); trawl them a while to compare.", Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+			}
+		}
+		if (!v.plans.isEmpty())
+		{
+			in.add(new Line("For your plans", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.FishPlan o : v.plans)
+			{
+				String figure;
+				Color tint;
+				if (o.needs > 0)
+				{
+					figure = "from " + o.needs;
+					tint = Theme.BLOCKED;
+				}
+				else if (o.perHour > 0)
+				{
+					figure = Format.estimate((long) (o.hours * 3_600_000));
+					tint = Theme.TEAL;
+				}
+				else
+				{
+					figure = "not timed";
+					tint = Theme.TEXT_MUTED;
+				}
+				in.add(new IconLine(o.icon, Format.amount(o.need) + " " + o.store.toLowerCase(Locale.ENGLISH) + " short", figure, icons,
+					Theme.TEXT, tint));
+			}
+		}
+		if (v.hauls.size() > 1 || v.shoal == null)
+		{
+			in.add(new Line("By shoal", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.HaulView t : v.hauls)
+			{
+				String figure = t.perHour > 0 ? Words.rate(t.perHour) + "/h" : Format.amount(t.count);
+				in.add(new IconLine(t.icon, t.shoal.replace(" shoal", ""), figure, icons, Theme.TEXT, t.perHour > 0 ? Theme.TEAL : Theme.TEXT_MUTED));
+			}
+		}
+		card.add(in, BorderLayout.CENTER);
+		p.add(card);
+		p.add(foot("Your own fish, counted as they land in the net and timed catch to catch while you keep with a shoal; "
+			+ "a gap over three minutes is not timed. Experience is what came in between catches. "
+			+ "Your net and boat are not told apart. The same pace times trawling wherever Ironworks ranks ways to get these fish."));
 	}
 
 	/** "Dragon pickaxe" as "dragon". */
