@@ -299,6 +299,90 @@ public final class View
 		public List<TreeView> trees = Collections.emptyList();
 	}
 
+	/** Mining: the player's own ore an hour by rock and pickaxe; null when nothing has been mined. */
+	public MineView mining;
+
+	/** Mining as this account does it. */
+	public static final class MineView
+	{
+		/** Ore mined in all (gems from gem rocks among it), and gems and clues turned up. */
+		public long ore;
+		public long gems;
+		public long clues;
+		/** The Mining level, when known; 0 when not. */
+		public int level;
+		/** The rock and pickaxe mined last, what it gives and its picture. */
+		public String rock;
+		public String pickaxe;
+		public String oreName;
+		public int icon = -1;
+		/** Ore an hour at the player's pace there, and the time that is timed over; 0 until timed. */
+		public double perHour;
+		public long timedMs;
+		/** Mining experience an hour at the wiki's experience for each ore; 0 until timed. */
+		public double xpPerHour;
+		/** Every rock and pickaxe mined, the latest first. */
+		public List<SeamView> seams = Collections.emptyList();
+		/** The rock with the most Mining experience an hour at the player's own pace, open at their level. */
+		public SeamView best;
+		/** A rock open at their level that gives more experience for each ore, never timed yet. */
+		public String untried;
+		public int untriedLevel;
+		public double untriedXp;
+		/** Ores the plans are short of, and how long the player's own pace takes to cover each. */
+		public List<OrePlan> plans = Collections.emptyList();
+		/** Gems and clues turned up, most first. */
+		public List<FoundView> found = Collections.emptyList();
+		/** Ore mined from rocks for each gem turned up, or 0 when none. */
+		public double orePerGem;
+		/** Rocks seen come back, against the wiki's time. */
+		public List<ComebackView> comebacks = Collections.emptyList();
+	}
+
+	/** One rock with one pickaxe, as this account mines it. */
+	public static final class SeamView
+	{
+		public String rock;
+		public String pickaxe;
+		public int icon = -1;
+		public long ore;
+		public double perHour;
+		public double xpPerHour;
+	}
+
+	/** One ore the plans are short of. */
+	public static final class OrePlan
+	{
+		public String store;
+		public int icon = -1;
+		public long need;
+		public String rock;
+		/** The Mining level the rock needs, when the player is short of it; 0 when open. */
+		public int needs;
+		/** The player's own best pace on the rock; 0 when never timed. */
+		public double perHour;
+		public double hours;
+	}
+
+	/** A gem or clue turned up while mining. */
+	public static final class FoundView
+	{
+		public String name;
+		public int icon = -1;
+		public long count;
+		public boolean clue;
+	}
+
+	/** One rock as the player has seen it come back. */
+	public static final class ComebackView
+	{
+		public String rock;
+		public long seen;
+		public double seconds;
+		public double wikiSeconds;
+		public String varies;
+	}
+
 	/** One skill a tree's logs bank experience in. */
 	public static final class BankView
 	{
