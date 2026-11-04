@@ -559,6 +559,81 @@ public final class View
 		public List<FishPlan> plans = Collections.emptyList();
 	}
 
+	/** Shipwreck salvaging: the player's own salvage and experience by wreck; null when none is logged. */
+	public SalvageView salvaging;
+
+	/** Shipwreck salvaging as this account does it. */
+	public static final class SalvageView
+	{
+		/** Salvage on the player's own hook in all, and salvage sorted. */
+		public long salvage;
+		public long sorted;
+		/** The Sailing level, when known; 0 when not. */
+		public int level;
+		/** The wreck type worked last; null when only sorting or the hold is logged. */
+		public WreckView last;
+		/** Every wreck type salvaged or sorted, the latest first. */
+		public List<WreckView> wrecks = Collections.emptyList();
+		/** The wreck type with the most Sailing experience an hour, sorting counted in, open at the level. */
+		public WreckView best;
+		/** The best wreck open at the level that gives more experience a salvage, never salvaged. */
+		public String untried;
+		public int untriedLevel;
+		public double untriedXp;
+		public double untriedSortXp;
+		/** The cargo hold as last seen, or null. */
+		public HoldView hold;
+	}
+
+	/** One wreck type as this account salvages and sorts it. */
+	public static final class WreckView
+	{
+		public String wreck;
+		public String salvage;
+		public int icon = -1;
+		public int level;
+		/** Salvage on the player's own hook, its pace and the time it is timed over; 0 until timed. */
+		public long count;
+		public double perHour;
+		public long timedMs;
+		/** Sailing experience an hour from the hooks, and with the salvage that came sorted at the wiki's figure. */
+		public double xpPerHour;
+		public double withSorting;
+		/** Seconds between own salvages, wrecks seen sink, and the wiki's time a wreck lasts. */
+		public double secondsEach;
+		public long sunk;
+		public int lastsSeconds;
+		/** Salvage sorted, Sailing experience a sort as it came, sorts that kept nothing, and what they gave. */
+		public long sorted;
+		public double sortXpEach;
+		public long bare;
+		public List<LootView> loot = Collections.emptyList();
+	}
+
+	/** One thing salvage sorted into. */
+	public static final class LootView
+	{
+		public int icon = -1;
+		public String name;
+		public long count;
+		/** Of the sorts that kept something, the share this came up in, as a count per sort. */
+		public double perSort;
+	}
+
+	/** The cargo hold as last seen open. */
+	public static final class HoldView
+	{
+		public int boat;
+		public int used;
+		/** Slots in the hold; 0 when its size was not read. */
+		public int capacity;
+		/** Salvage in it, and the Sailing experience sorting it gives at the wiki's figures. */
+		public long salvage;
+		public double sortXp;
+		public List<LootView> kinds = Collections.emptyList();
+		public long agoMs;
+	}
+
 	/** One fish as this account trawls it. */
 	public static final class HaulView
 	{
