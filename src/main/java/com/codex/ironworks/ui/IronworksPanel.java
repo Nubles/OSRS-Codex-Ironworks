@@ -414,6 +414,7 @@ public class IronworksPanel extends PluginPanel
 			getMore(p);
 			herbiboar(p);
 			woodcutting(p);
+			mining(p);
 			return p;
 		}
 		if (s.gained > 0)
@@ -423,6 +424,7 @@ public class IronworksPanel extends PluginPanel
 		getMore(p);
 		herbiboar(p);
 		woodcutting(p);
+		mining(p);
 		if (!s.skills.isEmpty())
 		{
 			Card hands = new Card(new BorderLayout());
@@ -908,6 +910,136 @@ public class IronworksPanel extends PluginPanel
 		p.add(foot("Your own logs, timed log to log at the tree: waiting for a felled tree to grow back counts, a bank trip does not. "
 			+ "Banked experience is the logs burned, fletched into the best your level makes, or sawn into planks. "
 			+ "The same pace times chopping wherever Ironworks ranks ways to get logs."));
+	}
+
+	/**
+	 * Mining as this account does it: ore an hour on the rock and pickaxe last used, the Mining
+	 * experience it comes to, the rock that gives the most experience an hour at the player's level,
+	 * how long the ores their plans are short of take, the gems and clues mining turned up, and the
+	 * rocks they have seen come back against the wiki's respawn time.
+	 */
+	private void mining(StackPanel p)
+	{
+		View.MineView v = view.mining;
+		if (v == null)
+		{
+			return;
+		}
+		String sub = Format.amount(v.ore) + " ore";
+		if (v.gems > 0)
+		{
+			sub += ", " + Format.amount(v.gems) + (v.gems == 1 ? " gem" : " gems");
+		}
+		if (v.clues > 0)
+		{
+			sub += ", " + Format.amount(v.clues) + (v.clues == 1 ? " clue" : " clues");
+		}
+		p.add(new SectionHeader("Mining", sub));
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.GOLD);
+		StackPanel in = new StackPanel(2, 0);
+		if (v.rock != null)
+		{
+			String with = v.pickaxe == null ? "" : ", " + shortPick(v.pickaxe);
+			if (v.perHour > 0)
+			{
+				in.add(new Figure(Words.rate(v.perHour), v.oreName.toLowerCase(Locale.ENGLISH) + " an hour at your pace", Theme.GREEN));
+				in.add(new Line("      " + v.rock.toLowerCase(Locale.ENGLISH) + with + ", over " + Format.duration(v.timedMs), null, null,
+					Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+				in.add(new Line("Mining an hour", Words.rate(v.xpPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.TEXT));
+			}
+			else
+			{
+				long left = Math.max(60_000L, com.codex.ironworks.core.Mines.LEARN_MS - v.timedMs);
+				in.add(new Line("Timing your " + v.rock.toLowerCase(Locale.ENGLISH), "~" + Format.duration(left) + " to go", null,
+					Theme.GOLD_BRIGHT, Theme.TEXT_FAINT));
+			}
+		}
+		if (v.best != null || v.untried != null)
+		{
+			in.add(new Line(v.level > 0 ? "Best for you at " + v.level : "Best for you", null, null, Theme.GOLD, Theme.TEXT));
+			if (v.best != null)
+			{
+				String label = v.best.rock + (v.best.pickaxe == null ? "" : ", " + shortPick(v.best.pickaxe));
+				in.add(new IconLine(v.best.icon, label, Words.rate(v.best.xpPerHour) + " xp/h", icons, Theme.TEXT, Theme.GREEN));
+			}
+			if (v.untried != null)
+			{
+				in.add(Ui.wrapped(v.untried + " give " + xp(v.untriedXp) + " xp an ore from " + v.untriedLevel
+					+ " (wiki); mine them a while to compare.", Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+			}
+		}
+		if (!v.plans.isEmpty())
+		{
+			in.add(new Line("For your plans", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.OrePlan o : v.plans)
+			{
+				String figure;
+				Color tint;
+				if (o.needs > 0)
+				{
+					figure = "from " + o.needs;
+					tint = Theme.BLOCKED;
+				}
+				else if (o.perHour > 0)
+				{
+					figure = Format.estimate((long) (o.hours * 3_600_000));
+					tint = Theme.TEAL;
+				}
+				else
+				{
+					figure = "not timed";
+					tint = Theme.TEXT_MUTED;
+				}
+				in.add(new IconLine(o.icon, Format.amount(o.need) + " " + o.store.toLowerCase(Locale.ENGLISH) + " short", figure, icons,
+					Theme.TEXT, tint));
+			}
+		}
+		if (v.seams.size() > 1 || v.rock == null)
+		{
+			in.add(new Line("By rock and pickaxe", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.SeamView t : v.seams)
+			{
+				String figure = t.perHour > 0 ? Words.rate(t.perHour) + "/h" : Format.amount(t.ore);
+				String label = t.rock.replace(" rocks", "").replace(" crystals", "") + (t.pickaxe == null ? "" : ", " + shortPick(t.pickaxe));
+				in.add(new IconLine(t.icon, label, figure, icons, Theme.TEXT, t.perHour > 0 ? Theme.TEAL : Theme.TEXT_MUTED));
+			}
+		}
+		if (!v.found.isEmpty())
+		{
+			in.add(new Line("Turned up", v.orePerGem > 0 ? "a gem per " + Format.amount(Math.round(v.orePerGem)) + " ore" : null,
+				null, Theme.GOLD, Theme.TEXT_FAINT));
+			for (View.FoundView f : v.found)
+			{
+				in.add(new IconLine(f.icon, f.name, Format.amount(f.count), icons, Theme.TEXT, f.clue ? Theme.VIOLET : Theme.GOLD_BRIGHT));
+			}
+		}
+		if (!v.comebacks.isEmpty())
+		{
+			in.add(new Line("Rocks you saw come back", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.ComebackView b : v.comebacks)
+			{
+				in.add(new Line("      " + b.rock.replace(" rocks", "").replace(" crystals", "") + ", " + Format.amount(b.seen) + " seen",
+					Format.seconds(b.seconds * 1000) + " (wiki " + Format.seconds(b.wikiSeconds * 1000) + ")", null, Theme.TEXT_MUTED, Theme.TEXT));
+			}
+		}
+		card.add(in, BorderLayout.CENTER);
+		p.add(card);
+		p.add(foot("Your own ore, timed ore to ore at the rock: waiting for a rock to come back counts, a bank trip does not. "
+			+ "Times over mined rocks are estimates from the OSRS Wiki's respawn times until you have seen three come back in one place. "
+			+ "The Motherlode Mine is left to Codex Minigame Pilot."));
+	}
+
+	/** "Dragon pickaxe" as "dragon". */
+	private static String shortPick(String pickaxe)
+	{
+		return pickaxe.replace(" pickaxe", "").toLowerCase(Locale.ENGLISH);
+	}
+
+	/** Experience for one ore: "35", "17.5". */
+	private static String xp(double xp)
+	{
+		return xp == Math.rint(xp) ? String.valueOf((long) xp) : String.format(Locale.ENGLISH, "%.1f", xp);
 	}
 
 	/** Every path to a store, costed in time for this account, fastest first, with the way to the best. */

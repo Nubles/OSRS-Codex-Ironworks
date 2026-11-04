@@ -142,6 +142,17 @@ public interface CodexIronworksConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "mineCoach",
+		name = "Rock respawn estimates",
+		description = "While you mine, over each rock near you that has been mined out, show an estimate of when it comes back: the wiki's respawn time, or your own once you have seen enough rocks there come back",
+		position = 10
+	)
+	default boolean mineCoach()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "picked",
 		name = "Also track",
 		description = "Item names to keep as stores too, separated by commas, such as Abyssal whip, Games necklace(8)",

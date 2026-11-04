@@ -72,6 +72,8 @@ public final class Works
 	Herbiboars herbiboars = new Herbiboars();
 	/** The player's woodcutting: logs an hour tree by tree, and the trees felled. */
 	Woodcuts woodcuts = new Woodcuts();
+	/** The player's mining: ore an hour by rock and pickaxe, gems and clues, and rocks seen come back. */
+	Mines mines = new Mines();
 
 	public Works()
 	{
@@ -312,6 +314,12 @@ public final class Works
 		trips.record(flows, now);
 		herbiboars.record(flows, herbiboarGround, herblore, now);
 		woodcuts.record(flows, now);
+	}
+
+	/** The player's mining log. */
+	public Mines mines()
+	{
+		return mines;
 	}
 
 	/** The player's woodcutting log. */
@@ -748,6 +756,9 @@ public final class Works
 				case "woodcuts":
 					woodcuts = gson.fromJson(value, Woodcuts.class);
 					break;
+				case "mines":
+					mines = gson.fromJson(value, Mines.class);
+					break;
 				default:
 					break;
 			}
@@ -954,6 +965,7 @@ public final class Works
 		trips = trips == null ? new Trips() : trips.repair();
 		herbiboars = herbiboars == null ? new Herbiboars() : herbiboars.repair();
 		woodcuts = woodcuts == null ? new Woodcuts() : woodcuts.repair();
+		mines = mines == null ? new Mines() : mines.repair();
 		death = death == null ? null : death.repair();
 		if (death != null && death.items.isEmpty())
 		{

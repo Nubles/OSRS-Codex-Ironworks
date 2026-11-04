@@ -62,6 +62,8 @@ import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameObjectDespawned;
+import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
@@ -69,6 +71,8 @@ import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.StatChanged;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.events.WallObjectDespawned;
+import net.runelite.api.events.WallObjectSpawned;
 import net.runelite.api.events.WidgetClosed;
 import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.gameval.InterfaceID;
@@ -107,7 +111,7 @@ import org.slf4j.LoggerFactory;
 @PluginDescriptor(
 	name = "Codex Ironworks",
 	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources, shops and a guide",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "codex"}
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "mining", "ore", "respawn", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -201,6 +205,8 @@ public class CodexIronworksPlugin extends Plugin
 	private Compass compass;
 	private com.codex.ironworks.overlay.TreeCoach treeCoach;
 	private TreeWatch treeWatch;
+	private com.codex.ironworks.overlay.MineCoach mineCoach;
+	private RockWatch rockWatch;
 	/** The tick of the Woodcutting experience the tree coach last took as a log. */
 	private int lastCutTick = Integer.MIN_VALUE;
 	private StepItems stepItems;
@@ -287,6 +293,8 @@ public class CodexIronworksPlugin extends Plugin
 		compass = new Compass(client, guide);
 		treeCoach = new com.codex.ironworks.overlay.TreeCoach(client);
 		treeWatch = new TreeWatch(client, treeCoach);
+		mineCoach = new com.codex.ironworks.overlay.MineCoach(client);
+		rockWatch = new RockWatch(client, mineCoach);
 		stepItems = new StepItems(itemManager, guide);
 		panel = new IronworksPanel(icons, new IronworksPanel.Actions()
 		{
@@ -372,6 +380,7 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.add(compass);
 		overlayManager.add(stepItems);
 		overlayManager.add(treeCoach);
+		overlayManager.add(mineCoach);
 		lookup = Catalogue.with(config.picked(), config.hidden());
 		clientThread.invokeLater(() ->
 		{
@@ -408,6 +417,7 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.remove(compass);
 		overlayManager.remove(stepItems);
 		overlayManager.remove(treeCoach);
+		overlayManager.remove(mineCoach);
 		clientToolbar.removeNavigation(navButton);
 		RouteGuide leaving = guide;
 		clientThread.invokeLater(() ->
@@ -445,6 +455,10 @@ public class CodexIronworksPlugin extends Plugin
 		if (treeWatch != null)
 		{
 			treeWatch.reset();
+		}
+		if (rockWatch != null)
+		{
+			rockWatch.reset();
 		}
 	}
 
@@ -488,8 +502,16 @@ public class CodexIronworksPlugin extends Plugin
 			dirty = true;
 			publish();
 		}
+		else if (state == GameState.LOADING && rockWatch != null)
+		{
+			rockWatch.loaded();
+		}
 		else if (state == GameState.HOPPING)
 		{
+			if (rockWatch != null)
+			{
+				rockWatch.reset();
+			}
 			if (tracker != null)
 			{
 				tracker.hop();
@@ -580,6 +602,42 @@ public class CodexIronworksPlugin extends Plugin
 		if (wayfinder.heard(event))
 		{
 			dirty = true;
+		}
+	}
+
+	@Subscribe
+	public void onGameObjectSpawned(GameObjectSpawned event)
+	{
+		if (rockWatch != null)
+		{
+			rockWatch.spawned(event.getGameObject());
+		}
+	}
+
+	@Subscribe
+	public void onGameObjectDespawned(GameObjectDespawned event)
+	{
+		if (rockWatch != null)
+		{
+			rockWatch.despawned(event.getGameObject());
+		}
+	}
+
+	@Subscribe
+	public void onWallObjectSpawned(WallObjectSpawned event)
+	{
+		if (rockWatch != null)
+		{
+			rockWatch.spawned(event.getWallObject());
+		}
+	}
+
+	@Subscribe
+	public void onWallObjectDespawned(WallObjectDespawned event)
+	{
+		if (rockWatch != null)
+		{
+			rockWatch.despawned(event.getWallObject());
 		}
 	}
 
@@ -838,6 +896,11 @@ public class CodexIronworksPlugin extends Plugin
 		lastCutTick = wcTick;
 		treeWatch.tick(cut, works.woodcuts(), config.treeCoach());
 		if (works.woodcuts().felled() != felled)
+		{
+			unsaved = true;
+			dirty = true;
+		}
+		if (rockWatch.tick(lastItems, items, bankOpen || !storageOpen.isEmpty(), nowMs, works.mines(), config.mineCoach()))
 		{
 			unsaved = true;
 			dirty = true;

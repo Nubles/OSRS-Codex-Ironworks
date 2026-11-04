@@ -7,6 +7,8 @@ import com.codex.ironworks.core.Herbiboar;
 import com.codex.ironworks.core.Herbiboars;
 import com.codex.ironworks.core.Trees;
 import com.codex.ironworks.core.Woodcuts;
+import com.codex.ironworks.core.Mines;
+import com.codex.ironworks.core.Rocks;
 
 import com.codex.ironworks.core.Altar;
 import com.codex.ironworks.core.Catalogue;
@@ -284,6 +286,7 @@ final class Views
 		v.getting = getting;
 		v.herbiboar = herbiboar(works, levels);
 		v.woodcutting = woodcutting(works, levels);
+		v.mining = mining(works, levels, v.wants);
 		v.shortWays = shortWays(v.workshop, works, lookup, levels, shops, travel, here);
 		long listCoins = 0;
 		for (View.Want w : wants)
@@ -453,6 +456,11 @@ final class Views
 			// Logs timed at the tree, the wait for a felled tree to grow back counted in.
 			return works.woodcuts().perHour(store);
 		}
+		if (src == Source.GATHERED && Rocks.byStore(store) != null && works.mines().perHour(store) > 0)
+		{
+			// Ore timed at the rock, the wait for a mined rock to come back counted in.
+			return works.mines().perHour(store);
+		}
 		if ((src == Source.MADE || src == Source.GATHERED) && Catalogue.family(store) == Family.RUNES)
 		{
 			Trips.Leg leg = works.trips().leg(store);
@@ -599,6 +607,145 @@ final class Views
 		v.ticksToFall = w.ticksToFall();
 		v.wikiFallTicks = k.fallTicks;
 		v.banked = banked(k.logs, v.perHour, levels);
+		return v;
+	}
+
+	/**
+	 * The mining card on the Sources tab: the player's own ore an hour by rock and pickaxe, the rock
+	 * that gives them the most Mining experience an hour at their level, how long the ores their plans
+	 * are short of take at their pace, the gems and clues mining turned up, and the rocks they have
+	 * seen come back against the wiki's time. Null until something has been mined.
+	 */
+	static View.MineView mining(Works works, Map<Skill, Integer> levels, List<View.Want> wants)
+	{
+		Mines log = works.mines();
+		if (log.isEmpty())
+		{
+			return null;
+		}
+		View.MineView v = new View.MineView();
+		v.level = levels.getOrDefault(Skill.MINING, 0);
+		v.ore = log.mined();
+		List<View.SeamView> seams = new ArrayList<>();
+		for (Map.Entry<String, Mines.Seam> e : log.byLatest())
+		{
+			Rocks.Kind k = Mines.rockOf(e.getKey());
+			Mines.Seam s = e.getValue();
+			if (k == null || s.getOre() == 0)
+			{
+				continue;
+			}
+			View.SeamView t = new View.SeamView();
+			t.rock = k.name;
+			t.pickaxe = Mines.pickaxeOf(e.getKey());
+			t.icon = k.oreItem;
+			t.ore = s.getOre();
+			t.perHour = s.perHour();
+			t.xpPerHour = t.perHour * k.xp;
+			seams.add(t);
+			boolean open = v.level == 0 || k.level <= v.level;
+			if (open && t.xpPerHour > 0 && (v.best == null || t.xpPerHour > v.best.xpPerHour))
+			{
+				v.best = t;
+			}
+		}
+		v.seams = seams;
+		if (!seams.isEmpty())
+		{
+			View.SeamView last = seams.get(0);
+			Rocks.Kind k = Rocks.of(last.rock);
+			v.rock = last.rock;
+			v.pickaxe = last.pickaxe;
+			v.oreName = k.ore;
+			v.icon = last.icon;
+			v.perHour = last.perHour;
+			v.timedMs = log.seams().get(log.latest()).getMs();
+			v.xpPerHour = last.xpPerHour;
+		}
+		if (v.level > 0)
+		{
+			// The rock with the most experience for each ore the level opens, if never mined.
+			Rocks.Kind top = null;
+			for (Rocks.Kind k : Rocks.all())
+			{
+				if (k.level <= v.level && (top == null || k.xp > top.xp))
+				{
+					top = k;
+				}
+			}
+			if (top != null && !log.tried(top) && (v.best == null || top.xp > Rocks.of(v.best.rock).xp))
+			{
+				v.untried = top.name;
+				v.untriedLevel = top.level;
+				v.untriedXp = top.xp;
+			}
+		}
+		List<View.OrePlan> plans = new ArrayList<>();
+		for (View.Want w : wants)
+		{
+			Rocks.Kind k = Rocks.byStore(w.store);
+			if (k == null || w.need <= 0)
+			{
+				continue;
+			}
+			View.OrePlan p = new View.OrePlan();
+			p.store = w.store;
+			p.icon = k.oreItem;
+			p.need = w.need;
+			p.rock = k.name;
+			p.needs = v.level > 0 && v.level < k.level ? k.level : 0;
+			p.perHour = log.perHour(k);
+			p.hours = p.perHour > 0 ? w.need / p.perHour : 0;
+			plans.add(p);
+		}
+		v.plans = plans;
+		List<View.FoundView> found = new ArrayList<>();
+		long gemsOffRocks = 0;
+		for (Map.Entry<String, Long> e : log.found().entrySet())
+		{
+			View.FoundView f = new View.FoundView();
+			f.name = e.getKey();
+			f.icon = Rocks.itemOf(e.getKey());
+			f.count = e.getValue();
+			f.clue = Rocks.isClue(e.getKey());
+			if (f.clue)
+			{
+				v.clues += f.count;
+			}
+			else
+			{
+				v.gems += f.count;
+			}
+			found.add(f);
+		}
+		found.sort((a, b) -> a.clue != b.clue ? (a.clue ? 1 : -1) : Long.compare(b.count, a.count));
+		v.found = found;
+		for (Map.Entry<String, Mines.Seam> e : log.seams().entrySet())
+		{
+			if (Mines.rockOf(e.getKey()) == Rocks.GEM_ROCKS)
+			{
+				gemsOffRocks += e.getValue().getOre();
+			}
+		}
+		long random = v.gems - gemsOffRocks;
+		v.orePerGem = random > 0 && log.ore() > 0 ? log.ore() / (double) random : 0;
+		List<View.ComebackView> comebacks = new ArrayList<>();
+		for (Rocks.Kind k : Rocks.all())
+		{
+			Mines.Comeback c = log.comebacks(k);
+			if (c.getSeen() == 0)
+			{
+				continue;
+			}
+			View.ComebackView b = new View.ComebackView();
+			b.rock = k.name;
+			b.seen = c.getSeen();
+			b.seconds = c.average() * 0.6;
+			b.wikiSeconds = k.respawnTicks * 0.6;
+			b.varies = k.varies;
+			comebacks.add(b);
+		}
+		v.comebacks = comebacks;
 		return v;
 	}
 
