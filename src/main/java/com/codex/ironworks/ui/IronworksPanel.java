@@ -88,6 +88,11 @@ public class IronworksPanel extends PluginPanel
 
 		/** Start or stop pointing the way to the step in hand. */
 		void follow(boolean on);
+
+		/** Asks Codex Wayfinder to plot the way to a place. */
+		default void route(View.Goto spot)
+		{
+		}
 	}
 
 	public IronworksPanel(ItemIcons icons, Actions actions)
@@ -712,8 +717,15 @@ public class IronworksPanel extends PluginPanel
 			return;
 		}
 		p.add(new SectionHeader(title, "ways to get more"));
+		boolean planned = false;
 		for (View.Getting g : list.subList(0, Math.min(6, list.size())))
 		{
+			if (!g.plan.isEmpty())
+			{
+				p.add(plan(g));
+				planned = true;
+				continue;
+			}
 			Card card = new Card(new BorderLayout());
 			StackPanel in = new StackPanel(2, 0);
 			in.add(new IconLine(g.icon, g.store, null, icons, Theme.GOLD_BRIGHT, Theme.TEXT_MUTED));
@@ -732,7 +744,62 @@ public class IronworksPanel extends PluginPanel
 			card.add(in, BorderLayout.CENTER);
 			p.add(card);
 		}
-		p.add(foot("A pace per hour is your own, timed while you were at it."));
+		p.add(foot(planned ? "Fastest first, for this account: the trip there with the teleports you own, then the work at your own pace, or the OSRS Wiki's rate until Ironworks has timed you."
+			: "A pace per hour is your own, timed while you were at it."));
+	}
+
+	/** Every path to a store, costed in time for this account, fastest first, with the way to the best. */
+	private JComponent plan(View.Getting g)
+	{
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.GOLD_DIM);
+		StackPanel in = new StackPanel(3, 0);
+		in.add(new IconLine(g.icon, g.store, Format.amount(g.need) + " to get", icons, Theme.GOLD_BRIGHT, Theme.TEXT_MUTED));
+		int shown = 0;
+		boolean routed = false;
+		for (View.PathView pv : g.plan)
+		{
+			if (shown++ == 4)
+			{
+				break;
+			}
+			boolean best = shown == 1 && !pv.locked && (pv.timed || pv.figure != null);
+			Color tint = pv.locked ? Theme.TEXT_FAINT : Palette.of(pv.source);
+			Color figure = pv.locked ? Theme.BLOCKED : pv.timed ? (best ? Theme.GOLD_BRIGHT : Theme.TEAL) : Theme.TEXT_MUTED;
+			in.add(new Line(shown + ". " + pv.text, pv.figure, tint, pv.locked ? Theme.TEXT_FAINT : best ? Theme.GOLD_BRIGHT : Theme.TEXT, figure));
+			List<String> sub = new ArrayList<>();
+			if (pv.basis != null)
+			{
+				sub.add(pv.basis);
+			}
+			if (pv.travel != null)
+			{
+				sub.add(pv.travel);
+			}
+			if (pv.needs != null && !pv.locked)
+			{
+				sub.add("needs " + pv.needs);
+			}
+			if (!sub.isEmpty())
+			{
+				JPanel row = new JPanel(new BorderLayout());
+				row.setOpaque(false);
+				row.setBorder(new EmptyBorder(0, 12, 2, 0));
+				row.add(Ui.wrapped(String.join(" · ", sub), Theme.small(), pv.travel != null && best ? Theme.TEAL : Theme.TEXT_FAINT, WIDTH - 40), BorderLayout.CENTER);
+				in.add(row);
+			}
+			if (view.wayfinder && pv.spot != null && !pv.locked && !routed)
+			{
+				routed = true;
+				JPanel holder = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+				holder.setOpaque(false);
+				View.Goto spot = pv.spot;
+				holder.add(new CodexButton("Route to " + Ui.clip(spot.name, getFontMetrics(Theme.small()), 110), best, () -> actions.route(spot)));
+				in.add(holder);
+			}
+		}
+		card.add(in, BorderLayout.CENTER);
+		return card;
 	}
 
 	/** Ranks busy stores by how much of the player's play they eat, so feathers do not crowd out food. */

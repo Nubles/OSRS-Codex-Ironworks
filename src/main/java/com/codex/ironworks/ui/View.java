@@ -59,6 +59,8 @@ public final class View
 
 	/** The ways to get more of each store, by store. */
 	public Map<String, Getting> getting = Collections.emptyMap();
+	/** Codex Wayfinder is on, so places can have a Route button. */
+	public boolean wayfinder;
 	/** Coins the shopping list costs, as far as prices are known. */
 	public long listCoins;
 	/** Coins held, everywhere. */
@@ -107,6 +109,49 @@ public final class View
 		public String store;
 		public int icon = -1;
 		public List<WayView> ways = Collections.emptyList();
+		/** Units the plan below covers: the shortfall, or a runway's worth when nothing is short. */
+		public long need;
+		/** Every path to it, costed in time for this account, fastest first. */
+		public List<PathView> plan = Collections.emptyList();
+	}
+
+	/** One costed path to a store. */
+	public static final class PathView
+	{
+		/** "Gather", "Kill", "Buy", "Make", "Farm". */
+		public String verb;
+		/** The source it is filed under, for its colour. */
+		public com.codex.ironworks.core.Source source;
+		public String text;
+		/** "5h 30m", "~640 kills", "Magic 33", or null. */
+		public String figure;
+		/** "204/h wiki rate", "your pace", or null. */
+		public String basis;
+		/** The quickest way there with Codex Wayfinder, or null. */
+		public String travel;
+		public boolean locked;
+		public boolean timed;
+		public String needs;
+		public Goto spot;
+	}
+
+	/** A tile to route to. */
+	public static final class Goto
+	{
+		public final int x;
+		public final int y;
+		public final int plane;
+		public final String name;
+		public final String key;
+
+		public Goto(int x, int y, int plane, String name, String key)
+		{
+			this.x = x;
+			this.y = y;
+			this.plane = plane;
+			this.name = name;
+			this.key = key;
+		}
 	}
 
 	/** One way to get more. */
@@ -142,6 +187,8 @@ public final class View
 	{
 		public String key;
 		public String name;
+		/** The map square it stands in. */
+		public int region;
 		public int visits;
 		public long first;
 		public long last;

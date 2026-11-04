@@ -1,5 +1,7 @@
 package com.codex.ironworks;
 
+import com.codex.ironworks.core.Travel;
+
 import com.codex.ironworks.core.Catalogue;
 import com.codex.ironworks.core.Classify;
 import com.codex.ironworks.core.Family;
@@ -84,10 +86,13 @@ import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ClientShutdown;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.events.PluginChanged;
+import net.runelite.client.events.PluginMessage;
 import net.runelite.client.events.RuneScapeProfileChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.plugins.PluginManager;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -179,6 +184,12 @@ public class CodexIronworksPlugin extends Plugin
 	@Inject
 	private WorldMapPointManager worldMap;
 
+	@Inject
+	private PluginManager pluginManager;
+
+	/** Codex Wayfinder: its travel atlas and the Route button. */
+	private WayfinderLink wayfinder;
+
 	private Route route;
 	private RouteGuide guide;
 	private Highlights highlights;
@@ -247,6 +258,8 @@ public class CodexIronworksPlugin extends Plugin
 			arrivals.ask(image, onLoaded);
 			return image;
 		};
+		wayfinder = new WayfinderLink(pluginManager, eventBus, configManager, clientThread, gson);
+		wayfinder.refresh();
 		route = Route.load();
 		guide = new RouteGuide(client, eventBus, worldMap, Sigil.icon(18), route, this::name);
 		highlights = new Highlights(client, outlines, guide);
@@ -280,6 +293,15 @@ public class CodexIronworksPlugin extends Plugin
 						publish();
 					}
 				});
+			}
+
+			@Override
+			public void route(View.Goto spot)
+			{
+				if (config.wayfinder() && spot != null)
+				{
+					wayfinder.route(spot.x, spot.y, spot.plane, spot.name, spot.key);
+				}
 			}
 
 			@Override
@@ -446,6 +468,7 @@ public class CodexIronworksPlugin extends Plugin
 	@Subscribe
 	public void onRuneScapeProfileChanged(RuneScapeProfileChanged event)
 	{
+		wayfinder.refresh();
 		save();
 		reset();
 		warned.clear();
@@ -471,6 +494,32 @@ public class CodexIronworksPlugin extends Plugin
 				}
 				dirty = true;
 			});
+		}
+	}
+
+	@Subscribe
+	public void onConfigChangedWayfinder(ConfigChanged event)
+	{
+		if (Travel.GROUP.equals(event.getGroup()) && Travel.KEY.equals(event.getKey()))
+		{
+			wayfinder.refresh();
+			dirty = true;
+		}
+	}
+
+	@Subscribe
+	public void onPluginChanged(PluginChanged event)
+	{
+		wayfinder.refresh();
+		dirty = true;
+	}
+
+	@Subscribe
+	public void onPluginMessage(PluginMessage event)
+	{
+		if (wayfinder.heard(event))
+		{
+			dirty = true;
 		}
 	}
 
@@ -1408,8 +1457,23 @@ public class CodexIronworksPlugin extends Plugin
 		}
 		View built = works == null ? new View()
 			: Views.build(works, lookup, config.target(), config.warn(), System.currentTimeMillis(), LocalDate.now(), this::unitWorth,
-			levels, xp, config.altar(), itemManager::getItemPrice);
+			levels, xp, config.altar(), itemManager::getItemPrice, config.wayfinder() ? wayfinder.atlas() : null, loggedIn ? here() : null);
 		built.loggedIn = loggedIn;
+		built.wayfinder = config.wayfinder() && wayfinder.on();
+		if (built.wayfinder)
+		{
+			for (View.Getting g : built.getting.values())
+			{
+				for (View.PathView pv : g.plan)
+				{
+					Travel.Routed r = pv.spot == null ? null : wayfinder.reply(pv.spot.key);
+					if (r != null && r.found)
+					{
+						pv.travel = "Wayfinder: " + Travel.time(r.seconds) + (r.steps.isEmpty() ? "" : " · " + r.steps.get(0));
+					}
+				}
+			}
+		}
 		if (works != null)
 		{
 			built.guide = Guides.build(route, works.ticked(), guide.account(), works.isFollowing(), built.found, built.workshop, xp);

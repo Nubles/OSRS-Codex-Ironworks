@@ -109,6 +109,17 @@ public interface CodexIronworksConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "wayfinder",
+		name = "Travel with Wayfinder",
+		description = "With Codex Wayfinder on, cost each way to get more by real travel time with your teleports and show a Route button",
+		position = 7
+	)
+	default boolean wayfinder()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "picked",
 		name = "Also track",
 		description = "Item names to keep as stores too, separated by commas, such as Abyssal whip, Games necklace(8)",
