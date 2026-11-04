@@ -82,7 +82,7 @@ public class SettingsTest
 				keys.add(item.keyName());
 			}
 		}
-		for (String key : new String[]{"target", "warn", "chatWarnings", "shopPlaque", "picked", "hidden"})
+		for (String key : new String[]{"target", "warn", "chatWarnings", "shopPlaque", "picked", "hidden", "wayfinder"})
 		{
 			assertTrue(key, keys.contains(key));
 		}

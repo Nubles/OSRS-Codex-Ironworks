@@ -1,5 +1,8 @@
 package com.codex.ironworks;
 
+import com.codex.ironworks.core.Acquire;
+import com.codex.ironworks.core.Travel;
+
 import com.codex.ironworks.core.Altar;
 import com.codex.ironworks.core.Catalogue;
 import com.codex.ironworks.core.Death;
@@ -84,6 +87,14 @@ final class Views
 		ToDoubleFunction<String> unitWorth, Map<Skill, Integer> levels, Map<Skill, Integer> xp, Altar altar,
 		ToLongFunction<Integer> priceOf)
 	{
+		return build(works, lookup, target, warn, now, today, unitWorth, levels, xp, altar, priceOf, null, null);
+	}
+
+	/** As above, with Codex Wayfinder's atlas and where the player stands, for travel times; both may be null. */
+	static View build(Works works, Catalogue.Lookup lookup, double target, double warn, long now, LocalDate today,
+		ToDoubleFunction<String> unitWorth, Map<Skill, Integer> levels, Map<Skill, Integer> xp, Altar altar,
+		ToLongFunction<Integer> priceOf, Travel travel, int[] here)
+	{
 		View v = new View();
 		v.now = now;
 		v.account = works.getAccount();
@@ -109,6 +120,7 @@ final class Views
 			View.ShopView sv = new View.ShopView();
 			sv.key = s.key();
 			sv.name = s.getName();
+			sv.region = s.getRegion();
 			sv.visits = s.getVisits();
 			sv.first = s.getFirst();
 			sv.last = s.getLast();
@@ -256,7 +268,10 @@ final class Views
 		{
 			if (!Catalogue.money(sv.store))
 			{
-				getting.put(sv.store, getting(sv.store, sv.icon, works, lookup, levels));
+				View.Getting g = getting(sv.store, sv.icon, works, lookup, levels);
+				long need = sv.runway.need > 0 ? sv.runway.need : Math.round(sv.runway.burn * target);
+				plan(g, need, works, levels, shops, travel, here);
+				getting.put(sv.store, g);
 			}
 		}
 		v.getting = getting;
@@ -409,6 +424,73 @@ final class Views
 				break;
 			}
 		}
+	}
+
+	/** Teleports in the bank are taken to cost a minute's bank stop: a planning assumption. */
+	static final int BANK_STOP_SECONDS = 60;
+
+	/** Costs every path to a store for this account, fastest first, onto its card. */
+	static void plan(View.Getting g, long need, Works works, Map<Skill, Integer> levels, List<View.ShopView> shops,
+		Travel travel, int[] here)
+	{
+		g.need = need;
+		if (need <= 0)
+		{
+			return;
+		}
+		List<Acquire.Offer> offers = new ArrayList<>();
+		for (View.ShopView s : shops)
+		{
+			for (View.WareView w : s.wares)
+			{
+				if (g.store.equals(w.store))
+				{
+					offers.add(new Acquire.Offer(s.name, s.region, (long) Math.max(0, w.base) * Math.max(1, w.units)));
+					break;
+				}
+			}
+		}
+		List<Acquire.Make> makes = new ArrayList<>();
+		for (View.WayView w : g.ways)
+		{
+			if (w.kind == Ways.Kind.MAKE && w.text.startsWith("Make it from"))
+			{
+				makes.add(new Acquire.Make(w.text, w.skill, w.level));
+			}
+		}
+		if (!Acquire.knows(g.store) && offers.isEmpty() && makes.isEmpty())
+		{
+			return;
+		}
+		List<Acquire.Path> paths = Acquire.rank(g.store, need, levels, (store, src) ->
+		{
+			Rate r = works.rate(store, src);
+			return r == null ? 0 : r.perHour();
+		}, offers, makes, travel, here, BANK_STOP_SECONDS);
+		List<View.PathView> out = new ArrayList<>();
+		for (Acquire.Path p : paths)
+		{
+			View.PathView pv = new View.PathView();
+			pv.verb = p.kind.getVerb();
+			pv.source = p.kind.getSource();
+			pv.text = p.text;
+			pv.locked = p.locked != null;
+			pv.timed = p.seconds >= 0;
+			pv.needs = p.needs;
+			pv.figure = p.locked != null ? p.locked : p.seconds >= 0 ? com.codex.ironworks.ui.Format.duration(p.seconds * 1000)
+				: p.kills > 0 ? "~" + com.codex.ironworks.ui.Format.amount(p.kills) + " kills" : null;
+			pv.basis = p.perWorld > 0 ? com.codex.ironworks.ui.Format.amount(p.perWorld) + " a world, " + p.basis
+				: p.perHour > 0 ? com.codex.ironworks.ui.Format.amount(Math.round(p.perHour)) + "/h " + p.basis
+				: p.basis;
+			pv.travel = p.leg == null ? null : p.leg.say();
+			if (p.located())
+			{
+				pv.spot = new View.Goto(p.x, p.y, p.plane, p.place == null ? p.text : p.place,
+					"path:" + g.store + ":" + p.kind.name() + ":" + p.x + "," + p.y);
+			}
+			out.add(pv);
+		}
+		g.plan = out;
 	}
 
 	/** The ways to get more of a store: the player's own paces first, then what they have the levels for. */
