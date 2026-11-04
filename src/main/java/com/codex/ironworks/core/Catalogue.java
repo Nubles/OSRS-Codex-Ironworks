@@ -97,6 +97,8 @@ public final class Catalogue
 			"Red dragon leather", "Black dragon leather", "Uncut sapphire", "Uncut emerald", "Uncut ruby", "Uncut diamond",
 			"Uncut dragonstone", "Amethyst", "Steel nails", "Bolt of cloth", "Limestone brick", "Marble block", "Soft clay",
 			"Air orb", "Unpowered orb", "Battlestaff",
+			// Wine for Cooking: grapes from the Aldarin vineyard, the Vinery or shops, and jugs of water
+			"Grapes", "Jug of water",
 			// Sailing: what it gathers, and what boats are built from
 			"Small salvage", "Fishy salvage", "Barracuda salvage", "Large salvage", "Plundered salvage", "Martial salvage",
 			"Fremennik salvage", "Opulent salvage", "Lead ore", "Nickel ore", "Lead bar", "Cupronickel bar", "Camphor logs",

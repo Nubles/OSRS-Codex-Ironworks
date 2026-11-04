@@ -3,6 +3,7 @@ package com.codex.ironworks;
 import com.codex.ironworks.core.Altar;
 import com.codex.ironworks.core.Fish;
 import com.codex.ironworks.core.Stars;
+import com.codex.ironworks.core.Vineyard;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -196,6 +197,17 @@ public interface CodexIronworksConfig extends Config
 	default Fish.PearlGoal pearlGoal()
 	{
 		return Fish.PearlGoal.NONE;
+	}
+
+	@ConfigItem(
+		keyName = "grapeGoal",
+		name = "Grape goal",
+		description = "A Cooking level to gather Aldarin vineyard grapes toward as jugs of wine: the vineyard card shows the grapes it takes against the grapes you hold, and the time at your pace",
+		position = 17
+	)
+	default Vineyard.Goal grapeGoal()
+	{
+		return Vineyard.Goal.NEXT_LEVEL;
 	}
 
 	@ConfigItem(

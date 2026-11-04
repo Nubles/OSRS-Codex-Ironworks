@@ -14,6 +14,8 @@ import com.codex.ironworks.core.Fishing;
 import com.codex.ironworks.core.Trawls;
 import com.codex.ironworks.core.Salvages;
 import com.codex.ironworks.core.Wrecks;
+import com.codex.ironworks.core.Vineyard;
+import com.codex.ironworks.core.Vineyards;
 import com.codex.ironworks.core.Starlog;
 import com.codex.ironworks.core.Stars;
 import com.codex.ironworks.core.Rocks;
@@ -53,6 +55,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToLongFunction;
+import net.runelite.api.Experience;
 import net.runelite.api.Skill;
 
 /** Works out everything the panel shows from the saved works, on the client thread, as a copy the panel can keep. */
@@ -297,6 +300,7 @@ final class Views
 		v.mining = mining(works, levels, v.wants);
 		v.trawling = trawling(works, levels, v.wants);
 		v.salvaging = salvaging(works, levels, now);
+		v.vineyard = vineyard(works, levels);
 		v.fishing = fishing(works, levels, v.wants);
 		v.stars = stars(works, levels, travel);
 		v.shortWays = shortWays(v.workshop, works, lookup, levels, shops, travel, here);
@@ -482,6 +486,11 @@ final class Views
 		{
 			// Salvage timed salvage to salvage at the wrecks, on the player's own hook.
 			return works.salvages().perHour(store);
+		}
+		if (src == Source.GATHERED && Vineyard.STORE.equals(store) && works.vineyard().grapesPerHour() > 0)
+		{
+			// Grapes timed barrel to barrel at the Aldarin vineyard, the walk between the vines counted in.
+			return works.vineyard().grapesPerHour();
 		}
 		if (src == Source.GATHERED && Fish.byStore(store) != null && works.fishing().perHour(store) > 0)
 		{
@@ -1043,6 +1052,71 @@ final class Views
 			v.hold = o;
 		}
 		return v;
+	}
+
+	/**
+	 * The vineyard card on the Sources tab: the player's own grape barrels at Aldarin, grapes and
+	 * barrels an hour at their pace, the Cooking experience those grapes come to as wine at the wiki's
+	 * figure, the grapes they hold, and their sittings. Null until a barrel is taken or handed in.
+	 */
+	static View.VineyardView vineyard(Works works, Map<Skill, Integer> levels)
+	{
+		Vineyards log = works.vineyard();
+		if (log.isEmpty())
+		{
+			return null;
+		}
+		View.VineyardView v = new View.VineyardView();
+		v.barrels = log.getBarrels();
+		v.grapes = log.getGrapes();
+		v.perBarrel = log.perBarrel();
+		v.timed = log.getTimed();
+		v.barrelsPerHour = log.barrelsPerHour();
+		v.grapesPerHour = log.grapesPerHour();
+		v.roundMs = log.roundMs();
+		v.wineXpPerHour = v.grapesPerHour * Vineyard.WINE_XP;
+		v.cooking = levels.getOrDefault(Skill.COOKING, 0);
+		v.held = held(works, Vineyard.GRAPES);
+		v.heldXp = v.held * Vineyard.WINE_XP;
+		List<View.SittingView> sittings = new ArrayList<>();
+		List<Vineyards.Sitting> all = log.sittings();
+		for (int i = all.size() - 1; i >= 0; i--)
+		{
+			Vineyards.Sitting s = all.get(i);
+			View.SittingView o = new View.SittingView();
+			o.start = s.getStart();
+			o.ms = s.getMs();
+			o.barrels = s.getBarrels();
+			o.grapes = s.getGrapes();
+			o.grapesPerHour = s.grapesPerHour();
+			sittings.add(o);
+		}
+		v.sittings = sittings;
+		return v;
+	}
+
+	/**
+	 * The Cooking level the player chose to fill grapes toward: the grapes it takes as jugs of wine at
+	 * the wiki's 200 each, less the grapes held, and the time at their own vineyard pace. Below 35
+	 * Cooking, where wine is first made, the goal is counted from 35.
+	 */
+	static void vineyardGoal(View.VineyardView v, Vineyard.Goal goal, Map<Skill, Integer> xp)
+	{
+		if (v == null || goal == null || v.cooking <= 0 || !xp.containsKey(Skill.COOKING))
+		{
+			return;
+		}
+		// Wine gives nothing below its level, so a goal is counted from there.
+		int level = goal.target(Math.max(v.cooking, Vineyard.WINE_LEVEL));
+		if (level <= 0)
+		{
+			return;
+		}
+		v.goal = goal.toString();
+		v.goalLevel = level;
+		v.goalGrapes = Vineyard.grapesTo(Math.max(xp.get(Skill.COOKING), Experience.getXpForLevel(Vineyard.WINE_LEVEL)), level);
+		long missing = Math.max(0, v.goalGrapes - v.held);
+		v.goalHours = v.grapesPerHour > 0 ? missing / v.grapesPerHour : 0;
 	}
 
 	/**

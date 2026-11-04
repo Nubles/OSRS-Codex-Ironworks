@@ -634,6 +634,48 @@ public final class View
 		public long agoMs;
 	}
 
+	/** The Aldarin vineyard: the player's own grape barrels; null when none is logged. */
+	public VineyardView vineyard;
+
+	/** The Aldarin vineyard as this account works it. */
+	public static final class VineyardView
+	{
+		/** Barrels handed in, the grapes they paid, and grapes a barrel. */
+		public long barrels;
+		public long grapes;
+		public double perBarrel;
+		/** Barrels timed, and the pace over them; 0 until enough are timed. */
+		public long timed;
+		public double barrelsPerHour;
+		public double grapesPerHour;
+		public long roundMs;
+		/** Cooking experience an hour the grapes come to as jugs of wine, at the wiki's 200 a jug. */
+		public double wineXpPerHour;
+		/** The Cooking level, when known; 0 when not. */
+		public int cooking;
+		/** Grapes in the pack and the bank, as last seen. */
+		public long held;
+		/** Experience the grapes held come to as wine. */
+		public double heldXp;
+		/** The goal chosen: its name, its level, the grapes it takes as wine, and the time at the player's pace. */
+		public String goal;
+		public int goalLevel;
+		public long goalGrapes;
+		public double goalHours;
+		/** The latest sittings first. */
+		public List<SittingView> sittings = Collections.emptyList();
+	}
+
+	/** One sitting at the vineyard. */
+	public static final class SittingView
+	{
+		public long start;
+		public long ms;
+		public long barrels;
+		public long grapes;
+		public double grapesPerHour;
+	}
+
 	/** One fish as this account trawls it. */
 	public static final class HaulView
 	{

@@ -185,6 +185,13 @@ public final class Acquire
 		lead("Limpwurt root", new Lead(Kind.DROP, "Kill hill giants in Edgeville Dungeon", "Edgeville Dungeon",
 			3096, 3469, 0, 0, 11 / 128.0, 0, null, 0, null));
 		lead("Limpwurt root", new Lead(Kind.FARM, "Grow it in flower patches", null, 0, 0, -1, 0, 0, 0, Skill.FARMING, 26, null));
+		// Grapes: the Aldarin vineyard foreman pays 5 noted a full barrel; the wiki gives no rate, so it is
+		// timed only by the player's own barrels. Faustus' Fruit and Veg holds 5 (OSRS Wiki: Grapes).
+		lead("Grapes", new Lead(Kind.GATHER, "Fill the foreman's grape barrel in Aldarin", "Aldarin",
+			0, 0, -1, 0, 0, 0, null, 0, Vineyard.QUEST));
+		lead("Grapes", new Lead(Kind.SHOP, "Buy them at Faustus' Fruit and Veg in Aldarin", "Aldarin",
+			0, 0, -1, 0, 0, 5, null, 0, null));
+		lead("Grapes", new Lead(Kind.FARM, "Grow them at the Hosidius Vinery", null, 0, 0, -1, 0, 0, 0, Skill.FARMING, 36, null));
 		// Herbs from the herbiboar: the middle trail's start, from RuneLite's Herbiboar plugin. Timed only
 		// by the player's own trails; the wiki's catch rate is not split into herbs of each kind.
 		for (String herb : Herbiboar.herbs())
