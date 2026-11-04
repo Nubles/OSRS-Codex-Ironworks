@@ -418,6 +418,7 @@ public class IronworksPanel extends PluginPanel
 			mining(p);
 			stars(p);
 			trawling(p);
+			salvaging(p);
 			fishing(p);
 			return p;
 		}
@@ -431,6 +432,7 @@ public class IronworksPanel extends PluginPanel
 		mining(p);
 		stars(p);
 		trawling(p);
+		salvaging(p);
 		fishing(p);
 		if (!s.skills.isEmpty())
 		{
@@ -1248,6 +1250,157 @@ public class IronworksPanel extends PluginPanel
 		p.add(foot("Your own fish, counted as they land in the net and timed catch to catch while you keep with a shoal; "
 			+ "a gap over three minutes is not timed. Experience is what came in between catches. "
 			+ "Your net and boat are not told apart. The same pace times trawling wherever Ironworks ranks ways to get these fish."));
+	}
+
+	/** Wreck types whose sorted loot is shown, the latest first. */
+	private static final int LOOT_WRECKS = 3;
+	/** Loot lines shown for each wreck type. */
+	private static final int LOOT_SHOWN = 5;
+
+	/**
+	 * Shipwreck salvaging as this account does it: salvage and Sailing experience an hour on the wreck
+	 * worked last, the wreck that pays best at the player's level, how full the cargo hold was when
+	 * last seen, and what each wreck's salvage sorted into.
+	 */
+	private void salvaging(StackPanel p)
+	{
+		View.SalvageView v = view.salvaging;
+		if (v == null)
+		{
+			return;
+		}
+		String sub = Format.amount(v.salvage) + " salvage";
+		if (v.sorted > 0)
+		{
+			sub += ", " + Format.amount(v.sorted) + " sorted";
+		}
+		p.add(new SectionHeader("Salvaging", sub));
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.GOLD);
+		StackPanel in = new StackPanel(2, 0);
+		View.WreckView last = v.last;
+		if (last != null)
+		{
+			String wreck = last.wreck.toLowerCase(Locale.ENGLISH);
+			if (last.perHour > 0)
+			{
+				in.add(new Figure(Words.rate(last.perHour), last.salvage.toLowerCase(Locale.ENGLISH) + " an hour at your pace", Theme.GREEN));
+				in.add(new Line("      " + wreck + "s, over " + Format.duration(last.timedMs), null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+				in.add(new Line("Sailing an hour", Words.rate(last.xpPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.TEXT));
+				in.add(new Line("With it all sorted", Words.rate(last.withSorting) + " xp", null, Theme.TEXT_MUTED, Theme.GOLD_BRIGHT));
+				if (last.secondsEach > 0)
+				{
+					in.add(new Line("A salvage every", seconds(last.secondsEach), null, Theme.TEXT_MUTED, Theme.TEXT));
+				}
+			}
+			else
+			{
+				long left = Math.max(60_000L, com.codex.ironworks.core.Salvages.LEARN_MS - last.timedMs);
+				in.add(new Line("Timing your " + wreck + "s", "~" + Format.duration(left) + " to go", null, Theme.GOLD_BRIGHT, Theme.TEXT_FAINT));
+			}
+			if (last.sunk > 0)
+			{
+				in.add(new Line("Wrecks sunk", Format.amount(last.sunk) + (last.count >= last.sunk
+					? ", ~" + Format.amount(Math.round(last.count / (double) last.sunk)) + " each" : ""), null, Theme.TEXT_MUTED, Theme.TEXT));
+			}
+			in.add(Ui.wrapped("Idle note: a " + wreck + " lasts about " + lasts(last.lastsSeconds)
+				+ " once salvaging starts, and larger wrecks allow longer idle time (wiki).", Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+		}
+		if (v.best != null || v.untried != null)
+		{
+			in.add(new Line(v.level > 0 ? "Best for you at " + v.level : "Best for you", null, null, Theme.GOLD, Theme.TEXT));
+			if (v.best != null)
+			{
+				in.add(new IconLine(v.best.icon, v.best.wreck.replace(" shipwreck", "") + ", sorted", Words.rate(v.best.withSorting) + " xp/h",
+					icons, Theme.TEXT, Theme.GREEN));
+			}
+			if (v.untried != null)
+			{
+				in.add(Ui.wrapped(v.untried + "s open at " + v.untriedLevel + " Sailing, " + xp(v.untriedXp) + " xp a salvage and "
+					+ xp(v.untriedSortXp) + " to sort it (wiki); salvage them a while to compare.", Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+			}
+		}
+		View.HoldView hold = v.hold;
+		if (hold != null)
+		{
+			in.add(new Line("Cargo hold", "seen " + Format.ago(hold.agoMs), null, Theme.GOLD, Theme.TEXT_FAINT));
+			String boat = hold.boat > 0 ? "Boat " + hold.boat + ", " : "";
+			if (hold.capacity > 0)
+			{
+				double share = Math.min(1, hold.used / (double) hold.capacity);
+				in.add(new Meter(boat + Format.amount(hold.capacity - Math.min(hold.used, hold.capacity)) + " slots free",
+					hold.used + "/" + hold.capacity, share, share >= 0.9 ? Theme.EMBER : share >= 0.6 ? Theme.GOLD : Theme.TEAL));
+			}
+			else
+			{
+				in.add(new Line(hold.boat > 0 ? "Slots used on boat " + hold.boat : "Slots used", String.valueOf(hold.used), null,
+					Theme.TEXT_MUTED, Theme.TEXT));
+			}
+			for (View.LootView k : hold.kinds)
+			{
+				in.add(new IconLine(k.icon, k.name, Format.amount(k.count), icons, Theme.TEXT, Theme.TEXT_MUTED));
+			}
+			if (hold.salvage > 0)
+			{
+				in.add(Ui.wrapped(Format.amount(hold.salvage) + " salvage waits to be sorted: " + Words.rate(hold.sortXp)
+					+ " Sailing xp at the wiki's figures.", Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+			}
+		}
+		int shown = 0;
+		for (View.WreckView t : v.wrecks)
+		{
+			if (t.sorted == 0 || shown >= LOOT_WRECKS)
+			{
+				continue;
+			}
+			shown++;
+			in.add(new Line(t.salvage, Format.amount(t.sorted) + " sorted", null, Theme.GOLD, Theme.TEXT_FAINT));
+			for (int i = 0; i < Math.min(LOOT_SHOWN, t.loot.size()); i++)
+			{
+				View.LootView o = t.loot.get(i);
+				in.add(new IconLine(o.icon, o.name, Format.amount(o.count), icons, Theme.TEXT, Theme.TEXT_MUTED));
+			}
+			if (t.loot.size() > LOOT_SHOWN)
+			{
+				in.add(new Line("      and " + (t.loot.size() - LOOT_SHOWN) + " more kinds", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+			if (t.bare > 0)
+			{
+				in.add(new Line("      " + Format.amount(t.bare) + " kept nothing in your pack", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+		}
+		if (v.wrecks.size() > 1 || last == null)
+		{
+			in.add(new Line("By wreck", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.WreckView t : v.wrecks)
+			{
+				String figure = t.withSorting > 0 ? Words.rate(t.withSorting) + " xp/h" : t.count > 0 ? Format.amount(t.count) : Format.amount(t.sorted) + " sorted";
+				in.add(new IconLine(t.icon, t.wreck.replace(" shipwreck", ""), figure, icons, Theme.TEXT, t.withSorting > 0 ? Theme.TEAL : Theme.TEXT_MUTED));
+			}
+		}
+		card.add(in, BorderLayout.CENTER);
+		p.add(card);
+		p.add(foot("Your own salvage, counted as it comes onto your hook with Sailing experience and timed salvage to salvage; "
+			+ "a gap over three minutes is not timed. Sailing an hour is all your hooks, crew too; salvage an hour is your own. "
+			+ "Sorted is what came into your pack as salvage was sorted. The hold is as you last opened it. "
+			+ "The same pace times salvaging wherever Ironworks ranks ways to get salvage."));
+	}
+
+	/** Seconds as a short wait: "12s", "1m 05s". */
+	private static String seconds(double s)
+	{
+		long n = Math.round(s);
+		return n < 60 ? n + "s" : n / 60 + "m " + String.format(Locale.ENGLISH, "%02d", n % 60) + "s";
+	}
+
+	/** The wiki's time a wreck lasts: "3 minutes", "3:15". */
+	private static String lasts(int seconds)
+	{
+		if (seconds % 60 == 0)
+		{
+			return seconds / 60 + (seconds == 60 ? " minute" : " minutes");
+		}
+		return seconds / 60 + ":" + String.format(Locale.ENGLISH, "%02d", seconds % 60);
 	}
 
 	/**

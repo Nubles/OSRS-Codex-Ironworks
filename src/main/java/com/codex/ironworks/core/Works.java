@@ -76,6 +76,8 @@ public final class Works
 	Mines mines = new Mines();
 	/** The player's deep sea trawling: fish an hour by kind, with the Fishing and Sailing experience. */
 	Trawls trawls = new Trawls();
+	/** The player's shipwreck salvaging: salvage and Sailing experience an hour by wreck, and what it sorted into. */
+	Salvages salvages = new Salvages();
 	/** The player's shooting stars: stardust and experience an hour by size, and the stars they found. */
 	Starlog stars = new Starlog();
 	/** The player's own fishing: fish an hour by way and tool, what else turned up, and spots seen move. */
@@ -344,6 +346,12 @@ public final class Works
 	public Trawls trawls()
 	{
 		return trawls;
+	}
+
+	/** The player's shipwreck salvaging log. */
+	public Salvages salvages()
+	{
+		return salvages;
 	}
 
 	/** The player's woodcutting log. */
@@ -786,6 +794,9 @@ public final class Works
 				case "trawls":
 					trawls = gson.fromJson(value, Trawls.class);
 					break;
+				case "salvages":
+					salvages = gson.fromJson(value, Salvages.class);
+					break;
 				case "stars":
 					stars = gson.fromJson(value, Starlog.class);
 					break;
@@ -1000,6 +1011,7 @@ public final class Works
 		woodcuts = woodcuts == null ? new Woodcuts() : woodcuts.repair();
 		mines = mines == null ? new Mines() : mines.repair();
 		trawls = trawls == null ? new Trawls() : trawls.repair();
+		salvages = salvages == null ? new Salvages() : salvages.repair();
 		stars = stars == null ? new Starlog() : stars.repair();
 		fishing = fishing == null ? new Fishing() : fishing.repair();
 		death = death == null ? null : death.repair();

@@ -12,6 +12,8 @@ import com.codex.ironworks.core.Shoals;
 import com.codex.ironworks.core.Fish;
 import com.codex.ironworks.core.Fishing;
 import com.codex.ironworks.core.Trawls;
+import com.codex.ironworks.core.Salvages;
+import com.codex.ironworks.core.Wrecks;
 import com.codex.ironworks.core.Starlog;
 import com.codex.ironworks.core.Stars;
 import com.codex.ironworks.core.Rocks;
@@ -294,6 +296,7 @@ final class Views
 		v.woodcutting = woodcutting(works, levels);
 		v.mining = mining(works, levels, v.wants);
 		v.trawling = trawling(works, levels, v.wants);
+		v.salvaging = salvaging(works, levels, now);
 		v.fishing = fishing(works, levels, v.wants);
 		v.stars = stars(works, levels, travel);
 		v.shortWays = shortWays(v.workshop, works, lookup, levels, shops, travel, here);
@@ -474,6 +477,11 @@ final class Views
 		{
 			// Trawled fish timed catch to catch while following the shoal.
 			return works.trawls().perHour(store);
+		}
+		if (src == Source.GATHERED && Wrecks.bySalvage(store) != null && works.salvages().perHour(store) > 0)
+		{
+			// Salvage timed salvage to salvage at the wrecks, on the player's own hook.
+			return works.salvages().perHour(store);
 		}
 		if (src == Source.GATHERED && Fish.byStore(store) != null && works.fishing().perHour(store) > 0)
 		{
@@ -911,6 +919,130 @@ final class Views
 		s.prospectAgoSeconds = n.prospectAgo * 0.6;
 		s.own = n.own;
 		return s;
+	}
+
+	/**
+	 * The salvaging card on the Sources tab: the player's own salvage and Sailing experience an hour
+	 * by wreck type, what their salvage sorted into, the wreck that pays best for them at their level
+	 * and the best one they have not tried, and their cargo hold as last seen. Null until something
+	 * has been salvaged, sorted or seen in a hold.
+	 */
+	static View.SalvageView salvaging(Works works, Map<Skill, Integer> levels, long now)
+	{
+		Salvages log = works.salvages();
+		if (log.isEmpty())
+		{
+			return null;
+		}
+		View.SalvageView v = new View.SalvageView();
+		v.level = levels.getOrDefault(Skill.SAILING, 0);
+		v.salvage = log.salvage();
+		v.sorted = log.sorted();
+		List<View.WreckView> list = new ArrayList<>();
+		for (Map.Entry<String, Salvages.Wreck> e : log.byLatest())
+		{
+			Wrecks.Kind k = Wrecks.bySalvage(e.getKey());
+			Salvages.Wreck w = e.getValue();
+			if (k == null || w.getSalvage() == 0 && w.getSorted() == 0)
+			{
+				continue;
+			}
+			View.WreckView t = new View.WreckView();
+			t.wreck = k.wreck;
+			t.salvage = k.salvage;
+			t.icon = k.item;
+			t.level = k.level;
+			t.count = w.getSalvage();
+			t.perHour = w.perHour();
+			t.timedMs = w.getMs();
+			t.xpPerHour = w.xpPerHour();
+			t.withSorting = t.xpPerHour > 0 ? t.xpPerHour + t.perHour * k.sortXp : 0;
+			t.secondsEach = w.secondsEach();
+			t.sunk = w.getSunk();
+			t.lastsSeconds = k.lastsSeconds;
+			t.sorted = w.getSorted();
+			t.sortXpEach = w.getSorted() > 0 ? w.getSortXp() / w.getSorted() : 0;
+			t.bare = w.getSortedBare();
+			long kept = Math.max(0, w.getSorted() - w.getSortedBare());
+			List<View.LootView> loot = new ArrayList<>();
+			for (Map.Entry<Integer, Long> l : w.getLoot().entrySet())
+			{
+				View.LootView o = new View.LootView();
+				o.icon = l.getKey();
+				o.name = log.name(l.getKey());
+				if (o.name == null)
+				{
+					o.name = "Item " + l.getKey();
+				}
+				o.count = l.getValue();
+				o.perSort = kept > 0 ? l.getValue() / (double) kept : 0;
+				loot.add(o);
+			}
+			loot.sort((a, b) -> Long.compare(b.count, a.count));
+			t.loot = loot;
+			list.add(t);
+			boolean open = v.level == 0 || k.level <= v.level;
+			if (open && t.withSorting > 0 && (v.best == null || t.withSorting > v.best.withSorting))
+			{
+				v.best = t;
+			}
+		}
+		v.wrecks = list;
+		for (View.WreckView t : list)
+		{
+			if (t.count > 0)
+			{
+				v.last = t;
+				break;
+			}
+		}
+		if (v.level > 0)
+		{
+			// The wreck with the most experience a salvage the level opens, if never salvaged.
+			Wrecks.Kind top = null;
+			for (Wrecks.Kind k : Wrecks.all())
+			{
+				if (k.level <= v.level && (top == null || k.xp > top.xp))
+				{
+					top = k;
+				}
+			}
+			if (top != null && !log.tried(top))
+			{
+				v.untried = top.wreck;
+				v.untriedLevel = top.level;
+				v.untriedXp = top.xp;
+				v.untriedSortXp = top.sortXp;
+			}
+		}
+		Salvages.Hold h = log.hold();
+		if (h != null)
+		{
+			View.HoldView o = new View.HoldView();
+			o.boat = h.getBoat();
+			o.used = h.getUsed();
+			o.capacity = h.getCapacity();
+			o.agoMs = Math.max(0, now - h.getSeen());
+			List<View.LootView> kinds = new ArrayList<>();
+			for (Wrecks.Kind k : Wrecks.all())
+			{
+				long n = h.getSalvage().getOrDefault(k.salvage, 0L);
+				if (n > 0)
+				{
+					View.LootView l = new View.LootView();
+					l.icon = k.item;
+					l.name = k.salvage;
+					l.count = n;
+					kinds.add(l);
+					o.salvage += n;
+					o.sortXp += n * k.sortXp;
+				}
+			}
+			kinds.sort((a, b) -> Long.compare(b.count, a.count));
+			o.kinds = kinds;
+			v.hold = o;
+		}
+		return v;
 	}
 
 	/**

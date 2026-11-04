@@ -34,6 +34,7 @@ import com.google.inject.Provides;
 import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -113,7 +114,7 @@ import org.slf4j.LoggerFactory;
 @PluginDescriptor(
 	name = "Codex Ironworks",
 	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources, shops and a guide",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "mining", "ore", "respawn", "stars", "stardust", "trawling", "sailing", "fishing", "fish", "aerial", "codex"}
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "mining", "ore", "respawn", "stars", "stardust", "trawling", "salvaging", "salvage", "shipwreck", "sailing", "fishing", "fish", "aerial", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -210,6 +211,9 @@ public class CodexIronworksPlugin extends Plugin
 	private com.codex.ironworks.overlay.MineCoach mineCoach;
 	private RockWatch rockWatch;
 	private final TrawlWatch trawlWatch = new TrawlWatch();
+	private final SalvageWatch salvageWatch = new SalvageWatch();
+	/** The boat whose cargo hold was sent last, 1 to 5; 0 until one is. */
+	private int holdBoat;
 	private final StarWatch starWatch = new StarWatch();
 	private com.codex.ironworks.overlay.MineCoach starCoach;
 	private com.codex.ironworks.overlay.MineCoach fishCoach;
@@ -475,6 +479,8 @@ public class CodexIronworksPlugin extends Plugin
 			rockWatch.reset();
 		}
 		trawlWatch.reset();
+		salvageWatch.reset();
+		holdBoat = 0;
 		starWatch.reset();
 		if (starCoach != null)
 		{
@@ -539,6 +545,7 @@ public class CodexIronworksPlugin extends Plugin
 				rockWatch.reset();
 			}
 			trawlWatch.reset();
+			salvageWatch.reset();
 			starWatch.reset();
 			if (fishWatch != null)
 			{
@@ -696,6 +703,7 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			xpTick.put(skill, ticks);
 			trawlWatch.xp(skill, xp - was);
+			salvageWatch.xp(skill, xp - was);
 			starWatch.xp(skill, xp - was);
 			if (fishWatch != null)
 			{
@@ -754,6 +762,13 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			// The boat's trawling net, where trawled fish land before they are taken out.
 			trawlWatch.net(contents(event.getItemContainer()));
+			return;
+		}
+		int boat = HOLDS.indexOf(id) + 1;
+		if (boat > 0)
+		{
+			// A boat's cargo hold, sent while its window is open: each item or stack takes one slot.
+			readHold(boat, event.getItemContainer());
 			return;
 		}
 		long now = System.currentTimeMillis();
@@ -967,6 +982,12 @@ public class CodexIronworksPlugin extends Plugin
 			unsaved = true;
 			dirty = true;
 		}
+		if (salvageWatch.tick(lastItems, items, bankOpen || !storageOpen.isEmpty(), this::name, nowMs, works.salvages()))
+		{
+			unsaved = true;
+			dirty = true;
+		}
+		readHoldSize();
 		stars(items, nowMs);
 		if (fishWatch.tick(lastItems, items, bankOpen || !storageOpen.isEmpty(), works.fishing(), nowMs, config.fishCoach()))
 		{
@@ -1031,6 +1052,7 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			String plain = Text.removeTags(event.getMessage());
 			trawlWatch.heard(plain);
+			salvageWatch.heard(plain);
 			starWatch.heard(plain);
 			if (fishWatch != null)
 			{
@@ -1412,6 +1434,60 @@ public class CodexIronworksPlugin extends Plugin
 			}
 		});
 		return out;
+	}
+
+	/** The cargo holds of the five boats a player can own, in the game's boat order. */
+	private static final List<Integer> HOLDS = Arrays.asList(InventoryID.SAILING_BOAT_1_CARGOHOLD,
+		InventoryID.SAILING_BOAT_2_CARGOHOLD, InventoryID.SAILING_BOAT_3_CARGOHOLD, InventoryID.SAILING_BOAT_4_CARGOHOLD,
+		InventoryID.SAILING_BOAT_5_CARGOHOLD);
+
+	/** A cargo hold as the game sent it: slots used, and the salvage in it by wreck. */
+	private void readHold(int boat, ItemContainer container)
+	{
+		int used = 0;
+		Map<com.codex.ironworks.core.Wrecks.Kind, Long> salvage = new HashMap<>();
+		if (container != null)
+		{
+			for (Item item : container.getItems())
+			{
+				if (item.getId() < 0 || item.getQuantity() <= 0)
+				{
+					continue;
+				}
+				used++;
+				com.codex.ironworks.core.Wrecks.Kind k = com.codex.ironworks.core.Wrecks.byItem(itemManager.canonicalize(item.getId()));
+				if (k != null)
+				{
+					salvage.merge(k, (long) item.getQuantity(), Long::sum);
+				}
+			}
+		}
+		holdBoat = boat;
+		works.salvages().hold(boat, used, 0, salvage, System.currentTimeMillis());
+		unsaved = true;
+		dirty = true;
+	}
+
+	/** The hold's size as its open window shows it, kept with the hold last sent. */
+	private void readHoldSize()
+	{
+		if (holdBoat <= 0)
+		{
+			return;
+		}
+		Widget w = client.getWidget(InterfaceID.SailingBoatCargohold.CAPACITY);
+		if (w == null || w.isHidden())
+		{
+			return;
+		}
+		int size = SalvageWatch.capacity(Text.removeTags(w.getText()));
+		com.codex.ironworks.core.Salvages.Hold h = works.salvages().hold();
+		if (size > 0 && h != null && h.getCapacity() != size)
+		{
+			works.salvages().holdSize(holdBoat, size);
+			unsaved = true;
+			dirty = true;
+		}
 	}
 
 	private Map<Integer, Long> contents(ItemContainer container)
