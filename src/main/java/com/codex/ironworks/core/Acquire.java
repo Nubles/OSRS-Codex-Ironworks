@@ -71,6 +71,8 @@ public final class Acquire
 		final int level;
 		/** A quest or unlock it asks for, in words, or null. */
 		final String needs;
+		/** The Herblore levels it gives the store at, for the herbiboar; null for any other lead. */
+		Herbiboar.Range herblore;
 
 		Lead(Kind kind, String text, String place, int x, int y, int plane, double perHour, double perKill, long perWorld,
 			Skill skill, int level, String needs)
@@ -183,6 +185,15 @@ public final class Acquire
 		lead("Limpwurt root", new Lead(Kind.DROP, "Kill hill giants in Edgeville Dungeon", "Edgeville Dungeon",
 			3096, 3469, 0, 0, 11 / 128.0, 0, null, 0, null));
 		lead("Limpwurt root", new Lead(Kind.FARM, "Grow it in flower patches", null, 0, 0, -1, 0, 0, 0, Skill.FARMING, 26, null));
+		// Herbs from the herbiboar: the middle trail's start, from RuneLite's Herbiboar plugin. Timed only
+		// by the player's own trails; the wiki's catch rate is not split into herbs of each kind.
+		for (String herb : Herbiboar.herbs())
+		{
+			Lead l = new Lead(Kind.GATHER, "Hunt the herbiboar on Fossil Island", "Fossil Island",
+				Herbiboar.START_X, Herbiboar.START_Y, 0, 0, 0, 0, Skill.HUNTER, Herbiboar.HUNTER, Herbiboar.QUEST);
+			l.herblore = Herbiboar.range(herb);
+			lead(herb, l);
+		}
 		// Runes crafted from pure essence at their altar: timed only by the player's own trips, as the
 		// wiki gives no one rate (it hangs on the route, the pouches and the level's multiples).
 		for (Recipe r : Recipes.all())
@@ -273,9 +284,19 @@ public final class Acquire
 				p.y = l.y;
 				p.plane = l.plane;
 			}
+			int herblore = levels.getOrDefault(Skill.HERBLORE, 99);
+			if (l.herblore != null && herblore > l.herblore.max)
+			{
+				// Past the Herblore levels the herbiboar gives this herb at.
+				continue;
+			}
 			if (l.skill != null && levels.getOrDefault(l.skill, 99) < l.level)
 			{
 				p.locked = skillName(l.skill) + " " + l.level;
+			}
+			else if (l.herblore != null && herblore < Math.max(Herbiboar.HERBLORE, l.herblore.min))
+			{
+				p.locked = skillName(Skill.HERBLORE) + " " + Math.max(Herbiboar.HERBLORE, l.herblore.min);
 			}
 			double own = paces == null ? 0 : paces.perHour(store, l.kind.getSource());
 			if (own > 0)

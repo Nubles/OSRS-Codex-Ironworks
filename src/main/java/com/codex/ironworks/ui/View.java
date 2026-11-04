@@ -225,6 +225,52 @@ public final class View
 		public long roundMs;
 	}
 
+	/** The herbiboar: the player's own harvests and trails; null when neither hunted nor in reach. */
+	public HerbiView herbiboar;
+
+	/** The herbiboar as this account hunts it. */
+	public static final class HerbiView
+	{
+		/** Harvests logged, and trails timed harvest to harvest. */
+		public long harvests;
+		public long timed;
+		/** Trails an hour and the average trail; 0 until timed. */
+		public double trailsPerHour;
+		public long trailMs;
+		/** Herbs a harvest at the stretch of Herblore levels last hunted at, and that stretch. */
+		public double herbsPerHarvest;
+		public long bandHarvests;
+		public int bandLo;
+		public int bandHi;
+		/** Whether the player's Herblore today has left that stretch, so the mix may have changed. */
+		public boolean bandStale;
+		/** Each herb at that stretch, most first. */
+		public List<HerbView> herbs = Collections.emptyList();
+		/** Herbs an hour, all kinds; 0 until timed. */
+		public double herbsPerHour;
+		/** Herblore experience an hour from the harvests themselves; 0 until timed. */
+		public double harvestXpPerHour;
+		/** Herblore experience an hour the herbs bank, each made into its best potion at today's level; 0 until timed. */
+		public double bankedXpPerHour;
+		/** What is missing to hunt it, in words; empty when nothing is. */
+		public List<String> missing = Collections.emptyList();
+		/** The herbs the harvest can give at today's Herblore level that it has not given yet. */
+		public List<String> unseen = Collections.emptyList();
+	}
+
+	/** One herb from the herbiboar, as this account's harvests give it. */
+	public static final class HerbView
+	{
+		public String herb;
+		public int icon = -1;
+		/** Herbs a harvest, and an hour at the player's trails; 0 until timed. */
+		public double perHarvest;
+		public double perHour;
+		/** The potion it banks as at today's level, and its experience; null and 0 when none. */
+		public String potion;
+		public double potionXp;
+	}
+
 	/** One way to get more. */
 	public static final class WayView
 	{

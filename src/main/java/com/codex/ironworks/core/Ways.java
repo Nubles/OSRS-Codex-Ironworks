@@ -47,18 +47,40 @@ public final class Ways
 		/** The skill it trains or needs, or null. */
 		public final Skill skill;
 		public final int level;
+		/** The Herblore levels it gives the store at, for the herbiboar; null for any other way. */
+		public final Herbiboar.Range herblore;
 
 		Way(Kind kind, String text, Skill skill, int level)
+		{
+			this(kind, text, skill, level, null);
+		}
+
+		Way(Kind kind, String text, Skill skill, int level, Herbiboar.Range herblore)
 		{
 			this.kind = kind;
 			this.text = text;
 			this.skill = skill;
 			this.level = level;
+			this.herblore = herblore;
+		}
+
+		/** Whether the way gives the store at all at this Herblore level; true for anything but the herbiboar. */
+		public boolean gives(int herblore)
+		{
+			return this.herblore == null || herblore <= this.herblore.max;
+		}
+
+		/** Whether the player's Herblore reaches it; true for anything but the herbiboar. */
+		public boolean herbloreOpen(int level)
+		{
+			return herblore == null || level >= Math.max(Herbiboar.HERBLORE, herblore.min) && level <= herblore.max;
 		}
 	}
 
 	private static final Map<String, List<Way>> BY_STORE = new HashMap<>();
 	private static final Map<Family, List<Way>> BY_SHELF = new HashMap<>();
+	/** The herbiboar, for each herb it can give, beside the herb's other ways. */
+	private static final Map<String, Way> HUNTED = new HashMap<>();
 
 	static
 	{
@@ -211,7 +233,14 @@ public final class Ways
 		add("Black chinchompa", Kind.GATHER, "Box trap them in the Wilderness", Skill.HUNTER, 73);
 
 		shelf(Family.HERBS, Kind.FARM, "Herb runs", Skill.FARMING, 9);
-		shelf(Family.HERBS, Kind.GATHER, "Hunt the herbiboar on Fossil Island", Skill.HUNTER, 80);
+		for (String herb : Herbiboar.herbs())
+		{
+			Herbiboar.Range r = Herbiboar.range(herb);
+			String text = "Hunt the herbiboar on Fossil Island"
+				+ (r.min > Herbiboar.HERBLORE ? ", from " + r.min + " Herblore" : "")
+				+ (r.max < 99 ? ", until " + (r.max + 1) + " Herblore" : "");
+			HUNTED.put(key(herb), new Way(Kind.GATHER, text, Skill.HUNTER, Herbiboar.HUNTER, r));
+		}
 		shelf(Family.SEEDS, Kind.GATHER, "Pickpocket master farmers", Skill.THIEVING, 38);
 		shelf(Family.SEEDS, Kind.GATHER, "Seed nests from birdhouse runs", Skill.HUNTER, 5);
 		shelf(Family.RUNES, Kind.GATHER, "Craft them at their altar", Skill.RUNECRAFT, 1);
@@ -240,15 +269,18 @@ public final class Ways
 		return store.toLowerCase(Locale.ENGLISH);
 	}
 
-	/** The store's own ways, or its shelf's when it has none. */
+	/** The store's own ways, or its shelf's when it has none; and the herbiboar for a herb it gives. */
 	public static List<Way> of(String store)
 	{
 		List<Way> own = BY_STORE.get(key(store));
-		if (own != null)
+		List<Way> base = own != null ? own : BY_SHELF.get(Catalogue.family(store));
+		Way hunted = HUNTED.get(key(store));
+		if (hunted == null)
 		{
-			return Collections.unmodifiableList(own);
+			return base == null ? Collections.emptyList() : Collections.unmodifiableList(base);
 		}
-		List<Way> shelf = BY_SHELF.get(Catalogue.family(store));
-		return shelf == null ? Collections.emptyList() : Collections.unmodifiableList(shelf);
+		List<Way> out = base == null ? new ArrayList<>() : new ArrayList<>(base);
+		out.add(hunted);
+		return Collections.unmodifiableList(out);
 	}
 }

@@ -107,7 +107,7 @@ import org.slf4j.LoggerFactory;
 @PluginDescriptor(
 	name = "Codex Ironworks",
 	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources, shops and a guide",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "codex"}
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -812,7 +812,8 @@ public class CodexIronworksPlugin extends Plugin
 			learnPacks(lastItems, items, lastUnits, carriedUnits);
 		}
 		List<Flow> flows = tracker.tick(carriedUnits, ctx, today, nowMs);
-		works.rate(flows, nowMs);
+		works.rate(flows, nowMs, com.codex.ironworks.core.Herbiboar.ground(client.getTopLevelWorldView().getMapRegions()),
+			client.getRealSkillLevel(Skill.HERBLORE));
 		if (!flows.isEmpty())
 		{
 			unsaved = true;
