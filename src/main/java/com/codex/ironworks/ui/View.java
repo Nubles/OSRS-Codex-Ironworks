@@ -422,6 +422,110 @@ public final class View
 		public boolean own;
 	}
 
+	/** Fishing: the player's own fish an hour by way and tool; null when nothing has been caught. */
+	public FishView fishing;
+
+	/** Fishing as this account does it. */
+	public static final class FishView
+	{
+		/** Fish caught in all, and clue bottles among the finds. */
+		public long fish;
+		public long clues;
+		/** The Fishing level, when known; 0 when not. */
+		public int level;
+		/** The way fished last, with its tool, the fish it gave most and its picture. */
+		public String method;
+		public String tool;
+		public String fishName;
+		public int icon = -1;
+		/** Fish an hour at the player's pace on it, and the time that is timed over; 0 until timed. */
+		public double perHour;
+		public long timedMs;
+		/** Fishing experience an hour on it, at the wiki's experience for each fish; 0 until timed. */
+		public double xpPerHour;
+		/** Every way and tool fished, the latest first. */
+		public List<CastView> casts = Collections.emptyList();
+		/** The way and tool with the most Fishing experience an hour at the player's own pace, open at their level. */
+		public CastView best;
+		/** The way open at their level that gives the most experience a fish, never fished; null when none. */
+		public String untried;
+		public String untriedFish;
+		public int untriedLevel;
+		public double untriedXp;
+		public int untriedIcon = -1;
+		/** Fish the plans are short of, and how long the player's own pace takes to cover each. */
+		public List<CatchPlan> plans = Collections.emptyList();
+		/** What else fishing turned up, the most first, clue bottles last. */
+		public List<FoundView> found = Collections.emptyList();
+		/** Big fish against the wiki's chance for the fish caught. */
+		public List<LuckView> luck = Collections.emptyList();
+		/** Aerial catches and the Molch pearls they gave; 0 when no aerial fishing. */
+		public long aerialCatches;
+		public long pearls;
+		/** Molch pearls an hour of aerial fishing at the player's pace; 0 until timed. */
+		public double pearlsPerHour;
+		/** Molch pearls in the pack and the bank, as last seen. */
+		public long pearlsHeld;
+		/** The Alry shop item the player chose to save pearls toward; null when none. */
+		public String pearlGoal;
+		public int pearlGoalIcon = -1;
+		public int pearlGoalPrice;
+		/** Hours of aerial fishing at the player's pace to the goal; 0 when not timed or reached. */
+		public double pearlGoalHours;
+		/** Spots the player watched stay put, by kind. */
+		public List<StayView> stays = Collections.emptyList();
+	}
+
+	/** One way of fishing with one tool, as this account fishes it. */
+	public static final class CastView
+	{
+		public String method;
+		public String spot;
+		public String tool;
+		/** The fish it gave most, for its picture and name. */
+		public String fish;
+		public int icon = -1;
+		public long count;
+		public double perHour;
+		public double xpPerHour;
+	}
+
+	/** One fish the plans are short of. */
+	public static final class CatchPlan
+	{
+		public String store;
+		public int icon = -1;
+		public long need;
+		public String method;
+		/** The Fishing level it needs, when the player is short of it; 0 when open. */
+		public int needs;
+		/** The player's own pace on it; 0 when never timed. */
+		public double perHour;
+		public double hours;
+	}
+
+	/** A rare find against the wiki's chance: so many seen from so many fish, where one in so many was expected. */
+	public static final class LuckView
+	{
+		public String name;
+		public int icon = -1;
+		public long seen;
+		public long from;
+		public int oneIn;
+		/** Finds the wiki's chance gives for the fish caught. */
+		public double expected;
+	}
+
+	/** One kind of fishing spot, as the player watched it stay put. */
+	public static final class StayView
+	{
+		public String spot;
+		public long seen;
+		public double seconds;
+		public double wikiMinSeconds;
+		public double wikiMaxSeconds;
+	}
+
 	/** Deep sea trawling: the player's own fish an hour by kind; null when nothing has been trawled. */
 	public TrawlView trawling;
 

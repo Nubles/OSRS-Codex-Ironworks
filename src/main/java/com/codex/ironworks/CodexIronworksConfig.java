@@ -1,6 +1,7 @@
 package com.codex.ironworks;
 
 import com.codex.ironworks.core.Altar;
+import com.codex.ironworks.core.Fish;
 import com.codex.ironworks.core.Stars;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
@@ -173,6 +174,28 @@ public interface CodexIronworksConfig extends Config
 	default Stars.Reward starGoal()
 	{
 		return Stars.Reward.NONE;
+	}
+
+	@ConfigItem(
+		keyName = "fishCoach",
+		name = "Fishing spot move estimate",
+		description = "While you fish, over the spot you fish at, show an estimate of when it may move, from the wiki's figures for how long spots stay; the game never says, so it is only ever an estimate",
+		position = 15
+	)
+	default boolean fishCoach()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "pearlGoal",
+		name = "Molch pearl goal",
+		description = "An item from Alry the Angler's shop to save Molch pearls toward: the fishing card shows your pearls against its price and the time at your aerial fishing pace",
+		position = 16
+	)
+	default Fish.PearlGoal pearlGoal()
+	{
+		return Fish.PearlGoal.NONE;
 	}
 
 	@ConfigItem(

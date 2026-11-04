@@ -33,6 +33,8 @@ public class MineCoach extends Overlay
 	private static final int LIFT = 140;
 	/** Height above a crashed star the plaque floats at: a star stands taller than a rock. */
 	public static final int STAR_LIFT = 260;
+	/** Height above a fishing spot the plaque floats at: a spot lies flat on the water. */
+	public static final int SPOT_LIFT = 90;
 
 	/** One plaque, worked out on the client thread. */
 	public static final class Shown
