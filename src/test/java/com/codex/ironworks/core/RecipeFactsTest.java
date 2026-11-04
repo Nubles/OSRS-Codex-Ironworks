@@ -13,6 +13,7 @@ import net.runelite.client.plugins.skillcalculator.skills.HerbloreAction;
 import net.runelite.client.plugins.skillcalculator.skills.ItemSkillAction;
 import net.runelite.client.plugins.skillcalculator.skills.MagicAction;
 import net.runelite.client.plugins.skillcalculator.skills.PrayerAction;
+import net.runelite.client.plugins.skillcalculator.skills.RunecraftAction;
 import net.runelite.client.plugins.skillcalculator.skills.SailingAction;
 import net.runelite.client.plugins.skillcalculator.skills.SkillAction;
 import net.runelite.client.plugins.skillcalculator.skills.SmithingAction;
@@ -46,6 +47,8 @@ public class RecipeFactsTest
 				return FiremakingAction.values();
 			case PRAYER:
 				return PrayerAction.values();
+			case RUNECRAFT:
+				return RunecraftAction.values();
 			case SAILING:
 				// Each salvage is in it twice, salvaged at sea and sorted at a station; only sorting
 				// uses the salvage up.

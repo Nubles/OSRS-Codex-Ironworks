@@ -66,6 +66,8 @@ public final class Works
 	boolean following;
 	/** The recipe the player picked for a store on the Make tab, by store: a product's name, or "-" to keep it. */
 	Map<String, String> methods = new HashMap<>();
+	/** The player's runecrafting trips: essence a trip and runes an hour, rune by rune. */
+	Trips trips = new Trips();
 
 	public Works()
 	{
@@ -292,6 +294,13 @@ public final class Works
 				rates.computeIfAbsent(f.store + "|" + f.source.name(), k -> new Rate()).add(f.units, now);
 			}
 		}
+		trips.record(flows, now);
+	}
+
+	/** The player's runecrafting trips. */
+	public Trips trips()
+	{
+		return trips;
 	}
 
 	/** The pace a store comes in one way, or null when never seen. */
@@ -701,6 +710,9 @@ public final class Works
 				case "methods":
 					methods = gson.fromJson(value, METHODS);
 					break;
+				case "trips":
+					trips = gson.fromJson(value, Trips.class);
+					break;
 				default:
 					break;
 			}
@@ -904,6 +916,7 @@ public final class Works
 			});
 		}
 		methods = mt;
+		trips = trips == null ? new Trips() : trips.repair();
 		death = death == null ? null : death.repair();
 		if (death != null && death.items.isEmpty())
 		{

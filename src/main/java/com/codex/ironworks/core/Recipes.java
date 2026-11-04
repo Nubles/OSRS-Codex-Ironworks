@@ -76,6 +76,23 @@ public final class Recipes
 		r(Skill.PRAYER, 1, 65f, "Malicious ashes", 25772, 0, 9, "Malicious ashes", 1);
 		r(Skill.PRAYER, 1, 85f, "Abyssal ashes", 25775, 0, 9, "Abyssal ashes", 1);
 		r(Skill.PRAYER, 1, 110f, "Infernal ashes", 25778, 0, 9, "Infernal ashes", 1);
+		// Pure essence crafted at an altar, for the experience each essence gives (OSRS Wiki: Runecraft).
+		// The runes it makes depend on the level's multiples, so only the experience is counted; the
+		// altar it goes to is the one the player's own trips craft at, unless they pick another.
+		r(Skill.RUNECRAFT, 1, 5f, "Air rune", 556, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 2, 5.5f, "Mind rune", 558, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 5, 6f, "Water rune", 555, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 9, 6.5f, "Earth rune", 557, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 14, 7f, "Fire rune", 554, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 20, 7.5f, "Body rune", 559, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 27, 8f, "Cosmic rune", 564, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 35, 8.5f, "Chaos rune", 562, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 40, 8.7f, "Astral rune", 9075, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 44, 9f, "Nature rune", 561, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 54, 9.5f, "Law rune", 563, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 65, 10f, "Death rune", 560, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 77, 10.5f, "Blood rune", 565, 0, 9, "Pure essence", 1);
+		r(Skill.RUNECRAFT, 95, 8f, "Wrath rune", 21880, 0, 9, "Pure essence", 1);
 		r(Skill.COOKING, 80, 210f, "Shark", 385, 1, 0, "Raw shark", 1);
 		r(Skill.COOKING, 91, 216.3f, "Manta ray", 391, 1, 0, "Raw manta ray", 1);
 		r(Skill.COOKING, 84, 230f, "Anglerfish", 13441, 1, 0, "Raw anglerfish", 1);

@@ -7,6 +7,7 @@ import com.codex.ironworks.core.Classify;
 import com.codex.ironworks.core.Family;
 import com.codex.ironworks.core.Flow;
 import com.codex.ironworks.core.Place;
+import com.codex.ironworks.core.Pouch;
 import com.codex.ironworks.core.Route;
 import com.codex.ironworks.core.Runway;
 import com.codex.ironworks.core.Settle;
@@ -106,7 +107,7 @@ import org.slf4j.LoggerFactory;
 @PluginDescriptor(
 	name = "Codex Ironworks",
 	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources, shops and a guide",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "codex"}
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -234,6 +235,13 @@ public class CodexIronworksPlugin extends Plugin
 	private int storageGrace;
 	private Set<Integer> storageVars;
 	private boolean bankOpen;
+	/** The essence pouches as last read, the essence in the pack, and whether they were read this login. */
+	private List<View.PouchView> pouches = java.util.Collections.emptyList();
+	private long packEssence;
+	private boolean pouchesLive;
+	/** Pouches already named in chat as about to shrink, or as worn, until that is no longer so. */
+	private final Set<Pouch> pouchRiskSaid = java.util.EnumSet.noneOf(Pouch.class);
+	private final Set<Pouch> pouchWornSaid = java.util.EnumSet.noneOf(Pouch.class);
 	private int ticks;
 	private long lastTickMs;
 	private boolean dirty;
@@ -421,6 +429,8 @@ public class CodexIronworksPlugin extends Plugin
 		readStorage = false;
 		storageGrace = 0;
 		beforeDeath = null;
+		pouchesLive = false;
+		packEssence = 0;
 		held.clear();
 		plaque.show(null, null, null);
 		stepPlaque.show(null);
@@ -783,6 +793,7 @@ public class CodexIronworksPlugin extends Plugin
 
 		Map<Integer, Long> items = readCarried(nowMs);
 		Map<String, Long> carriedUnits = units(items);
+		readPouches(carriedUnits);
 		if (lastItems != null)
 		{
 			deaths(lastItems, items, nowMs);
@@ -1266,6 +1277,161 @@ public class CodexIronworksPlugin extends Plugin
 		return items;
 	}
 
+	/**
+	 * The essence pouches in the pack, read from the game's own counts: what each holds, and how
+	 * worn it is. Says in chat once when one could shrink on its next fill, or has worn.
+	 */
+	private void readPouches(Map<String, Long> carriedUnits)
+	{
+		ItemContainer inv = client.getItemContainer(InventoryID.INV);
+		if (inv == null)
+		{
+			return;
+		}
+		int runecraft = client.getRealSkillLevel(Skill.RUNECRAFT);
+		Map<Pouch, Integer> carried = new java.util.EnumMap<>(Pouch.class);
+		for (Item item : inv.getItems())
+		{
+			Pouch p = item == null ? null : Pouch.of(item.getId());
+			if (p != null)
+			{
+				carried.put(p, item.getId());
+			}
+		}
+		long pack = 0;
+		for (Map.Entry<String, Long> e : carriedUnits.entrySet())
+		{
+			if (com.codex.ironworks.core.Trips.essence(e.getKey()))
+			{
+				pack += e.getValue();
+			}
+		}
+		boolean changed = pack != packEssence || pouchesLive == carried.isEmpty();
+		packEssence = pack;
+		if (carried.isEmpty())
+		{
+			// Pouches left in the bank are remembered as last read.
+			pouchesLive = false;
+			if (changed)
+			{
+				dirty = true;
+			}
+			return;
+		}
+		List<View.PouchView> read = new ArrayList<>();
+		for (Map.Entry<Pouch, Integer> e : carried.entrySet())
+		{
+			Pouch p = e.getKey();
+			View.PouchView pv = Views.pouch(p, e.getValue(), client.getVarbitValue(pouchAmountVar(p)), wear(p), runecraft);
+			read.add(pv);
+			if (config.pouchWarnings())
+			{
+				sayPouch(p, pv);
+			}
+		}
+		if (!same(read, pouches))
+		{
+			pouches = read;
+			dirty = true;
+		}
+		pouchesLive = true;
+		if (changed)
+		{
+			dirty = true;
+		}
+	}
+
+	private static boolean same(List<View.PouchView> a, List<View.PouchView> b)
+	{
+		if (a.size() != b.size())
+		{
+			return false;
+		}
+		for (int i = 0; i < a.size(); i++)
+		{
+			View.PouchView x = a.get(i);
+			View.PouchView y = b.get(i);
+			if (x.item != y.item || x.amount != y.amount || x.capacity != y.capacity || x.safe != y.safe)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/** The varbit that counts the essence in a pouch (RuneLite gameval). */
+	private static int pouchAmountVar(Pouch p)
+	{
+		switch (p)
+		{
+			case SMALL:
+				return VarbitID.SMALL_ESSENCE_POUCH;
+			case MEDIUM:
+				return VarbitID.MEDIUM_ESSENCE_POUCH;
+			case LARGE:
+				return VarbitID.LARGE_ESSENCE_POUCH;
+			case GIANT:
+				return VarbitID.GIANT_ESSENCE_POUCH;
+			default:
+				return VarbitID.COLOSSAL_ESSENCE_POUCH;
+		}
+	}
+
+	/** A pouch's hidden wear counter (RuneLite gameval); the small pouch has none. */
+	private int wear(Pouch p)
+	{
+		switch (p)
+		{
+			case MEDIUM:
+				return client.getVarpValue(VarPlayerID.RCU_POUCH_DEGRADATION_MED);
+			case LARGE:
+				return client.getVarpValue(VarPlayerID.RCU_POUCH_DEGRADATION_LARGE);
+			case GIANT:
+				return client.getVarpValue(VarPlayerID.RCU_POUCH_DEGRADATION_GIANT);
+			case COLOSSAL:
+				return client.getVarbitValue(VarbitID.RCU_POUCH_DEGRADATION_COLOSSAL);
+			default:
+				return 0;
+		}
+	}
+
+	private void sayPouch(Pouch p, View.PouchView pv)
+	{
+		String text = null;
+		if (pv.degraded)
+		{
+			if (pouchWornSaid.add(p))
+			{
+				text = Views.pouchWarning(pv);
+			}
+		}
+		else
+		{
+			pouchWornSaid.remove(p);
+		}
+		if (pv.atRisk && !pv.degraded)
+		{
+			if (pouchRiskSaid.add(p))
+			{
+				text = Views.pouchWarning(pv);
+			}
+		}
+		else if (!pv.atRisk)
+		{
+			pouchRiskSaid.remove(p);
+		}
+		if (text != null)
+		{
+			String message = new ChatMessageBuilder()
+				.append(ChatColorType.HIGHLIGHT)
+				.append("Ironworks: ")
+				.append(ChatColorType.NORMAL)
+				.append(text)
+				.build();
+			chatMessageManager.queue(QueuedMessage.builder().type(ChatMessageType.CONSOLE).runeLiteFormattedMessage(message).build());
+		}
+	}
+
 	/** Saves a carried place item by item when it has changed. */
 	private void keep(Spot spot, Map<Integer, Long> items, long now)
 	{
@@ -1529,6 +1695,7 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			built.guide = Guides.build(route, works.ticked(), guide.account(), works.isFollowing(), built.found, built.workshop, xp);
 			Views.sources(built, works, lookup, levels);
+			Views.runecraft(built, works, pouches, loggedIn ? packEssence : 0, loggedIn && pouchesLive);
 			if (loggedIn && built.guide.current != null)
 			{
 				Route.Step step = route.steps().get(indexOf(built.guide.current.key));

@@ -183,6 +183,23 @@ public final class Acquire
 		lead("Limpwurt root", new Lead(Kind.DROP, "Kill hill giants in Edgeville Dungeon", "Edgeville Dungeon",
 			3096, 3469, 0, 0, 11 / 128.0, 0, null, 0, null));
 		lead("Limpwurt root", new Lead(Kind.FARM, "Grow it in flower patches", null, 0, 0, -1, 0, 0, 0, Skill.FARMING, 26, null));
+		// Runes crafted from pure essence at their altar: timed only by the player's own trips, as the
+		// wiki gives no one rate (it hangs on the route, the pouches and the level's multiples).
+		for (Recipe r : Recipes.all())
+		{
+			if (r.skill == Skill.RUNECRAFT)
+			{
+				lead(r.product, new Lead(Kind.MAKE, "Craft them at the " + altar(r.product), null, 0, 0, -1, 0, 0, 0,
+					Skill.RUNECRAFT, r.level, null));
+			}
+		}
+	}
+
+	/** The altar a rune is crafted at from pure essence: blood runes at the True Blood Altar. */
+	public static String altar(String rune)
+	{
+		String kind = rune.endsWith(" rune") ? rune.substring(0, rune.length() - " rune".length()) : rune;
+		return ("Blood".equals(kind) ? "True Blood" : kind) + " Altar";
 	}
 
 	private Acquire()
