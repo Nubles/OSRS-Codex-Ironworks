@@ -3,6 +3,8 @@ package com.codex.ironworks;
 import com.codex.ironworks.core.Acquire;
 import com.codex.ironworks.core.Travel;
 import com.codex.ironworks.core.Trips;
+import com.codex.ironworks.core.Herbiboar;
+import com.codex.ironworks.core.Herbiboars;
 
 import com.codex.ironworks.core.Altar;
 import com.codex.ironworks.core.Catalogue;
@@ -278,6 +280,7 @@ final class Views
 			}
 		}
 		v.getting = getting;
+		v.herbiboar = herbiboar(works, levels);
 		v.shortWays = shortWays(v.workshop, works, lookup, levels, shops, travel, here);
 		long listCoins = 0;
 		for (View.Want w : wants)
@@ -437,6 +440,11 @@ final class Views
 	 */
 	static double pace(Works works, String store, Source src)
 	{
+		if (src == Source.GATHERED && Catalogue.family(store) == Family.HERBS && works.herbiboars().gave(store))
+		{
+			// Herbs come once a trail: timed by whole trails, never gain to gain.
+			return works.herbiboars().perHour(store);
+		}
 		if ((src == Source.MADE || src == Source.GATHERED) && Catalogue.family(store) == Family.RUNES)
 		{
 			Trips.Leg leg = works.trips().leg(store);
@@ -447,6 +455,119 @@ final class Views
 		}
 		Rate r = works.rate(store, src);
 		return r == null ? 0 : r.perHour();
+	}
+
+	/** Hunter a hunter potion can be boosted from to track the herbiboar (OSRS Wiki: Herbiboar). */
+	static final int HERBIBOAR_BOOSTABLE = 74;
+
+	/**
+	 * The herbiboar card on the Sources tab: the player's own harvests and trails, the herbs an hour
+	 * they come to at the stretch of Herblore levels last hunted at, and the Herblore experience
+	 * those herbs bank. Null when the account has never harvested one and cannot reach it yet.
+	 */
+	static View.HerbiView herbiboar(Works works, Map<Skill, Integer> levels)
+	{
+		Herbiboars log = works.herbiboars();
+		Integer hunter = levels.get(Skill.HUNTER);
+		Integer herbloreLevel = levels.get(Skill.HERBLORE);
+		boolean reach = hunter != null && herbloreLevel != null && hunter >= HERBIBOAR_BOOSTABLE
+			&& herbloreLevel >= Herbiboar.HERBLORE;
+		if (log.isEmpty() && !reach)
+		{
+			return null;
+		}
+		int herblore = herbloreLevel == null ? 99 : herbloreLevel;
+		View.HerbiView h = new View.HerbiView();
+		h.harvests = log.getHarvests();
+		h.timed = log.getTimed();
+		h.trailsPerHour = log.trailsPerHour();
+		h.trailMs = log.trailMs();
+		List<String> missing = new ArrayList<>();
+		if (hunter != null && hunter < Herbiboar.HUNTER)
+		{
+			missing.add(Herbiboar.HUNTER + " Hunter");
+		}
+		if (herbloreLevel != null && herbloreLevel < Herbiboar.HERBLORE)
+		{
+			missing.add(Herbiboar.HERBLORE + " Herblore");
+		}
+		h.missing = missing;
+		String key = log.currentBand();
+		Herbiboars.Band band = log.band(key);
+		List<View.HerbView> herbs = new ArrayList<>();
+		if (band != null)
+		{
+			String[] lohi = key.split("-");
+			h.bandLo = Integer.parseInt(lohi[0]);
+			h.bandHi = Integer.parseInt(lohi[1]);
+			h.bandStale = herbloreLevel != null && !Herbiboar.bandKey(herblore).equals(key);
+			h.bandHarvests = band.getHarvests();
+			h.herbsPerHarvest = band.perHarvest();
+			h.herbsPerHour = h.trailsPerHour * h.herbsPerHarvest;
+			h.harvestXpPerHour = h.trailsPerHour * Math.max(0, h.herbsPerHarvest - 1) * Herbiboar.XP_PER_EXTRA_HERB;
+			for (String herb : band.getByHerb().keySet())
+			{
+				View.HerbView hv = new View.HerbView();
+				hv.herb = herb;
+				Herbiboar.Range r = Herbiboar.range(herb);
+				hv.icon = r != null ? r.grimy : works.icon(herb);
+				hv.perHarvest = band.perHarvest(herb);
+				hv.perHour = h.trailsPerHour * hv.perHarvest;
+				Recipe best = bestPotion(herb, herblore);
+				if (best != null)
+				{
+					hv.potion = best.product;
+					hv.potionXp = best.xp;
+					h.bankedXpPerHour += hv.perHour * best.xp;
+				}
+				herbs.add(hv);
+			}
+			herbs.sort((a, b) -> Double.compare(b.perHarvest, a.perHarvest));
+		}
+		h.herbs = herbs;
+		List<String> unseen = new ArrayList<>();
+		if (herbloreLevel != null && herblore >= Herbiboar.HERBLORE)
+		{
+			for (String herb : Herbiboar.herbs())
+			{
+				if (Herbiboar.drops(herb, herblore) && !log.gave(herb))
+				{
+					unseen.add(herb);
+				}
+			}
+		}
+		h.unseen = unseen;
+		return h;
+	}
+
+	/**
+	 * The potion one herb makes the most Herblore experience as at this level: the herb, or its
+	 * unfinished potion, as a recipe's main input. The secondaries are the player's to find.
+	 */
+	static Recipe bestPotion(String herb, int herblore)
+	{
+		String unf = null;
+		for (Recipe r : Recipes.all())
+		{
+			if (r.skill == Skill.HERBLORE && r.count > 0 && r.xp == 0 && herb.equals(r.primary()))
+			{
+				unf = r.product;
+			}
+		}
+		Recipe best = null;
+		for (Recipe r : Recipes.all())
+		{
+			if (r.skill != Skill.HERBLORE || r.xp <= 0 || r.level > herblore)
+			{
+				continue;
+			}
+			String main = r.primary();
+			if ((herb.equals(main) || main.equals(unf)) && (best == null || r.xp > best.xp))
+			{
+				best = r;
+			}
+		}
+		return best;
 	}
 
 	/** The store runes are crafted from, as the Make tab counts it. */
@@ -692,14 +813,25 @@ final class Views
 		g.store = store;
 		g.icon = icon;
 		List<View.WayView> ways = new ArrayList<>();
+		int herblore = levels.getOrDefault(Skill.HERBLORE, 99);
 		for (Ways.Way w : Ways.of(store))
 		{
+			if (!w.gives(herblore))
+			{
+				// The herbiboar stops giving low herbs once Herblore passes them.
+				continue;
+			}
 			View.WayView wv = new View.WayView();
 			wv.kind = w.kind;
 			wv.text = w.text;
 			wv.skill = w.skill;
 			wv.level = w.level;
-			wv.open = w.skill == null || levels.getOrDefault(w.skill, 99) >= w.level;
+			wv.open = (w.skill == null || levels.getOrDefault(w.skill, 99) >= w.level) && w.herbloreOpen(herblore);
+			if (w.skill != null && levels.getOrDefault(w.skill, 99) >= w.level && !w.herbloreOpen(herblore))
+			{
+				wv.skill = Skill.HERBLORE;
+				wv.level = Math.max(Herbiboar.HERBLORE, w.herblore.min);
+			}
 			wv.perHour = pace(works, store, w.kind.getSource());
 			ways.add(wv);
 		}

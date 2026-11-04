@@ -412,6 +412,7 @@ public class IronworksPanel extends PluginPanel
 				+ ". Gather, make, loot or buy something and it shows here."
 				: "Log in to see where your supplies come from."));
 			getMore(p);
+			herbiboar(p);
 			return p;
 		}
 		if (s.gained > 0)
@@ -419,6 +420,7 @@ public class IronworksPanel extends PluginPanel
 			p.add(selfCard(s));
 		}
 		getMore(p);
+		herbiboar(p);
 		if (!s.skills.isEmpty())
 		{
 			Card hands = new Card(new BorderLayout());
@@ -760,6 +762,82 @@ public class IronworksPanel extends PluginPanel
 		}
 		p.add(foot(planned ? "Fastest first, for this account: the trip there with the teleports you own, then the work at your own pace, or the OSRS Wiki's rate until Ironworks has timed you."
 			: "A pace per hour is your own, timed while you were at it."));
+	}
+
+	/**
+	 * The herbiboar as this account hunts it: trails an hour at the player's own pace, herbs a
+	 * harvest by kind at the Herblore levels last hunted at, and the herbs and Herblore experience
+	 * an hour that comes to. Tracking the trail itself is left to RuneLite's Herbiboar plugin.
+	 */
+	private void herbiboar(StackPanel p)
+	{
+		View.HerbiView h = view.herbiboar;
+		if (h == null)
+		{
+			return;
+		}
+		p.add(new SectionHeader("Herbiboar", h.harvests > 0 ? Format.amount(h.harvests) + (h.harvests == 1 ? " harvest" : " harvests") : "Fossil Island"));
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.GREEN);
+		StackPanel in = new StackPanel(2, 0);
+		if (h.harvests == 0)
+		{
+			in.add(new Line("Not hunted yet", null, null, Theme.GOLD_BRIGHT, Theme.GOLD));
+			in.add(Ui.wrapped(h.missing.isEmpty()
+				? "Harvest a herbiboar and Ironworks logs the herbs it gives and times your trails, so herbs come in at your own pace here and in the Make tab's plan."
+				: "Needs " + String.join(" and ", h.missing) + ". Only the start of a trail asks for the Hunter level, so a hunter potion can boost you there.",
+				Theme.small(), Theme.TEXT_MUTED, WIDTH - 40));
+			in.add(new Line("Needs " + com.codex.ironworks.core.Herbiboar.QUEST + " for Fossil Island", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			card.add(in, BorderLayout.CENTER);
+			p.add(card);
+			return;
+		}
+		if (h.trailsPerHour > 0)
+		{
+			in.add(new Figure(Words.rate(h.herbsPerHour), "herbs an hour at your pace", Theme.GREEN));
+			in.add(new Line("Trails an hour", Words.rate(h.trailsPerHour), null, Theme.TEXT_MUTED, Theme.GOLD));
+			in.add(new Line("      " + Format.seconds(h.trailMs) + " a trail, over " + Format.amount(h.timed) + " timed", null, null,
+				Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+		}
+		else
+		{
+			long left = Math.max(1, com.codex.ironworks.core.Herbiboars.LEARN_TRAILS - h.timed);
+			in.add(new Line("Timing your trails", left + " to go", null, Theme.GOLD_BRIGHT, Theme.TEXT_FAINT));
+		}
+		in.add(new Line("Herbs a harvest", Format.perTrip(h.herbsPerHarvest), null, Theme.TEXT_MUTED, Theme.TEXT));
+		in.add(new Line("      at " + h.bandLo + (h.bandHi > h.bandLo ? " to " + h.bandHi : "") + " Herblore, " + Format.amount(h.bandHarvests)
+			+ (h.bandHarvests == 1 ? " harvest" : " harvests"), null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+		for (View.HerbView hv : h.herbs)
+		{
+			String figure = hv.perHour > 0 ? Words.rate(hv.perHour) + "/h" : Format.perTrip(hv.perHarvest);
+			in.add(new IconLine(hv.icon, hv.herb, figure, icons, Theme.TEXT, hv.perHour > 0 ? Theme.TEAL : Theme.TEXT_MUTED));
+		}
+		if (h.trailsPerHour > 0 && (h.bankedXpPerHour > 0 || h.harvestXpPerHour > 0))
+		{
+			in.add(new Line("Herblore an hour", null, null, Theme.GOLD, Theme.TEXT));
+			if (h.harvestXpPerHour > 0)
+			{
+				in.add(new Line("      from the harvests", Words.rate(h.harvestXpPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.TEXT));
+			}
+			if (h.bankedXpPerHour > 0)
+			{
+				in.add(new Line("      banked in the herbs", Words.rate(h.bankedXpPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.GOLD_BRIGHT));
+			}
+		}
+		if (h.bandStale)
+		{
+			in.add(Ui.wrapped("Your Herblore has moved past these levels, so the herbs on offer have changed; the next harvests start a fresh mix.",
+				Theme.small(), Theme.EMBER, WIDTH - 40));
+		}
+		if (!h.unseen.isEmpty())
+		{
+			in.add(Ui.wrapped("Can also give at your level: " + String.join(", ", h.unseen).toLowerCase(Locale.ENGLISH) + ".",
+				Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+		}
+		card.add(in, BorderLayout.CENTER);
+		p.add(card);
+		p.add(foot("Your own harvests, timed harvest to harvest. Banked experience makes each herb into its best potion at your level; the secondaries are yours to find. The OSRS Wiki puts a stamina-potion pace at "
+			+ com.codex.ironworks.core.Herbiboar.WIKI_LOW + " to " + com.codex.ironworks.core.Herbiboar.WIKI_HIGH + " an hour."));
 	}
 
 	/** Every path to a store, costed in time for this account, fastest first, with the way to the best. */

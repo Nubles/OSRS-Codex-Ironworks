@@ -68,6 +68,8 @@ public final class Works
 	Map<String, String> methods = new HashMap<>();
 	/** The player's runecrafting trips: essence a trip and runes an hour, rune by rune. */
 	Trips trips = new Trips();
+	/** The player's herbiboar harvests: herbs a harvest by kind and trails an hour. */
+	Herbiboars herbiboars = new Herbiboars();
 
 	public Works()
 	{
@@ -286,6 +288,17 @@ public final class Works
 	/** Times the gains that come from the player's own work or loot, store by store. */
 	public void rate(List<Flow> flows, long now)
 	{
+		rate(flows, now, false, 0);
+	}
+
+	/**
+	 * As above, and logs herbiboar harvests.
+	 *
+	 * @param herbiboarGround whether the player is where the herbiboar is hunted
+	 * @param herblore the player's Herblore level, unboosted
+	 */
+	public void rate(List<Flow> flows, long now, boolean herbiboarGround, int herblore)
+	{
 		for (Flow f : flows)
 		{
 			if (f.isGain() && (f.source == Source.GATHERED || f.source == Source.FARMED || f.source == Source.MADE
@@ -295,6 +308,13 @@ public final class Works
 			}
 		}
 		trips.record(flows, now);
+		herbiboars.record(flows, herbiboarGround, herblore, now);
+	}
+
+	/** The player's herbiboar log. */
+	public Herbiboars herbiboars()
+	{
+		return herbiboars;
 	}
 
 	/** The player's runecrafting trips. */
@@ -713,6 +733,9 @@ public final class Works
 				case "trips":
 					trips = gson.fromJson(value, Trips.class);
 					break;
+				case "herbiboars":
+					herbiboars = gson.fromJson(value, Herbiboars.class);
+					break;
 				default:
 					break;
 			}
@@ -917,6 +940,7 @@ public final class Works
 		}
 		methods = mt;
 		trips = trips == null ? new Trips() : trips.repair();
+		herbiboars = herbiboars == null ? new Herbiboars() : herbiboars.repair();
 		death = death == null ? null : death.repair();
 		if (death != null && death.items.isEmpty())
 		{
