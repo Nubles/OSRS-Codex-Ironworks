@@ -195,10 +195,11 @@ public class GuidesTest
 				ticked.add(s.key());
 			}
 		}
+		// 1,000 prayer potions (87,500 xp) cover 30 to 45 Herblore (48,149 xp).
 		Map<String, Long> stocks = new HashMap<>();
-		stocks.put("Ranarr weed", 500L);
-		stocks.put("Vial of water", 500L);
-		stocks.put("Snape grass", 500L);
+		stocks.put("Ranarr weed", 1000L);
+		stocks.put("Vial of water", 1000L);
+		stocks.put("Snape grass", 1000L);
 		Map<Skill, Integer> levels = new EnumMap<>(Skill.class);
 		levels.put(Skill.HERBLORE, 38);
 		Workshop w = Workshop.plan(stocks, Catalogue.standard(), levels, Altar.GILDED);
