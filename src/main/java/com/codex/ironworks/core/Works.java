@@ -76,6 +76,8 @@ public final class Works
 	Mines mines = new Mines();
 	/** The player's deep sea trawling: fish an hour by kind, with the Fishing and Sailing experience. */
 	Trawls trawls = new Trawls();
+	/** The player's shooting stars: stardust and experience an hour by size, and the stars they found. */
+	Starlog stars = new Starlog();
 
 	public Works()
 	{
@@ -322,6 +324,12 @@ public final class Works
 	public Mines mines()
 	{
 		return mines;
+	}
+
+	/** The player's shooting star log. */
+	public Starlog stars()
+	{
+		return stars;
 	}
 
 	/** The player's deep sea trawling log. */
@@ -770,6 +778,9 @@ public final class Works
 				case "trawls":
 					trawls = gson.fromJson(value, Trawls.class);
 					break;
+				case "stars":
+					stars = gson.fromJson(value, Starlog.class);
+					break;
 				default:
 					break;
 			}
@@ -978,6 +989,7 @@ public final class Works
 		woodcuts = woodcuts == null ? new Woodcuts() : woodcuts.repair();
 		mines = mines == null ? new Mines() : mines.repair();
 		trawls = trawls == null ? new Trawls() : trawls.repair();
+		stars = stars == null ? new Starlog() : stars.repair();
 		death = death == null ? null : death.repair();
 		if (death != null && death.items.isEmpty())
 		{

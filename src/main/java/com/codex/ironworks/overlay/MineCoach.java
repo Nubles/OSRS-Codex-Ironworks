@@ -31,6 +31,8 @@ public class MineCoach extends Overlay
 	private static final int BAR = 3;
 	/** Height above the rock's base the plaque floats at. */
 	private static final int LIFT = 140;
+	/** Height above a crashed star the plaque floats at: a star stands taller than a rock. */
+	public static final int STAR_LIFT = 260;
 
 	/** One plaque, worked out on the client thread. */
 	public static final class Shown
@@ -57,11 +59,18 @@ public class MineCoach extends Overlay
 	}
 
 	private final Client client;
+	private final int lift;
 	private volatile List<Shown> shown = Collections.emptyList();
 
 	public MineCoach(Client client)
 	{
+		this(client, LIFT);
+	}
+
+	public MineCoach(Client client, int lift)
+	{
 		this.client = client;
+		this.lift = lift;
 		setPosition(OverlayPosition.DYNAMIC);
 		setLayer(OverlayLayer.ABOVE_SCENE);
 	}
@@ -72,7 +81,7 @@ public class MineCoach extends Overlay
 	}
 
 	/** A wait as the game counts it: "0:54", "11:58". */
-	static String clock(double ticks)
+	public static String clock(double ticks)
 	{
 		long s = Math.round(Math.max(0, ticks) * 0.6);
 		return s / 60 + ":" + (s % 60 < 10 ? "0" : "") + s % 60;
@@ -110,7 +119,7 @@ public class MineCoach extends Overlay
 			{
 				continue;
 			}
-			Point p = Perspective.localToCanvas(client, s.at, s.plane, LIFT);
+			Point p = Perspective.localToCanvas(client, s.at, s.plane, lift);
 			if (p == null)
 			{
 				continue;

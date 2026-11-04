@@ -10,6 +10,8 @@ import com.codex.ironworks.core.Woodcuts;
 import com.codex.ironworks.core.Mines;
 import com.codex.ironworks.core.Shoals;
 import com.codex.ironworks.core.Trawls;
+import com.codex.ironworks.core.Starlog;
+import com.codex.ironworks.core.Stars;
 import com.codex.ironworks.core.Rocks;
 
 import com.codex.ironworks.core.Altar;
@@ -290,6 +292,7 @@ final class Views
 		v.woodcutting = woodcutting(works, levels);
 		v.mining = mining(works, levels, v.wants);
 		v.trawling = trawling(works, levels, v.wants);
+		v.stars = stars(works, levels, travel);
 		v.shortWays = shortWays(v.workshop, works, lookup, levels, shops, travel, here);
 		long listCoins = 0;
 		for (View.Want w : wants)
@@ -755,6 +758,151 @@ final class Views
 		}
 		v.comebacks = comebacks;
 		return v;
+	}
+
+	/** Tiles from a teleport's landing that a star is still said to be near it. */
+	static final int NEAR_TELEPORT = 80;
+
+	/**
+	 * The shooting stars card on the Sources tab: the player's own stardust and Mining experience an
+	 * hour by the star's size, the size that pays them best at their level, how long the layers they
+	 * watched took against the wiki's 7 minutes, and the stars they found themselves. Null until a
+	 * star has been found.
+	 */
+	static View.StarView stars(Works works, Map<Skill, Integer> levels, Travel travel)
+	{
+		Starlog log = works.stars();
+		if (log.isEmpty())
+		{
+			return null;
+		}
+		View.StarView v = new View.StarView();
+		v.level = levels.getOrDefault(Skill.MINING, 0);
+		v.largest = v.level > 0 ? Stars.largestFor(v.level) : 0;
+		v.dust = log.dust();
+		v.bonus = log.bonus();
+		v.found = log.finds().size();
+		List<View.TierView> tiers = new ArrayList<>();
+		for (int size = Stars.MAX_SIZE; size >= 1; size--)
+		{
+			Starlog.Tier t = log.tier(size);
+			if (t == null || t.getDust() == 0)
+			{
+				continue;
+			}
+			View.TierView tv = new View.TierView();
+			tv.size = size;
+			tv.level = Stars.level(size);
+			tv.dust = t.getDust();
+			tv.perHour = t.perHour();
+			tv.xpPerHour = t.xpPerHour();
+			tiers.add(tv);
+			boolean open = v.level == 0 || tv.level <= v.level;
+			if (open && tv.xpPerHour > 0 && (v.best == null || tv.xpPerHour > v.best.xpPerHour))
+			{
+				v.best = tv;
+			}
+		}
+		v.tiers = tiers;
+		int latest = log.latest();
+		Starlog.Tier last = latest == 0 ? null : log.tier(latest);
+		if (last != null)
+		{
+			v.size = latest;
+			v.perHour = last.perHour();
+			v.xpPerHour = last.xpPerHour();
+			v.timedMs = last.getMs();
+		}
+		v.layers = log.getLayers();
+		v.layerSeconds = log.averageLayer() * 0.6;
+		v.wikiLayerSeconds = Stars.LAYER_TICKS * 0.6;
+		List<View.FindView> finds = new ArrayList<>();
+		for (Starlog.Find f : log.finds())
+		{
+			View.FindView fv = new View.FindView();
+			fv.world = f.getWorld();
+			fv.size = f.getSize();
+			fv.lowest = f.getLowest();
+			fv.dust = f.getDust();
+			fv.first = f.getFirst();
+			fv.last = f.getLast();
+			fv.discovered = f.isDiscovered();
+			fv.gone = f.isGone();
+			fv.where = where(f.getX(), f.getY(), f.getPlane(), travel);
+			finds.add(fv);
+		}
+		v.finds = finds;
+		v.held = heldDust(works);
+		return v;
+	}
+
+	/** Stardust in the pack and the bank, as last seen. */
+	static long heldDust(Works works)
+	{
+		long n = 0;
+		for (Spot s : new Spot[]{Spot.INVENTORY, Spot.BANK})
+		{
+			Holding h = works.holding(s);
+			if (h != null)
+			{
+				n += h.getItems().getOrDefault(Stars.STARDUST, 0L);
+			}
+		}
+		return n;
+	}
+
+	/** Where a star was: by the nearest teleport landing the account owns, when Wayfinder shares them, else its tile. */
+	static String where(int x, int y, int plane, Travel travel)
+	{
+		Travel.Teleport near = null;
+		int best = Integer.MAX_VALUE;
+		if (travel != null)
+		{
+			for (Travel.Teleport t : travel.teleports())
+			{
+				int d = Math.max(Math.abs(t.x - x), Math.abs(t.y - y));
+				if (t.name != null && t.plane == plane && d <= NEAR_TELEPORT && d < best)
+				{
+					best = d;
+					near = t;
+				}
+			}
+		}
+		return near != null ? "near " + near.name : "tile " + x + ", " + y;
+	}
+
+	/** The Dusuri shop item the player chose, and how long their own pace takes to it. */
+	static void starGoal(View.StarView v, Stars.Reward goal, Works works)
+	{
+		if (v == null || goal == null || goal == Stars.Reward.NONE)
+		{
+			return;
+		}
+		v.goal = goal.item;
+		v.goalIcon = goal.itemId;
+		v.goalPrice = goal.price;
+		double pace = works.stars().all().perHour();
+		long missing = Math.max(0, goal.price - v.held);
+		v.goalHours = pace > 0 ? missing / pace : 0;
+	}
+
+	/** The star the player stands by, for the card. */
+	static View.StarNow starNow(StarWatch.Now n)
+	{
+		if (n == null)
+		{
+			return null;
+		}
+		View.StarNow s = new View.StarNow();
+		s.world = n.world;
+		s.size = n.size;
+		s.level = n.level;
+		s.mined = n.mined;
+		s.leftSeconds = n.leftTicks < 0 ? -1 : n.leftTicks * 0.6;
+		s.prospected = n.prospected;
+		s.prospectAgoSeconds = n.prospectAgo * 0.6;
+		s.own = n.own;
+		return s;
 	}
 
 	/**

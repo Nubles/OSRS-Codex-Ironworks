@@ -1,6 +1,7 @@
 package com.codex.ironworks;
 
 import com.codex.ironworks.notes.FieldNotes;
+import com.codex.ironworks.core.Stars;
 import com.codex.ironworks.core.Travel;
 import com.codex.ironworks.core.Catalogue;
 import com.codex.ironworks.core.Classify;
@@ -59,6 +60,7 @@ import net.runelite.api.Scene;
 import net.runelite.api.Skill;
 import net.runelite.api.Tile;
 import net.runelite.api.TileItem;
+import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.ChatMessage;
@@ -111,7 +113,7 @@ import org.slf4j.LoggerFactory;
 @PluginDescriptor(
 	name = "Codex Ironworks",
 	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources, shops and a guide",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "mining", "ore", "respawn", "trawling", "sailing", "codex"}
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "mining", "ore", "respawn", "stars", "stardust", "trawling", "sailing", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -208,6 +210,8 @@ public class CodexIronworksPlugin extends Plugin
 	private com.codex.ironworks.overlay.MineCoach mineCoach;
 	private RockWatch rockWatch;
 	private final TrawlWatch trawlWatch = new TrawlWatch();
+	private final StarWatch starWatch = new StarWatch();
+	private com.codex.ironworks.overlay.MineCoach starCoach;
 	/** The tick of the Woodcutting experience the tree coach last took as a log. */
 	private int lastCutTick = Integer.MIN_VALUE;
 	private StepItems stepItems;
@@ -296,6 +300,7 @@ public class CodexIronworksPlugin extends Plugin
 		treeWatch = new TreeWatch(client, treeCoach);
 		mineCoach = new com.codex.ironworks.overlay.MineCoach(client);
 		rockWatch = new RockWatch(client, mineCoach);
+		starCoach = new com.codex.ironworks.overlay.MineCoach(client, com.codex.ironworks.overlay.MineCoach.STAR_LIFT);
 		stepItems = new StepItems(itemManager, guide);
 		panel = new IronworksPanel(icons, new IronworksPanel.Actions()
 		{
@@ -382,6 +387,7 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.add(stepItems);
 		overlayManager.add(treeCoach);
 		overlayManager.add(mineCoach);
+		overlayManager.add(starCoach);
 		lookup = Catalogue.with(config.picked(), config.hidden());
 		clientThread.invokeLater(() ->
 		{
@@ -419,6 +425,7 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.remove(stepItems);
 		overlayManager.remove(treeCoach);
 		overlayManager.remove(mineCoach);
+		overlayManager.remove(starCoach);
 		clientToolbar.removeNavigation(navButton);
 		RouteGuide leaving = guide;
 		clientThread.invokeLater(() ->
@@ -462,6 +469,11 @@ public class CodexIronworksPlugin extends Plugin
 			rockWatch.reset();
 		}
 		trawlWatch.reset();
+		starWatch.reset();
+		if (starCoach != null)
+		{
+			starCoach.show(null);
+		}
 	}
 
 	@Subscribe
@@ -507,6 +519,7 @@ public class CodexIronworksPlugin extends Plugin
 		else if (state == GameState.LOADING && rockWatch != null)
 		{
 			rockWatch.loaded();
+			starWatch.loaded();
 		}
 		else if (state == GameState.HOPPING)
 		{
@@ -515,6 +528,7 @@ public class CodexIronworksPlugin extends Plugin
 				rockWatch.reset();
 			}
 			trawlWatch.reset();
+			starWatch.reset();
 			if (tracker != null)
 			{
 				tracker.hop();
@@ -615,6 +629,14 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			rockWatch.spawned(event.getGameObject());
 		}
+		if (works != null)
+		{
+			WorldPoint w = event.getGameObject().getWorldLocation();
+			if (w != null)
+			{
+				starWatch.spawned(event.getGameObject().getId(), w.getX(), w.getY(), w.getPlane(), works.stars());
+			}
+		}
 	}
 
 	@Subscribe
@@ -623,6 +645,11 @@ public class CodexIronworksPlugin extends Plugin
 		if (rockWatch != null)
 		{
 			rockWatch.despawned(event.getGameObject());
+		}
+		WorldPoint w = event.getGameObject().getWorldLocation();
+		if (w != null)
+		{
+			starWatch.despawned(event.getGameObject().getId(), w.getX(), w.getY(), w.getPlane());
 		}
 	}
 
@@ -654,6 +681,7 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			xpTick.put(skill, ticks);
 			trawlWatch.xp(skill, xp - was);
+			starWatch.xp(skill, xp - was);
 			recentXp.addLast(new long[]{System.currentTimeMillis(), skill.ordinal(), xp - was});
 		}
 	}
@@ -920,6 +948,7 @@ public class CodexIronworksPlugin extends Plugin
 			unsaved = true;
 			dirty = true;
 		}
+		stars(items, nowMs);
 		if (lastUnits == null || !lastUnits.equals(carriedUnits))
 		{
 			dirty = true;
@@ -978,6 +1007,7 @@ public class CodexIronworksPlugin extends Plugin
 		{
 			String plain = Text.removeTags(event.getMessage());
 			trawlWatch.heard(plain);
+			starWatch.heard(plain);
 			if (guide != null)
 			{
 				guide.heard(plain);
@@ -1053,6 +1083,37 @@ public class CodexIronworksPlugin extends Plugin
 	}
 
 	/** Where the player stands: x, y, plane; or null. */
+	/** Shooting stars on this tick: stardust mined beside a star, and the plaque over it. */
+	private void stars(Map<Integer, Long> items, long nowMs)
+	{
+		Player me = client.getLocalPlayer();
+		WorldPoint at = me == null ? null : me.getWorldLocation();
+		if (at == null)
+		{
+			starCoach.show(null);
+			return;
+		}
+		long dust = 0;
+		if (lastItems != null && !bankOpen && storageOpen.isEmpty())
+		{
+			dust = Math.max(0, items.getOrDefault(Stars.STARDUST, 0L) - lastItems.getOrDefault(Stars.STARDUST, 0L));
+		}
+		boolean was = starWatch.now() != null;
+		if (starWatch.tick(nowMs, client.getWorld(), at.getX(), at.getY(), at.getPlane(), dust, works.stars()))
+		{
+			unsaved = true;
+			dirty = true;
+		}
+		StarWatch.Now n = starWatch.now();
+		if (n != null || was)
+		{
+			// The card's line about the star by the player moves on as its layer does.
+			dirty = true;
+		}
+		LocalPoint lp = n == null || !config.starCoach() ? null : LocalPoint.fromWorld(client.getTopLevelWorldView(), n.x, n.y);
+		starCoach.show(lp == null ? null : java.util.Collections.singletonList(StarCoach.describe(n, lp)));
+	}
+
 	private int[] here()
 	{
 		Player me = client.getLocalPlayer();
@@ -1783,6 +1844,11 @@ public class CodexIronworksPlugin extends Plugin
 			: Views.build(works, lookup, config.target(), config.warn(), System.currentTimeMillis(), LocalDate.now(), this::unitWorth,
 			levels, xp, config.altar(), itemManager::getItemPrice, config.wayfinder() ? wayfinder.atlas() : null, loggedIn ? here() : null);
 		built.loggedIn = loggedIn;
+		Views.starGoal(built.stars, config.starGoal(), works);
+		if (built.stars != null && loggedIn)
+		{
+			built.stars.now = Views.starNow(starWatch.now());
+		}
 		built.wayfinder = config.wayfinder() && wayfinder.on();
 		if (built.wayfinder)
 		{
