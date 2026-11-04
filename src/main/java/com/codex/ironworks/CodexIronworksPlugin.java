@@ -107,7 +107,7 @@ import org.slf4j.LoggerFactory;
 @PluginDescriptor(
 	name = "Codex Ironworks",
 	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources, shops and a guide",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "codex"}
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -199,6 +199,10 @@ public class CodexIronworksPlugin extends Plugin
 	private Highlights highlights;
 	private Clicks clicks;
 	private Compass compass;
+	private com.codex.ironworks.overlay.TreeCoach treeCoach;
+	private TreeWatch treeWatch;
+	/** The tick of the Woodcutting experience the tree coach last took as a log. */
+	private int lastCutTick = Integer.MIN_VALUE;
 	private StepItems stepItems;
 
 	private final ShopPlaque plaque = new ShopPlaque();
@@ -281,6 +285,8 @@ public class CodexIronworksPlugin extends Plugin
 		highlights = new Highlights(client, outlines, guide);
 		clicks = new Clicks(client, guide, this::name);
 		compass = new Compass(client, guide);
+		treeCoach = new com.codex.ironworks.overlay.TreeCoach(client);
+		treeWatch = new TreeWatch(client, treeCoach);
 		stepItems = new StepItems(itemManager, guide);
 		panel = new IronworksPanel(icons, new IronworksPanel.Actions()
 		{
@@ -365,6 +371,7 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.add(clicks);
 		overlayManager.add(compass);
 		overlayManager.add(stepItems);
+		overlayManager.add(treeCoach);
 		lookup = Catalogue.with(config.picked(), config.hidden());
 		clientThread.invokeLater(() ->
 		{
@@ -400,6 +407,7 @@ public class CodexIronworksPlugin extends Plugin
 		overlayManager.remove(clicks);
 		overlayManager.remove(compass);
 		overlayManager.remove(stepItems);
+		overlayManager.remove(treeCoach);
 		clientToolbar.removeNavigation(navButton);
 		RouteGuide leaving = guide;
 		clientThread.invokeLater(() ->
@@ -434,6 +442,10 @@ public class CodexIronworksPlugin extends Plugin
 		held.clear();
 		plaque.show(null, null, null);
 		stepPlaque.show(null);
+		if (treeWatch != null)
+		{
+			treeWatch.reset();
+		}
 	}
 
 	@Subscribe
@@ -815,6 +827,17 @@ public class CodexIronworksPlugin extends Plugin
 		works.rate(flows, nowMs, com.codex.ironworks.core.Herbiboar.ground(client.getTopLevelWorldView().getMapRegions()),
 			client.getRealSkillLevel(Skill.HERBLORE));
 		if (!flows.isEmpty())
+		{
+			unsaved = true;
+			dirty = true;
+		}
+		long felled = works.woodcuts().felled();
+		// Woodcutting experience that arrived since the last tick: a log from the tree in hand.
+		int wcTick = xpTick.getOrDefault(Skill.WOODCUTTING, Integer.MIN_VALUE);
+		boolean cut = wcTick != lastCutTick && ticks - wcTick <= 1;
+		lastCutTick = wcTick;
+		treeWatch.tick(cut, works.woodcuts(), config.treeCoach());
+		if (works.woodcuts().felled() != felled)
 		{
 			unsaved = true;
 			dirty = true;

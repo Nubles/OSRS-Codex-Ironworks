@@ -271,6 +271,56 @@ public final class View
 		public double potionXp;
 	}
 
+	/** Woodcutting: the player's own logs an hour tree by tree; null when nothing has been cut. */
+	public WoodView woodcutting;
+
+	/** Woodcutting as this account does it. */
+	public static final class WoodView
+	{
+		/** Logs cut in all, and trees felled while the coach watched. */
+		public long logs;
+		public long felled;
+		/** The tree last chopped, its logs and their picture. */
+		public String tree;
+		public String logName;
+		public int icon = -1;
+		/** Its logs an hour at the player's pace, and the time that is timed over; 0 until timed. */
+		public double perHour;
+		public long timedMs;
+		/** Woodcutting experience an hour at the wiki's experience for each log; 0 until timed. */
+		public double xpPerHour;
+		/** What its logs bank an hour in the skills that use them; empty until timed. */
+		public List<BankView> banked = Collections.emptyList();
+		/** Falls of this tree seen from the first log, their average ticks of chopping, and the wiki's. */
+		public long timedFalls;
+		public double ticksToFall;
+		public int wikiFallTicks;
+		/** Every tree cut, the latest first. */
+		public List<TreeView> trees = Collections.emptyList();
+	}
+
+	/** One skill a tree's logs bank experience in. */
+	public static final class BankView
+	{
+		public net.runelite.api.Skill skill;
+		/** What the logs are made into, in words: "burned", "Yew longbow". */
+		public String how;
+		/** Experience an hour at the player's pace, or 0 when the level is not there yet. */
+		public double xpPerHour;
+		/** The level it needs, when the player is short of it; 0 when open. */
+		public int needs;
+	}
+
+	/** One tree as this account cuts it. */
+	public static final class TreeView
+	{
+		public String tree;
+		public int icon = -1;
+		public long logs;
+		public double perHour;
+		public long felled;
+	}
+
 	/** One way to get more. */
 	public static final class WayView
 	{

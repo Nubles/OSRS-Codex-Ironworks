@@ -413,6 +413,7 @@ public class IronworksPanel extends PluginPanel
 				: "Log in to see where your supplies come from."));
 			getMore(p);
 			herbiboar(p);
+			woodcutting(p);
 			return p;
 		}
 		if (s.gained > 0)
@@ -421,6 +422,7 @@ public class IronworksPanel extends PluginPanel
 		}
 		getMore(p);
 		herbiboar(p);
+		woodcutting(p);
 		if (!s.skills.isEmpty())
 		{
 			Card hands = new Card(new BorderLayout());
@@ -838,6 +840,74 @@ public class IronworksPanel extends PluginPanel
 		p.add(card);
 		p.add(foot("Your own harvests, timed harvest to harvest. Banked experience makes each herb into its best potion at your level; the secondaries are yours to find. The OSRS Wiki puts a stamina-potion pace at "
 			+ com.codex.ironworks.core.Herbiboar.WIKI_LOW + " to " + com.codex.ironworks.core.Herbiboar.WIKI_HIGH + " an hour."));
+	}
+
+	/**
+	 * Woodcutting as this account does it: logs an hour on the tree last chopped, the Woodcutting
+	 * experience and the experience those logs bank in the skills that use them, every tree cut at
+	 * its own pace, and how long the trees seen whole took to fall against the wiki's figure.
+	 */
+	private void woodcutting(StackPanel p)
+	{
+		View.WoodView v = view.woodcutting;
+		if (v == null)
+		{
+			return;
+		}
+		p.add(new SectionHeader("Woodcutting", Format.amount(v.logs) + (v.logs == 1 ? " log" : " logs")
+			+ (v.felled > 0 ? ", " + Format.amount(v.felled) + " felled" : "")));
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.TEAL);
+		StackPanel in = new StackPanel(2, 0);
+		if (v.tree != null)
+		{
+			if (v.perHour > 0)
+			{
+				in.add(new Figure(Words.rate(v.perHour), v.logName.toLowerCase(Locale.ENGLISH) + " an hour at your pace", Theme.GREEN));
+				in.add(new Line("      " + v.tree.toLowerCase(Locale.ENGLISH) + ", timed over " + Format.duration(v.timedMs), null, null,
+					Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+				in.add(new Line("Woodcutting an hour", Words.rate(v.xpPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.TEXT));
+				if (!v.banked.isEmpty())
+				{
+					in.add(new Line("Banked in the logs an hour", null, null, Theme.GOLD, Theme.TEXT));
+					for (View.BankView b : v.banked)
+					{
+						String skill = b.skill.getName();
+						String how = "burned".equals(b.how) ? skill : skill + ", " + b.how.toLowerCase(Locale.ENGLISH);
+						in.add(b.needs > 0
+							? new Line("      " + how, "from " + b.needs, null, Theme.TEXT_FAINT, Theme.BLOCKED)
+							: new Line("      " + how, Words.rate(b.xpPerHour) + " xp", null, Theme.TEXT_MUTED, Theme.GOLD_BRIGHT));
+					}
+				}
+			}
+			else
+			{
+				long left = Math.max(60_000L, com.codex.ironworks.core.Woodcuts.LEARN_MS - v.timedMs);
+				in.add(new Line("Timing your " + v.logName.toLowerCase(Locale.ENGLISH), "~" + Format.duration(left) + " to go", null,
+					Theme.GOLD_BRIGHT, Theme.TEXT_FAINT));
+			}
+			if (v.timedFalls > 0 && v.wikiFallTicks > 0)
+			{
+				in.add(Ui.wrapped("Your " + v.tree.toLowerCase(Locale.ENGLISH) + "s fell after " + Format.seconds(v.ticksToFall * 600)
+					+ " of chopping on average, over " + Format.amount(v.timedFalls) + " seen from the first log (wiki: "
+					+ Format.seconds(v.wikiFallTicks * 600.0) + ").", Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+			}
+		}
+		if (v.trees.size() > 1 || v.tree == null)
+		{
+			in.add(new Line("By tree", null, null, Theme.GOLD, Theme.TEXT));
+			for (View.TreeView t : v.trees)
+			{
+				String figure = t.perHour > 0 ? Words.rate(t.perHour) + "/h" : Format.amount(t.logs);
+				String label = t.tree + (t.felled > 0 ? ", " + Format.amount(t.felled) + " felled" : "");
+				in.add(new IconLine(t.icon, label, figure, icons, Theme.TEXT, t.perHour > 0 ? Theme.TEAL : Theme.TEXT_MUTED));
+			}
+		}
+		card.add(in, BorderLayout.CENTER);
+		p.add(card);
+		p.add(foot("Your own logs, timed log to log at the tree: waiting for a felled tree to grow back counts, a bank trip does not. "
+			+ "Banked experience is the logs burned, fletched into the best your level makes, or sawn into planks. "
+			+ "The same pace times chopping wherever Ironworks ranks ways to get logs."));
 	}
 
 	/** Every path to a store, costed in time for this account, fastest first, with the way to the best. */

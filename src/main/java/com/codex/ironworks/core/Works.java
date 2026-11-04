@@ -70,6 +70,8 @@ public final class Works
 	Trips trips = new Trips();
 	/** The player's herbiboar harvests: herbs a harvest by kind and trails an hour. */
 	Herbiboars herbiboars = new Herbiboars();
+	/** The player's woodcutting: logs an hour tree by tree, and the trees felled. */
+	Woodcuts woodcuts = new Woodcuts();
 
 	public Works()
 	{
@@ -309,6 +311,13 @@ public final class Works
 		}
 		trips.record(flows, now);
 		herbiboars.record(flows, herbiboarGround, herblore, now);
+		woodcuts.record(flows, now);
+	}
+
+	/** The player's woodcutting log. */
+	public Woodcuts woodcuts()
+	{
+		return woodcuts;
 	}
 
 	/** The player's herbiboar log. */
@@ -736,6 +745,9 @@ public final class Works
 				case "herbiboars":
 					herbiboars = gson.fromJson(value, Herbiboars.class);
 					break;
+				case "woodcuts":
+					woodcuts = gson.fromJson(value, Woodcuts.class);
+					break;
 				default:
 					break;
 			}
@@ -941,6 +953,7 @@ public final class Works
 		methods = mt;
 		trips = trips == null ? new Trips() : trips.repair();
 		herbiboars = herbiboars == null ? new Herbiboars() : herbiboars.repair();
+		woodcuts = woodcuts == null ? new Woodcuts() : woodcuts.repair();
 		death = death == null ? null : death.repair();
 		if (death != null && death.items.isEmpty())
 		{

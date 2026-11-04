@@ -5,6 +5,8 @@ import com.codex.ironworks.core.Travel;
 import com.codex.ironworks.core.Trips;
 import com.codex.ironworks.core.Herbiboar;
 import com.codex.ironworks.core.Herbiboars;
+import com.codex.ironworks.core.Trees;
+import com.codex.ironworks.core.Woodcuts;
 
 import com.codex.ironworks.core.Altar;
 import com.codex.ironworks.core.Catalogue;
@@ -281,6 +283,7 @@ final class Views
 		}
 		v.getting = getting;
 		v.herbiboar = herbiboar(works, levels);
+		v.woodcutting = woodcutting(works, levels);
 		v.shortWays = shortWays(v.workshop, works, lookup, levels, shops, travel, here);
 		long listCoins = 0;
 		for (View.Want w : wants)
@@ -445,6 +448,11 @@ final class Views
 			// Herbs come once a trail: timed by whole trails, never gain to gain.
 			return works.herbiboars().perHour(store);
 		}
+		if (src == Source.GATHERED && Trees.byLogs(store) != null && works.woodcuts().perHour(store) > 0)
+		{
+			// Logs timed at the tree, the wait for a felled tree to grow back counted in.
+			return works.woodcuts().perHour(store);
+		}
 		if ((src == Source.MADE || src == Source.GATHERED) && Catalogue.family(store) == Family.RUNES)
 		{
 			Trips.Leg leg = works.trips().leg(store);
@@ -538,6 +546,145 @@ final class Views
 		}
 		h.unseen = unseen;
 		return h;
+	}
+
+	/**
+	 * The woodcutting card on the Sources tab: the player's own logs an hour on each tree, and for the
+	 * tree last chopped the Woodcutting experience that comes to and what the logs bank in Firemaking,
+	 * Fletching and Construction at today's levels. Null until a log has been cut.
+	 */
+	static View.WoodView woodcutting(Works works, Map<Skill, Integer> levels)
+	{
+		Woodcuts log = works.woodcuts();
+		if (log.isEmpty())
+		{
+			return null;
+		}
+		View.WoodView v = new View.WoodView();
+		List<Map.Entry<String, Woodcuts.Wood>> woods = new ArrayList<>(log.woods().entrySet());
+		woods.sort((a, b) -> Long.compare(b.getValue().getLast(), a.getValue().getLast()));
+		List<View.TreeView> trees = new ArrayList<>();
+		for (Map.Entry<String, Woodcuts.Wood> e : woods)
+		{
+			Trees.Kind k = Trees.of(e.getKey());
+			Woodcuts.Wood w = e.getValue();
+			v.logs += w.getLogs();
+			v.felled += w.getFelled();
+			if (k == null || w.getLogs() == 0)
+			{
+				continue;
+			}
+			View.TreeView t = new View.TreeView();
+			t.tree = k.name;
+			t.icon = k.logItem;
+			t.logs = w.getLogs();
+			t.perHour = w.perHour();
+			t.felled = w.getFelled();
+			trees.add(t);
+		}
+		v.trees = trees;
+		Trees.Kind k = log.latest();
+		Woodcuts.Wood w = log.wood(k);
+		if (k == null || w == null)
+		{
+			return v;
+		}
+		v.tree = k.name;
+		v.logName = k.logs;
+		v.icon = k.logItem;
+		v.perHour = w.perHour();
+		v.timedMs = w.getMs();
+		v.xpPerHour = v.perHour * k.xp;
+		v.timedFalls = w.getTimedFalls();
+		v.ticksToFall = w.ticksToFall();
+		v.wikiFallTicks = k.fallTicks;
+		v.banked = banked(k.logs, v.perHour, levels);
+		return v;
+	}
+
+	/**
+	 * What one store of logs banks an hour at this pace: burned for Firemaking, fletched into the
+	 * best the Fletching level makes of it, and taken to the sawmill as planks for Construction.
+	 * A skill whose level is short shows the level it needs.
+	 */
+	static List<View.BankView> banked(String logs, double perHour, Map<Skill, Integer> levels)
+	{
+		List<View.BankView> out = new ArrayList<>();
+		Recipe burn = null;
+		Recipe fletch = null;
+		Recipe fletchLow = null;
+		Recipe plank = null;
+		for (Recipe r : Recipes.all())
+		{
+			if (!logs.equals(r.primary()))
+			{
+				continue;
+			}
+			if (r.skill == Skill.FIREMAKING)
+			{
+				burn = r;
+			}
+			else if (r.skill == Skill.FLETCHING && r.xp > 0)
+			{
+				if (r.level <= levels.getOrDefault(Skill.FLETCHING, 99) && (fletch == null || r.xp > fletch.xp))
+				{
+					fletch = r;
+				}
+				if (fletchLow == null || r.level < fletchLow.level)
+				{
+					fletchLow = r;
+				}
+			}
+			else if (r.skill == Skill.CONSTRUCTION && r.optional && r.count > 0)
+			{
+				plank = r;
+			}
+		}
+		if (burn != null)
+		{
+			out.add(bank(Skill.FIREMAKING, "burned", burn.level, burn.xp, perHour, levels));
+		}
+		if (fletch != null)
+		{
+			out.add(bank(Skill.FLETCHING, fletch.product, fletch.level, fletch.xp, perHour, levels));
+		}
+		else if (fletchLow != null)
+		{
+			out.add(bank(Skill.FLETCHING, fletchLow.product, fletchLow.level, fletchLow.xp, perHour, levels));
+		}
+		if (plank != null)
+		{
+			Recipe build = null;
+			for (Recipe r : Recipes.all())
+			{
+				if (r.skill == Skill.CONSTRUCTION && r.usesUp() && plank.product.equals(r.primary()))
+				{
+					build = r;
+				}
+			}
+			if (build != null)
+			{
+				out.add(bank(Skill.CONSTRUCTION, "as " + plank.product.toLowerCase(java.util.Locale.ENGLISH) + "s from the sawmill",
+					build.level, build.xp, perHour, levels));
+			}
+		}
+		return out;
+	}
+
+	private static View.BankView bank(Skill skill, String how, int level, double xp, double perHour, Map<Skill, Integer> levels)
+	{
+		View.BankView b = new View.BankView();
+		b.skill = skill;
+		b.how = how;
+		if (levels.getOrDefault(skill, 99) < level)
+		{
+			b.needs = level;
+		}
+		else
+		{
+			b.xpPerHour = perHour * xp;
+		}
+		return b;
 	}
 
 	/**

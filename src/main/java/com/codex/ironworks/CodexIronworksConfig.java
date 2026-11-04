@@ -131,6 +131,17 @@ public interface CodexIronworksConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "treeCoach",
+		name = "Tree coach",
+		description = "Over the tree you are chopping, show how many are chopping it and an estimate of the time left on its hidden Forestry timer",
+		position = 9
+	)
+	default boolean treeCoach()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "picked",
 		name = "Also track",
 		description = "Item names to keep as stores too, separated by commas, such as Abyssal whip, Games necklace(8)",
