@@ -123,6 +123,9 @@ public final class Recipes
 		r(Skill.COOKING, 87, 215f, "Bluefin", 32344, 1, 0, "Raw bluefin", 1);
 		// The wiki has marlin at 91 since February 2026; RuneLite's calculator still says 93.
 		r(Skill.COOKING, 91, 225f, "Marlin", 32352, 1, 0, "Raw marlin", 1);
+		// Wine: grapes used on a jug of water, fermenting for 200 each; below 68 some go bad for none
+		// (OSRS Wiki: Jug of wine, Jug of bad wine), so it is the most a batch gives.
+		r(Skill.COOKING, 35, 200f, "Jug of wine", 1993, 1, 0, "Grapes", 1, "Jug of water", 1);
 		r(Skill.CRAFTING, 1, 0f, "Green dragon leather", 1745, 1, 0, "Green dragonhide", 1);
 		r(Skill.CRAFTING, 1, 0f, "Blue dragon leather", 2505, 1, 0, "Blue dragonhide", 1);
 		r(Skill.CRAFTING, 1, 0f, "Red dragon leather", 2507, 1, 0, "Red dragonhide", 1);

@@ -112,6 +112,10 @@ public final class Ways
 		add("Goat horn dust", Kind.LOOT, "Grind desert goat horns", null, 0);
 		add("Volcanic ash", Kind.GATHER, "Mine ash piles on Fossil Island", Skill.MINING, 22);
 		add("Nail beast nails", Kind.LOOT, "Nail beasts in the Temple Trekking event", null, 0);
+		// Grapes, for wine (OSRS Wiki: Grapes, Vineyard foreman)
+		add("Grapes", Kind.GATHER, "Fill the vineyard foreman's grape barrel in Aldarin, 5 noted a barrel (" + Vineyard.QUEST + ")", null, 0);
+		add("Grapes", Kind.FARM, "Grow them at the Hosidius Vinery", Skill.FARMING, 36);
+		add("Grapes", Kind.BUY, "Buy them from the Culinaromancer's Chest or Faustus' Fruit and Veg in Aldarin", null, 0);
 		// Herbs, seeds and runes
 		add("Ranarr weed", Kind.FARM, "Herb runs with ranarr seeds", Skill.FARMING, 32);
 		add("Snapdragon", Kind.FARM, "Herb runs with snapdragon seeds", Skill.FARMING, 62);

@@ -78,6 +78,8 @@ public final class Works
 	Trawls trawls = new Trawls();
 	/** The player's shipwreck salvaging: salvage and Sailing experience an hour by wreck, and what it sorted into. */
 	Salvages salvages = new Salvages();
+	/** The player's Aldarin vineyard: grape barrels handed in, the grapes they paid, and barrels an hour. */
+	Vineyards vineyard = new Vineyards();
 	/** The player's shooting stars: stardust and experience an hour by size, and the stars they found. */
 	Starlog stars = new Starlog();
 	/** The player's own fishing: fish an hour by way and tool, what else turned up, and spots seen move. */
@@ -352,6 +354,12 @@ public final class Works
 	public Salvages salvages()
 	{
 		return salvages;
+	}
+
+	/** The player's Aldarin vineyard log. */
+	public Vineyards vineyard()
+	{
+		return vineyard;
 	}
 
 	/** The player's woodcutting log. */
@@ -797,6 +805,9 @@ public final class Works
 				case "salvages":
 					salvages = gson.fromJson(value, Salvages.class);
 					break;
+				case "vineyard":
+					vineyard = gson.fromJson(value, Vineyards.class);
+					break;
 				case "stars":
 					stars = gson.fromJson(value, Starlog.class);
 					break;
@@ -1012,6 +1023,7 @@ public final class Works
 		mines = mines == null ? new Mines() : mines.repair();
 		trawls = trawls == null ? new Trawls() : trawls.repair();
 		salvages = salvages == null ? new Salvages() : salvages.repair();
+		vineyard = vineyard == null ? new Vineyards() : vineyard.repair();
 		stars = stars == null ? new Starlog() : stars.repair();
 		fishing = fishing == null ? new Fishing() : fishing.repair();
 		death = death == null ? null : death.repair();

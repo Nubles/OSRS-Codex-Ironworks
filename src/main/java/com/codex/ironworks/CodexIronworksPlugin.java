@@ -114,7 +114,7 @@ import org.slf4j.LoggerFactory;
 @PluginDescriptor(
 	name = "Codex Ironworks",
 	description = "An all-in-one ironman app: store runways, banked experience, finding anything you own, sources, shops and a guide",
-	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "mining", "ore", "respawn", "stars", "stardust", "trawling", "salvaging", "salvage", "shipwreck", "sailing", "fishing", "fish", "aerial", "codex"}
+	tags = {"ironman", "iron", "supplies", "stores", "shops", "restock", "runway", "banked", "xp", "find", "death", "guide", "route", "runecraft", "pouch", "herbiboar", "herbs", "woodcutting", "trees", "forestry", "mining", "ore", "respawn", "stars", "stardust", "trawling", "salvaging", "salvage", "shipwreck", "vineyard", "grapes", "wine", "aldarin", "sailing", "fishing", "fish", "aerial", "codex"}
 )
 public class CodexIronworksPlugin extends Plugin
 {
@@ -212,6 +212,7 @@ public class CodexIronworksPlugin extends Plugin
 	private RockWatch rockWatch;
 	private final TrawlWatch trawlWatch = new TrawlWatch();
 	private final SalvageWatch salvageWatch = new SalvageWatch();
+	private final VineyardWatch vineyardWatch = new VineyardWatch();
 	/** The boat whose cargo hold was sent last, 1 to 5; 0 until one is. */
 	private int holdBoat;
 	private final StarWatch starWatch = new StarWatch();
@@ -988,6 +989,12 @@ public class CodexIronworksPlugin extends Plugin
 			dirty = true;
 		}
 		readHoldSize();
+		if (vineyardWatch.tick(lastItems, items, bankOpen || !storageOpen.isEmpty() || shopOpen || shopGrace > 0
+			|| !tradeOpen.isEmpty() || tradeGrace > 0, nowMs, works.vineyard()))
+		{
+			unsaved = true;
+			dirty = true;
+		}
 		stars(items, nowMs);
 		if (fishWatch.tick(lastItems, items, bankOpen || !storageOpen.isEmpty(), works.fishing(), nowMs, config.fishCoach()))
 		{
@@ -1950,6 +1957,7 @@ public class CodexIronworksPlugin extends Plugin
 		built.loggedIn = loggedIn;
 		Views.starGoal(built.stars, config.starGoal(), works);
 		Views.pearlGoal(built.fishing, config.pearlGoal(), works);
+		Views.vineyardGoal(built.vineyard, config.grapeGoal(), xp);
 		if (built.stars != null && loggedIn)
 		{
 			built.stars.now = Views.starNow(starWatch.now());

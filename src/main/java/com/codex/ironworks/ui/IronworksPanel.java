@@ -419,6 +419,7 @@ public class IronworksPanel extends PluginPanel
 			stars(p);
 			trawling(p);
 			salvaging(p);
+			vineyard(p);
 			fishing(p);
 			return p;
 		}
@@ -433,6 +434,7 @@ public class IronworksPanel extends PluginPanel
 		stars(p);
 		trawling(p);
 		salvaging(p);
+		vineyard(p);
 		fishing(p);
 		if (!s.skills.isEmpty())
 		{
@@ -1384,6 +1386,101 @@ public class IronworksPanel extends PluginPanel
 			+ "a gap over three minutes is not timed. Sailing an hour is all your hooks, crew too; salvage an hour is your own. "
 			+ "Sorted is what came into your pack as salvage was sorted. The hold is as you last opened it. "
 			+ "The same pace times salvaging wherever Ironworks ranks ways to get salvage."));
+	}
+
+	/** Sittings shown on the vineyard card, the latest first. */
+	private static final int SITTINGS_SHOWN = 4;
+
+	/**
+	 * The Aldarin vineyard as this account works it: grapes and barrels an hour at the player's own
+	 * pace, the grapes a barrel paid, what those grapes come to as jugs of wine, the grapes held
+	 * against the Cooking level the player chose, and their sittings. Information only: no vine is
+	 * marked and nothing says when to act.
+	 */
+	private void vineyard(StackPanel p)
+	{
+		View.VineyardView v = view.vineyard;
+		if (v == null)
+		{
+			return;
+		}
+		p.add(new SectionHeader("Vineyard", v.barrels > 0
+			? Format.amount(v.barrels) + (v.barrels == 1 ? " barrel, " : " barrels, ") + Format.amount(v.grapes) + " grapes" : "Aldarin"));
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.VIOLET);
+		StackPanel in = new StackPanel(2, 0);
+		if (v.grapesPerHour > 0)
+		{
+			in.add(new Figure(Words.rate(v.grapesPerHour), "grapes an hour at your pace", Theme.GREEN));
+			in.add(new Line("Barrels an hour", Words.rate(v.barrelsPerHour), null, Theme.TEXT_MUTED, Theme.GOLD));
+			in.add(new Line("      " + Format.seconds(v.roundMs) + " a barrel, over " + Format.amount(v.timed) + " timed", null, null,
+				Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+		}
+		else
+		{
+			long left = Math.max(1, com.codex.ironworks.core.Vineyards.LEARN_BARRELS - v.timed);
+			in.add(new Line("Timing your barrels", left + (left == 1 ? " barrel to go" : " barrels to go"), null, Theme.GOLD_BRIGHT, Theme.TEXT_FAINT));
+		}
+		if (v.barrels > 0)
+		{
+			in.add(new Line("Grapes a barrel", Format.perTrip(v.perBarrel), null, Theme.TEXT_MUTED, Theme.TEXT));
+			in.add(new Line("      the wiki gives " + com.codex.ironworks.core.Vineyard.GRAPES_PER_BARREL + " noted, always", null, null,
+				Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+		}
+		in.add(new Line("As jugs of wine", null, null, Theme.GOLD, Theme.TEXT));
+		boolean wine = v.cooking == 0 || v.cooking >= com.codex.ironworks.core.Vineyard.WINE_LEVEL;
+		if (v.grapesPerHour > 0)
+		{
+			in.add(new Line("      Cooking an hour", Words.rate(v.wineXpPerHour) + " xp", null, Theme.TEXT_MUTED, wine ? Theme.GOLD_BRIGHT : Theme.TEXT_FAINT));
+		}
+		in.add(new IconLine(com.codex.ironworks.core.Vineyard.GRAPES, "Grapes you hold", Format.amount(v.held), icons, Theme.TEXT, Theme.TEXT_MUTED));
+		if (v.held > 0)
+		{
+			in.add(new Line("      as wine", Words.rate(v.heldXp) + " xp", null, Theme.TEXT_FAINT, Theme.TEXT_MUTED));
+		}
+		if (!wine)
+		{
+			in.add(Ui.wrapped("Wine needs " + com.codex.ironworks.core.Vineyard.WINE_LEVEL + " Cooking; you have " + v.cooking
+				+ ". The grapes keep until then.", Theme.small(), Theme.EMBER, WIDTH - 40));
+		}
+		if (v.goal != null)
+		{
+			double share = v.goalGrapes <= 0 ? 1 : Math.min(1, v.held / (double) v.goalGrapes);
+			in.add(new Line("Toward " + v.goalLevel + " Cooking", null, null, Theme.GOLD, Theme.TEXT));
+			in.add(new Meter("      " + Format.amount(v.held) + " of " + Format.amount(v.goalGrapes) + " grapes held",
+				Format.percent(share), share, Theme.progressColor(share)));
+			if (share >= 1)
+			{
+				in.add(new Line("      enough grapes for it as wine", null, null, Theme.GREEN, Theme.TEXT_FAINT));
+			}
+			else if (v.goalHours > 0)
+			{
+				in.add(new Line("      at your pace", "~" + Format.estimate((long) (v.goalHours * 3_600_000)) + " picking", null,
+					Theme.TEXT_FAINT, Theme.TEAL));
+			}
+		}
+		if (v.cooking > 0 && v.cooking < com.codex.ironworks.core.Vineyard.NO_FAIL_LEVEL)
+		{
+			in.add(Ui.wrapped("Below " + com.codex.ironworks.core.Vineyard.NO_FAIL_LEVEL
+				+ " Cooking some jugs go bad and give nothing (wiki): wine experience here is the most it gives, and grapes to a level the fewest.",
+				Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
+		}
+		if (!v.sittings.isEmpty())
+		{
+			in.add(new Line("Your sittings", null, null, Theme.GOLD, Theme.TEXT));
+			for (int i = 0; i < Math.min(SITTINGS_SHOWN, v.sittings.size()); i++)
+			{
+				View.SittingView st = v.sittings.get(i);
+				String figure = Format.amount(st.grapes) + (st.grapesPerHour > 0 ? ", " + Words.rate(st.grapesPerHour) + "/h" : "");
+				in.add(new Line("      " + Format.shortDay(st.start) + ", " + Format.amount(st.barrels)
+					+ (st.barrels == 1 ? " barrel" : " barrels"), figure, null, Theme.TEXT_MUTED, st.grapesPerHour > 0 ? Theme.TEAL : Theme.TEXT));
+			}
+		}
+		card.add(in, BorderLayout.CENTER);
+		p.add(card);
+		p.add(foot("Your own barrels, counted when grapes come into your pack while you carry the foreman's grape barrel, "
+			+ "and timed barrel to barrel; a gap over ten minutes is not timed. The foreman pays grapes, no experience and no coins (wiki); "
+			+ "wine is the wiki's 200 Cooking xp a jug. The same pace times the vineyard wherever Ironworks ranks ways to get grapes."));
 	}
 
 	/** Seconds as a short wait: "12s", "1m 05s". */
