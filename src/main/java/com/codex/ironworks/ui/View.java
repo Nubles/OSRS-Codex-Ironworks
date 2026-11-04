@@ -160,6 +160,71 @@ public final class View
 		}
 	}
 
+	/** Runecrafting: the pouches carried, the essence on hand, and the player's own trips; null when none of it is known. */
+	public RcView rc;
+
+	/** The runecrafter's side of the account. */
+	public static final class RcView
+	{
+		/** The essence pouches last carried, smallest first. */
+		public List<PouchView> pouches = Collections.emptyList();
+		/** Whether the pouches were read on this login, rather than remembered. */
+		public boolean live;
+		/** Essence carried now, in the pack and in the pouches. */
+		public long pack;
+		public long pouched;
+		/** What the pouches hold between them when full, as worn today. */
+		public long pouchRoom;
+		/** Each rune the player has crafted, most trips first. */
+		public List<TripView> trips = Collections.emptyList();
+		/** Essence a trip over the recent trips, and the most on one. */
+		public double essencePerTrip;
+		public long bestTrip;
+		/** The rune the latest trip made, or null. */
+		public String current;
+		/** Pure essence in the stores, and the trips and time it makes at the player's own rounds. */
+		public long essence;
+		public long tripsInStock;
+		public long stockMs;
+		/** Runes the essence in the stores would make at the player's own multiples; 0 while unknown. */
+		public long runesInStock;
+		/** The rune the Make tab sends pure essence to because the player's trips craft it; null when picked or unknown. */
+		public String essenceTo;
+	}
+
+	/** One essence pouch as last read from the game. */
+	public static final class PouchView
+	{
+		public String name;
+		public int item;
+		public int amount;
+		/** What it holds now, and as new at the player's level. */
+		public int capacity;
+		public int full;
+		public boolean degraded;
+		public boolean wears;
+		/** Essence it is sure to take before it can shrink, and takes on average. */
+		public int safe;
+		public int expected;
+		/** What it holds once it next shrinks; 0 when that destroys it. */
+		public int next;
+		/** The next fill could shrink it. */
+		public boolean atRisk;
+	}
+
+	/** One rune the player crafts, measured from their own trips. */
+	public static final class TripView
+	{
+		public String rune;
+		public int icon = -1;
+		public long trips;
+		public double essence;
+		/** Runes an hour over whole rounds, bank to bank; 0 until timed. */
+		public double perHour;
+		public double runesPerEssence;
+		public long roundMs;
+	}
+
 	/** One way to get more. */
 	public static final class WayView
 	{

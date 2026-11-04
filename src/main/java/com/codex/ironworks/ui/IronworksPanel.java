@@ -829,7 +829,7 @@ public class IronworksPanel extends PluginPanel
 		StackPanel p = new StackPanel(6, 8);
 		View v = view;
 		Workshop w = v.workshop;
-		if (w.plans().isEmpty() && v.methods.isEmpty())
+		if (w.plans().isEmpty() && v.methods.isEmpty() && v.rc == null)
 		{
 			p.add(note(v.stores.isEmpty()
 				? "Log in and open your bank, and Ironworks works out the experience waiting in your stores."
@@ -856,6 +856,10 @@ public class IronworksPanel extends PluginPanel
 		top.add(new Line("Bones counted at", v.altar.toString(), null, Theme.TEXT_MUTED, Theme.TEXT_FAINT));
 		hero.add(top, BorderLayout.CENTER);
 		p.add(hero);
+		if (v.rc != null)
+		{
+			p.add(runecraft(v.rc));
+		}
 		for (Workshop.Plan plan : w.plans())
 		{
 			p.add(skillCard(plan));
@@ -897,7 +901,9 @@ public class IronworksPanel extends PluginPanel
 			String store = m.recipe.primary();
 			boolean picked = v.methods.containsKey(store);
 			boolean choosable = picked || Workshop.methods(store).size() > 1;
-			String label = Format.amount(m.times) + " × " + m.recipe.product;
+			String label = m.recipe.skill == net.runelite.api.Skill.RUNECRAFT
+				? Format.amount(m.times) + " essence at the " + com.codex.ironworks.core.Acquire.altar(m.recipe.product)
+				: Format.amount(m.times) + " × " + m.recipe.product;
 			String figure = m.locked ? "needs " + m.recipe.level : Format.amount(Math.round(m.xp));
 			Color labelColor = m.locked ? Theme.TEXT_FAINT : picked ? Theme.GOLD_BRIGHT : Theme.TEXT;
 			IconLine line = new IconLine(m.recipe.productItem, label, figure, icons, labelColor,
@@ -941,6 +947,91 @@ public class IronworksPanel extends PluginPanel
 				}
 			}
 			getMore(in, s.input);
+		}
+		card.add(in, BorderLayout.CENTER);
+		return card;
+	}
+
+	/**
+	 * Runecrafting: the essence on hand and in each pouch, how worn each pouch is, and the player's
+	 * own trips, with what the pure essence in the stores comes to at that pace.
+	 */
+	private JComponent runecraft(View.RcView rc)
+	{
+		Card card = new Card(new BorderLayout());
+		card.accent(Theme.VIOLET);
+		StackPanel in = new StackPanel(2, 0);
+		long carried = rc.pack + (rc.live ? rc.pouched : 0);
+		in.add(new Line("Runecrafting", carried > 0 ? Format.amount(carried) + " essence on you" : null, null,
+			Theme.GOLD_BRIGHT, Theme.GOLD));
+		if (!rc.pouches.isEmpty())
+		{
+			if (rc.live)
+			{
+				in.add(new Line("In your pack", Format.amount(rc.pack), null, Theme.TEXT_MUTED, Theme.TEXT));
+				in.add(new Line("In your pouches", Format.amount(rc.pouched) + " of " + Format.amount(rc.pouchRoom), null,
+					Theme.TEXT_MUTED, rc.pouched >= rc.pouchRoom ? Theme.GOLD_BRIGHT : Theme.TEXT));
+			}
+			else
+			{
+				in.add(new Line("Pouches as you last carried them", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+			for (View.PouchView pv : rc.pouches)
+			{
+				in.add(new PouchRow(pv, icons));
+			}
+		}
+		if (!rc.trips.isEmpty())
+		{
+			in.add(new Line("Your trips", rc.essencePerTrip > 0 ? Format.perTrip(rc.essencePerTrip) + " essence a trip" : null, null,
+				Theme.GOLD, Theme.TEXT));
+			if (rc.bestTrip > Math.round(rc.essencePerTrip))
+			{
+				in.add(new Line("      most on one trip", Format.amount(rc.bestTrip), null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+			int shown = 0;
+			for (View.TripView t : rc.trips)
+			{
+				if (shown++ == 4)
+				{
+					break;
+				}
+				String label = t.rune + "s, " + Format.amount(t.trips) + (t.trips == 1 ? " trip" : " trips");
+				String figure = t.perHour > 0 ? Words.rate(t.perHour) + "/h" : "timing";
+				in.add(new IconLine(t.icon, label, figure, icons, Theme.TEXT, t.perHour > 0 ? Theme.GOLD : Theme.TEXT_FAINT));
+				List<String> bits = new ArrayList<>();
+				if (t.runesPerEssence > 0)
+				{
+					bits.add(Format.perTrip(t.runesPerEssence) + (Math.abs(t.runesPerEssence - 1) < 0.05 ? " rune" : " runes") + " an essence");
+				}
+				if (t.roundMs > 0)
+				{
+					bits.add(Format.seconds(t.roundMs) + " a round");
+				}
+				else
+				{
+					bits.add("timed after " + com.codex.ironworks.core.Trips.LEARN_TRIPS + " rounds");
+				}
+				in.add(new Line("      " + String.join(", ", bits), null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
+			}
+		}
+		if (rc.essence > 0)
+		{
+			String trips = rc.tripsInStock > 0 ? Format.amount(rc.tripsInStock) + (rc.tripsInStock == 1 ? " trip" : " trips") : null;
+			in.add(new Line("Pure essence in your stores", Format.amount(rc.essence), null, Theme.TEXT_MUTED, Theme.TEXT));
+			if (trips != null)
+			{
+				String rune = rc.essenceTo != null ? rc.essenceTo : rc.current;
+				String made = rc.runesInStock > 0 && rune != null
+					? ", about " + Format.amount(rc.runesInStock) + " " + rune.toLowerCase(Locale.ENGLISH) + "s" : "";
+				in.add(new Line("      " + trips + made, rc.stockMs > 0 ? Format.duration(rc.stockMs) : null, null,
+					Theme.TEAL, Theme.GOLD));
+			}
+		}
+		if (rc.essenceTo != null)
+		{
+			in.add(Ui.wrapped("Banked experience counts your essence at the " + com.codex.ironworks.core.Acquire.altar(rc.essenceTo)
+				+ ", where your trips craft. Click the Runecraft line below to pick another.", Theme.small(), Theme.TEXT_FAINT, WIDTH - 40));
 		}
 		card.add(in, BorderLayout.CENTER);
 		return card;
@@ -999,7 +1090,8 @@ public class IronworksPanel extends PluginPanel
 		StackPanel in = new StackPanel(1, 0);
 		in.setBorder(new EmptyBorder(2, 12, 4, 0));
 		in.add(new Line("Use " + store.toLowerCase(Locale.ENGLISH) + " for", null, null, Theme.TEXT_FAINT, Theme.TEXT_FAINT));
-		in.add(option("Its best use first", null, picked == null, () -> actions.method(store, null)));
+		boolean trips = v.rc != null && v.rc.essenceTo != null && "Pure essence".equals(store);
+		in.add(option(trips ? "Where your trips craft" : "Its best use first", null, picked == null, () -> actions.method(store, null)));
 		for (com.codex.ironworks.core.Recipe r : Workshop.methods(store))
 		{
 			int level = v.levels.getOrDefault(r.skill, 99);
@@ -1085,6 +1177,8 @@ public class IronworksPanel extends PluginPanel
 				return "Plant them";
 			case SAILING:
 				return "Sort it at a salvaging station";
+			case RUNECRAFT:
+				return "The " + com.codex.ironworks.core.Acquire.altar(r.product);
 			default:
 				return "Build with them";
 		}
@@ -1586,6 +1680,121 @@ public class IronworksPanel extends PluginPanel
 			g.fillRoundRect(0, bar, w, 3, 3, 3);
 			g.setColor(color);
 			g.fillRoundRect(0, bar, Math.max(3, (int) Math.round(w * share)), 3, 3, 3);
+			g.dispose();
+		}
+	}
+
+	/**
+	 * One essence pouch: its picture, name and fill, a row of cells for what it holds now (gold when
+	 * filled, faint when empty, ghosted where it has worn away), and a line on its wear.
+	 */
+	private static final class PouchRow extends Fitted
+	{
+		private static final int ICON = 18;
+		private final View.PouchView pv;
+		private final ItemIcons icons;
+
+		PouchRow(View.PouchView pv, ItemIcons icons)
+		{
+			this.pv = pv;
+			this.icons = icons;
+			setFont(Theme.small());
+			setToolTipText(pv.name + ": " + pv.amount + " of " + pv.capacity + " essence");
+		}
+
+		/** The line under the cells: how long it lasts before it can shrink, or that it has worn. */
+		String wearText()
+		{
+			if (!pv.wears)
+			{
+				return "Never wears";
+			}
+			if (pv.capacity <= 0)
+			{
+				return "Worn through: see the Dark Mage";
+			}
+			if (pv.degraded)
+			{
+				return "Worn to " + pv.capacity + " of " + pv.full + ": the Dark Mage repairs it";
+			}
+			if (pv.atRisk)
+			{
+				return "Could shrink to " + pv.next + " on the next fill";
+			}
+			int fills = pv.capacity <= 0 ? 0 : pv.safe / pv.capacity;
+			return fills + (fills == 1 ? " safe fill" : " safe fills") + ", about " + Format.amount(pv.expected) + " essence before it shrinks";
+		}
+
+		Color wearColor()
+		{
+			return !pv.wears ? Theme.TEXT_FAINT : pv.degraded ? Theme.BLOOD : pv.atRisk ? Theme.EMBER : Theme.TEXT_FAINT;
+		}
+
+		@Override
+		int heightFor(int width)
+		{
+			int n = Ui.wrap(wearText(), getFontMetrics(getFont()), width - ICON - 5).size();
+			return 30 + n * 13;
+		}
+
+		@Override
+		protected void paintComponent(Graphics graphics)
+		{
+			Graphics2D g = (Graphics2D) graphics.create();
+			Theme.smooth(g);
+			BufferedImage icon = icons == null ? null : icons.icon(pv.item, this::repaint);
+			if (icon != null)
+			{
+				double scale = Math.min(ICON / (double) icon.getWidth(), ICON / (double) icon.getHeight());
+				int w = (int) Math.round(icon.getWidth() * scale);
+				int h = (int) Math.round(icon.getHeight() * scale);
+				g.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+				g.drawImage(icon, (ICON - w) / 2, 4 + (ICON - h) / 2, w, h, null);
+			}
+			g.setFont(getFont());
+			FontMetrics fm = g.getFontMetrics();
+			int x = ICON + 5;
+			int width = getWidth() - x;
+			String fill = pv.amount + " / " + pv.capacity;
+			Color nameColor = pv.degraded ? Theme.BLOOD : Theme.TEXT;
+			Ui.shadowed(g, pv.name, x, 11, nameColor);
+			Ui.shadowed(g, fill, getWidth() - fm.stringWidth(fill), 11, pv.amount >= pv.capacity && pv.capacity > 0 ? Theme.GOLD_BRIGHT : Theme.TEXT_MUTED);
+			// One cell for each essence it held as new; the worn-away ones are ghosted.
+			int cells = Math.max(1, pv.full);
+			int gap = cells > 20 ? 1 : 2;
+			float cw = (width - gap * (cells - 1)) / (float) cells;
+			int y = 16;
+			int ch = 7;
+			for (int i = 0; i < cells; i++)
+			{
+				int cx = x + Math.round(i * (cw + gap));
+				int cwi = Math.max(1, Math.round((i + 1) * (cw + gap) - gap) - Math.round(i * (cw + gap)));
+				Color c;
+				if (i >= pv.capacity)
+				{
+					c = Theme.alpha(Theme.BLOOD, 70);
+				}
+				else if (i < pv.amount)
+				{
+					c = pv.atRisk ? Theme.EMBER : Theme.GOLD;
+				}
+				else
+				{
+					c = Theme.INK_DEEP;
+				}
+				g.setColor(c);
+				g.fillRoundRect(cx, y, cwi, ch, 3, 3);
+				if (i < pv.amount && i < pv.capacity)
+				{
+					g.setColor(Theme.alpha(Color.WHITE, 45));
+					g.drawLine(cx + 1, y, cx + cwi - 2, y);
+				}
+			}
+			List<String> rows = Ui.wrap(wearText(), fm, width);
+			for (int i = 0; i < rows.size(); i++)
+			{
+				Ui.shadowed(g, rows.get(i), x, 36 + i * 13, wearColor());
+			}
 			g.dispose();
 		}
 	}

@@ -120,6 +120,17 @@ public interface CodexIronworksConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "pouchWarnings",
+		name = "Pouch wear in chat",
+		description = "Say in the chat box when an essence pouch you carry could shrink on its next fill, and how to have it repaired",
+		position = 8
+	)
+	default boolean pouchWarnings()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "picked",
 		name = "Also track",
 		description = "Item names to keep as stores too, separated by commas, such as Abyssal whip, Games necklace(8)",

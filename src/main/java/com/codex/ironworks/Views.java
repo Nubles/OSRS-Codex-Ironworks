@@ -2,6 +2,7 @@ package com.codex.ironworks;
 
 import com.codex.ironworks.core.Acquire;
 import com.codex.ironworks.core.Travel;
+import com.codex.ironworks.core.Trips;
 
 import com.codex.ironworks.core.Altar;
 import com.codex.ironworks.core.Catalogue;
@@ -13,6 +14,7 @@ import com.codex.ironworks.core.Recipe;
 import com.codex.ironworks.core.Recipes;
 import com.codex.ironworks.core.Family;
 import com.codex.ironworks.core.Place;
+import com.codex.ironworks.core.Pouch;
 import com.codex.ironworks.core.Run;
 import com.codex.ironworks.core.Runway;
 import com.codex.ironworks.core.Shop;
@@ -263,7 +265,7 @@ final class Views
 		v.xp = xp;
 		v.altar = altar;
 		v.methods = new HashMap<>(works.methods());
-		v.workshop = Workshop.plan(stocks, lookup, levels, xp, altar, v.methods);
+		v.workshop = Workshop.plan(stocks, lookup, levels, xp, altar, methods(works, v.methods));
 		Map<String, View.Getting> getting = new HashMap<>();
 		for (View.StoreView sv : stores)
 		{
@@ -428,6 +430,169 @@ final class Views
 		}
 	}
 
+	/**
+	 * The player's own pace at a store one way. Runes are made in bursts at the altar with the run to
+	 * the bank between, so a rune is timed by whole trips ({@link Trips}), never gain to gain; until
+	 * enough trips are timed it has no pace rather than a pace that leaves the running out.
+	 */
+	static double pace(Works works, String store, Source src)
+	{
+		if ((src == Source.MADE || src == Source.GATHERED) && Catalogue.family(store) == Family.RUNES)
+		{
+			Trips.Leg leg = works.trips().leg(store);
+			if (leg != null || src == Source.MADE)
+			{
+				return leg == null ? 0 : leg.perHour();
+			}
+		}
+		Rate r = works.rate(store, src);
+		return r == null ? 0 : r.perHour();
+	}
+
+	/** The store runes are crafted from, as the Make tab counts it. */
+	static final String ESSENCE = "Pure essence";
+
+	/**
+	 * The recipes the Make tab plans with: the player's picks, and pure essence sent to the altar the
+	 * player's latest trip crafted at, unless they picked otherwise.
+	 */
+	static Map<String, String> methods(Works works, Map<String, String> picked)
+	{
+		String rune = craftedFromEssence(works, picked);
+		if (rune == null)
+		{
+			return picked;
+		}
+		Map<String, String> out = new HashMap<>(picked);
+		out.put(ESSENCE, rune);
+		return out;
+	}
+
+	/** The rune pure essence goes to because the player's trips craft it; null when picked or unknown. */
+	static String craftedFromEssence(Works works, Map<String, String> picked)
+	{
+		if (picked.containsKey(ESSENCE))
+		{
+			return null;
+		}
+		String rune = works.trips().current();
+		if (rune == null)
+		{
+			return null;
+		}
+		for (Recipe r : Workshop.methods(ESSENCE))
+		{
+			if (r.product.equals(rune))
+			{
+				return rune;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * The runecrafting card: the pouches as last read, the essence carried now, each rune's trips,
+	 * and what the pure essence in the stores comes to at the player's own trips.
+	 *
+	 * @param pouches the pouches last carried, or empty
+	 * @param pack essence in the pack now
+	 * @param live whether the pouches were read on this login
+	 */
+	static void runecraft(View v, Works works, List<View.PouchView> pouches, long pack, boolean live)
+	{
+		Trips trips = works.trips();
+		if (pouches.isEmpty() && trips.isEmpty())
+		{
+			v.rc = null;
+			return;
+		}
+		View.RcView rc = new View.RcView();
+		rc.pouches = pouches;
+		rc.live = live;
+		rc.pack = pack;
+		for (View.PouchView p : pouches)
+		{
+			rc.pouched += p.amount;
+			rc.pouchRoom += p.capacity;
+		}
+		List<View.TripView> list = new ArrayList<>();
+		trips.legs().forEach((rune, leg) ->
+		{
+			View.TripView t = new View.TripView();
+			t.rune = rune;
+			t.icon = works.icon(rune);
+			for (Recipe r : Workshop.methods(ESSENCE))
+			{
+				if (t.icon < 0 && r.product.equals(rune))
+				{
+					t.icon = r.productItem;
+				}
+			}
+			t.trips = leg.getTrips();
+			t.essence = leg.essencePerTrip();
+			t.perHour = leg.perHour();
+			t.runesPerEssence = leg.runesPerEssence();
+			t.roundMs = leg.roundMs();
+			list.add(t);
+		});
+		list.sort((a, b) -> Long.compare(b.trips, a.trips));
+		rc.trips = list;
+		rc.bestTrip = trips.bestTrip();
+		rc.current = trips.current();
+		// Essence a trip at the altar the player crafts at now; a trip to another altar carries what it needs.
+		Trips.Leg now = rc.current == null ? null : trips.leg(rc.current);
+		rc.essencePerTrip = now != null ? now.essencePerTrip() : trips.essencePerTrip();
+		rc.essence = works.stock(ESSENCE);
+		rc.essenceTo = craftedFromEssence(works, v.methods);
+		String rune = v.methods.containsKey(ESSENCE) ? v.methods.get(ESSENCE) : rc.current;
+		Trips.Leg leg = rune == null ? null : trips.leg(rune);
+		if (rc.essence > 0 && rc.essencePerTrip >= 1)
+		{
+			rc.tripsInStock = (long) Math.ceil(rc.essence / rc.essencePerTrip);
+			if (leg != null && leg.roundMs() > 0)
+			{
+				rc.stockMs = rc.tripsInStock * leg.roundMs();
+			}
+			if (leg != null && leg.runesPerEssence() > 0)
+			{
+				rc.runesInStock = Math.round(rc.essence * leg.runesPerEssence());
+			}
+		}
+		v.rc = rc;
+	}
+
+	/** One pouch as the game's counts give it: what it holds, how worn it is, and what that means. */
+	static View.PouchView pouch(Pouch p, int itemId, int amount, int wear, int runecraft)
+	{
+		View.PouchView pv = new View.PouchView();
+		pv.name = p.getLabel();
+		pv.item = itemId;
+		pv.amount = Math.max(0, amount);
+		pv.capacity = p.capacity(wear, runecraft);
+		pv.full = p.capacityNew(runecraft);
+		pv.degraded = Pouch.degraded(itemId) || pv.capacity < pv.full;
+		pv.wears = p.wears();
+		pv.safe = p.safeEssence(wear);
+		pv.expected = p.expectedEssence(wear);
+		pv.next = p.capacityAfterNext(wear, runecraft);
+		pv.atRisk = p.atRisk(wear, runecraft);
+		return pv;
+	}
+
+	/** The chat line for a pouch that could shrink on its next fill, or has worn already. */
+	static String pouchWarning(View.PouchView pv)
+	{
+		String name = pv.name.toLowerCase(java.util.Locale.ENGLISH);
+		String repair = "The Dark Mage in the Abyss repairs pouches for free; Astral Contact reaches him from anywhere.";
+		if (pv.degraded)
+		{
+			return pv.capacity <= 0 ? "Your " + name + " is worn through. " + repair
+				: "Your " + name + " has worn and holds " + pv.capacity + " of " + pv.full + ". " + repair;
+		}
+		return "Your " + name + " could shrink on its next fill: it holds " + pv.capacity
+			+ (pv.next > 0 ? ", then " + pv.next : ", then it is gone") + ". " + repair;
+	}
+
 	/** Teleports in the bank are taken to cost a minute's bank stop: a planning assumption. */
 	static final int BANK_STOP_SECONDS = 60;
 
@@ -464,11 +629,8 @@ final class Views
 		{
 			return;
 		}
-		List<Acquire.Path> paths = Acquire.rank(g.store, need, levels, (store, src) ->
-		{
-			Rate r = works.rate(store, src);
-			return r == null ? 0 : r.perHour();
-		}, offers, makes, travel, here, BANK_STOP_SECONDS);
+		List<Acquire.Path> paths = Acquire.rank(g.store, need, levels, (store, src) -> pace(works, store, src),
+			offers, makes, travel, here, BANK_STOP_SECONDS);
 		List<View.PathView> out = new ArrayList<>();
 		for (Acquire.Path p : paths)
 		{
@@ -538,8 +700,7 @@ final class Views
 			wv.skill = w.skill;
 			wv.level = w.level;
 			wv.open = w.skill == null || levels.getOrDefault(w.skill, 99) >= w.level;
-			Rate r = works.rate(store, w.kind.getSource());
-			wv.perHour = r == null ? 0 : r.perHour();
+			wv.perHour = pace(works, store, w.kind.getSource());
 			ways.add(wv);
 		}
 		for (Recipe r : Recipes.all())
@@ -557,8 +718,7 @@ final class Views
 			wv.skill = r.skill;
 			wv.level = r.level;
 			wv.open = levels.getOrDefault(r.skill, 99) >= r.level;
-			Rate rate = works.rate(store, Source.MADE);
-			wv.perHour = rate == null ? 0 : rate.perHour();
+			wv.perHour = pace(works, store, Source.MADE);
 			ways.add(wv);
 		}
 		// Ways the player has a pace for come first, fastest first; then the open ones; locked ones last.
@@ -623,10 +783,10 @@ final class Views
 		double fastest = 0;
 		for (Source src : new Source[]{Source.GATHERED, Source.FARMED, Source.MADE, Source.LOOTED})
 		{
-			Rate r = works.rate(sv.store, src);
-			if (r != null && r.perHour() > fastest)
+			double r = pace(works, sv.store, src);
+			if (r > fastest)
 			{
-				fastest = r.perHour();
+				fastest = r;
 				w.how = src.getLabel().toLowerCase(java.util.Locale.ENGLISH);
 			}
 		}
