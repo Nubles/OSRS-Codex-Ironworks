@@ -41,6 +41,27 @@ public class ViewsTest
 	}
 
 	@Test
+	public void aMakeCardShortOfASecondIngredientSaysHowToGetMore()
+	{
+		Works w = new Works();
+		Map<String, Long> bank = new HashMap<>();
+		bank.put("Ranarr weed", 300L);
+		bank.put("Vial of water", 300L);
+		bank.put("Snape grass", 100L);
+		bank.put("Oak logs", 50L);
+		w.place(Place.BANK, bank, NOW);
+		w.method("Oak logs", "Oak plank");
+		View v = Views.build(w, Catalogue.standard(), 10, 2, NOW, TODAY, s -> 1);
+		assertEquals("Oak plank", v.methods.get("Oak logs"));
+		assertEquals(200, v.workshop.plan(net.runelite.api.Skill.HERBLORE).shorts.get(0).need);
+		View.Getting g = v.shortWays.get("Snape grass");
+		assertTrue(g != null && !g.plan.isEmpty());
+		assertEquals(200, g.need);
+		// The sawmill is short of coins, which are money: no way to get more is offered for them.
+		assertNull(v.shortWays.get("Coins"));
+	}
+
+	@Test
 	public void aShortStoreIsListedWithTheShopItWasBoughtAt()
 	{
 		View v = Views.build(feathers(), Catalogue.standard(), 10, 2, NOW, TODAY, s -> 1);

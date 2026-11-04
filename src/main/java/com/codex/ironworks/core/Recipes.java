@@ -9,8 +9,11 @@ import net.runelite.api.Skill;
 
 /**
  * The recipes an ironman turns stores into experience with. Levels and experience come from
- * RuneLite's own skill calculator; the inputs are the game's. Potions are counted in doses, as
- * their stores are, so a three-dose potion is one making that adds three doses.
+ * RuneLite's own skill calculator (RecipeFactsTest checks every one against it); the inputs are the
+ * game's, from the OSRS Wiki. Potions are counted in doses, as their stores are, so a three-dose
+ * potion is one making that adds three doses. A strung longbow made from logs counts both the
+ * cutting and the stringing. Planks used for Construction are counted at RuneLite's example build
+ * for each kind, and need its level.
  */
 public final class Recipes
 {
@@ -84,6 +87,14 @@ public final class Recipes
 		r(Skill.COOKING, 30, 100f, "Tuna", 361, 1, 0, "Raw tuna", 1);
 		r(Skill.COOKING, 25, 90f, "Salmon", 329, 1, 0, "Raw salmon", 1);
 		r(Skill.COOKING, 15, 70f, "Trout", 333, 1, 0, "Raw trout", 1);
+		r(Skill.COOKING, 43, 130f, "Bass", 365, 1, 0, "Raw bass", 1);
+		r(Skill.COOKING, 20, 80f, "Pike", 351, 1, 0, "Raw pike", 1);
+		r(Skill.COOKING, 18, 75f, "Cod", 339, 1, 0, "Raw cod", 1);
+		r(Skill.COOKING, 10, 60f, "Mackerel", 355, 1, 0, "Raw mackerel", 1);
+		r(Skill.COOKING, 5, 50f, "Herring", 347, 1, 0, "Raw herring", 1);
+		r(Skill.COOKING, 1, 40f, "Sardine", 325, 1, 0, "Raw sardine", 1);
+		r(Skill.COOKING, 1, 30f, "Anchovies", 319, 1, 0, "Raw anchovies", 1);
+		r(Skill.COOKING, 1, 30f, "Shrimps", 315, 1, 0, "Raw shrimps", 1);
 		r(Skill.CRAFTING, 1, 0f, "Green dragon leather", 1745, 1, 0, "Green dragonhide", 1);
 		r(Skill.CRAFTING, 1, 0f, "Blue dragon leather", 2505, 1, 0, "Blue dragonhide", 1);
 		r(Skill.CRAFTING, 1, 0f, "Red dragon leather", 2507, 1, 0, "Red dragonhide", 1);
@@ -105,11 +116,14 @@ public final class Recipes
 		r(Skill.FLETCHING, 70, 150f, "Yew longbow", 855, 1, 1, "Yew logs", 1, "Bow string", 1);
 		r(Skill.FLETCHING, 85, 183f, "Magic longbow", 859, 1, 1, "Magic logs", 1, "Bow string", 1);
 		r(Skill.FLETCHING, 55, 116.5f, "Maple longbow", 851, 1, 1, "Maple logs", 1, "Bow string", 1);
+		r(Skill.FLETCHING, 40, 83f, "Willow longbow", 847, 1, 1, "Willow logs", 1, "Bow string", 1);
+		r(Skill.FLETCHING, 25, 50f, "Oak longbow", 845, 1, 1, "Oak logs", 1, "Bow string", 1);
 		r(Skill.FLETCHING, 70, 75f, "Yew longbow (u)", 66, 1, 1, "Yew logs", 1);
 		r(Skill.FLETCHING, 85, 91.5f, "Magic longbow (u)", 70, 1, 1, "Magic logs", 1);
 		r(Skill.FLETCHING, 55, 58.3f, "Maple longbow (u)", 62, 1, 1, "Maple logs", 1);
 		r(Skill.FLETCHING, 40, 41.5f, "Willow longbow (u)", 58, 1, 1, "Willow logs", 1);
 		r(Skill.FLETCHING, 25, 25f, "Oak longbow (u)", 56, 1, 1, "Oak logs", 1);
+		r(Skill.SMITHING, 1, 6.2f, "Bronze bar", 2349, 1, 0, "Copper ore", 1, "Tin ore", 1);
 		r(Skill.SMITHING, 15, 12.5f, "Iron bar", 2351, 1, 0, "Iron ore", 1);
 		r(Skill.SMITHING, 30, 17.5f, "Steel bar", 2353, 1, 0, "Iron ore", 1, "Coal", 2);
 		r(Skill.SMITHING, 50, 30f, "Mithril bar", 2359, 1, 0, "Mithril ore", 1, "Coal", 4);
@@ -121,10 +135,18 @@ public final class Recipes
 		r(Skill.SMITHING, 99, 375f, "Rune platebody", 1127, 1, 1, "Runite bar", 5);
 		r(Skill.SMITHING, 88, 312.5f, "Adamant platebody", 1123, 1, 1, "Adamantite bar", 5);
 		r(Skill.SMITHING, 68, 250f, "Mithril platebody", 1121, 1, 1, "Mithril bar", 5);
+		r(Skill.SMITHING, 48, 187.5f, "Steel platebody", 1119, 1, 1, "Steel bar", 5);
+		r(Skill.SMITHING, 33, 125f, "Iron platebody", 1115, 1, 1, "Iron bar", 5);
+		r(Skill.SMITHING, 18, 62.5f, "Bronze platebody", 1117, 1, 1, "Bronze bar", 5);
+		// The sawmill turns logs and coins into planks for no experience; only when the player picks it.
+		sawmill("Plank", 960, "Logs", 100);
+		sawmill("Oak plank", 8778, "Oak logs", 250);
+		sawmill("Teak plank", 8780, "Teak logs", 500);
+		sawmill("Mahogany plank", 8782, "Mahogany logs", 1500);
 		r(Skill.CONSTRUCTION, 1, 29f, "Plank", 960, 0, 9, "Plank", 1);
-		r(Skill.CONSTRUCTION, 1, 60f, "Oak plank", 8778, 0, 9, "Oak plank", 1);
-		r(Skill.CONSTRUCTION, 1, 90f, "Teak plank", 8780, 0, 9, "Teak plank", 1);
-		r(Skill.CONSTRUCTION, 1, 140f, "Mahogany plank", 8782, 0, 9, "Mahogany plank", 1);
+		r(Skill.CONSTRUCTION, 15, 60f, "Oak plank", 8778, 0, 9, "Oak plank", 1);
+		r(Skill.CONSTRUCTION, 35, 90f, "Teak plank", 8780, 0, 9, "Teak plank", 1);
+		r(Skill.CONSTRUCTION, 40, 140f, "Mahogany plank", 8782, 0, 9, "Mahogany plank", 1);
 		r(Skill.FIREMAKING, 1, 40f, "Logs", 1511, 0, 9, "Logs", 1);
 		r(Skill.FIREMAKING, 15, 60f, "Oak logs", 1521, 0, 9, "Oak logs", 1);
 		r(Skill.FIREMAKING, 30, 90f, "Willow logs", 1519, 0, 9, "Willow logs", 1);
@@ -162,6 +184,14 @@ public final class Recipes
 			in.put((String) inputs[i], (Integer) inputs[i + 1]);
 		}
 		ALL.add(new Recipe(skill, level, xp, product, item, count, tier, in));
+	}
+
+	private static void sawmill(String plank, int item, String logs, int coins)
+	{
+		Map<String, Integer> in = new LinkedHashMap<>();
+		in.put(logs, 1);
+		in.put("Coins", coins);
+		ALL.add(new Recipe(Skill.CONSTRUCTION, 1, 0, plank, item, 1, 0, in, true));
 	}
 
 	public static List<Recipe> all()

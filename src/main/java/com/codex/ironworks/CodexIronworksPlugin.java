@@ -304,6 +304,19 @@ public class CodexIronworksPlugin extends Plugin
 			}
 
 			@Override
+			public void method(String store, String product)
+			{
+				clientThread.invokeLater(() ->
+				{
+					if (works != null && works.method(store, product))
+					{
+						unsaved = true;
+						publish();
+					}
+				});
+			}
+
+			@Override
 			public void route(View.Goto spot)
 			{
 				if (config.wayfinder() && spot != null)
