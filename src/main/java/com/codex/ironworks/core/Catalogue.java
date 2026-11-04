@@ -37,7 +37,9 @@ public final class Catalogue
 			"Raw karambwan", "Raw monkfish", "Raw lobster", "Raw swordfish", "Raw sea turtle", "Tuna", "Salmon", "Trout",
 			"Raw tuna", "Raw salmon", "Raw trout", "Bass", "Pike", "Cod", "Mackerel", "Herring", "Sardine", "Anchovies",
 			"Shrimps", "Raw bass", "Raw pike", "Raw cod", "Raw mackerel", "Raw herring", "Raw sardine", "Raw anchovies",
-			"Raw shrimps");
+			"Raw shrimps", "Swordtip squid", "Giant krill", "Jumbo squid", "Haddock", "Yellowfin", "Halibut", "Bluefin",
+			"Marlin", "Raw swordtip squid", "Raw giant krill", "Raw jumbo squid", "Raw haddock", "Raw yellowfin",
+			"Raw halibut", "Raw bluefin", "Raw marlin");
 		shelf(Family.POTIONS,
 			"Prayer potion", "Super restore", "Saradomin brew", "Super combat potion", "Divine super combat potion",
 			"Ranging potion", "Divine ranging potion", "Bastion potion", "Divine bastion potion", "Magic potion",
@@ -94,7 +96,14 @@ public final class Catalogue
 			"Blue dragonhide", "Red dragonhide", "Black dragonhide", "Green dragon leather", "Blue dragon leather",
 			"Red dragon leather", "Black dragon leather", "Uncut sapphire", "Uncut emerald", "Uncut ruby", "Uncut diamond",
 			"Uncut dragonstone", "Amethyst", "Steel nails", "Bolt of cloth", "Limestone brick", "Marble block", "Soft clay",
-			"Air orb", "Unpowered orb", "Battlestaff");
+			"Air orb", "Unpowered orb", "Battlestaff",
+			// Sailing: what it gathers, and what boats are built from
+			"Small salvage", "Fishy salvage", "Barracuda salvage", "Large salvage", "Plundered salvage", "Martial salvage",
+			"Fremennik salvage", "Opulent salvage", "Lead ore", "Nickel ore", "Lead bar", "Cupronickel bar", "Camphor logs",
+			"Ironwood logs", "Rosewood logs", "Camphor plank", "Ironwood plank", "Rosewood plank", "Wooden hull parts",
+			"Oak hull parts", "Teak hull parts", "Mahogany hull parts", "Camphor hull parts", "Ironwood hull parts",
+			"Rosewood hull parts", "Bronze keel parts", "Iron keel parts", "Steel keel parts", "Mithril keel parts",
+			"Adamant keel parts", "Rune keel parts");
 		shelf(Family.CURRENCY,
 			"Coins", "Tokkul", "Trading sticks", "Numulite");
 		for (String name : new String[]{
@@ -107,7 +116,9 @@ public final class Catalogue
 			"Red spiders' eggs", "Limpwurt root", "White berries", "Potato cactus", "Mort myre fungus", "Bird nest",
 			"Zulrah's scales", "Jangerberries", "Cave nightshade", "Poison ivy berries", "Cactus spine", "Blue dragon scale",
 			"Yew roots", "Magic roots", "Amylase crystal", "Lava scale shard", "Nail beast nails", "Toad's legs",
-			"Volcanic ash", "Ashes"})
+			"Volcanic ash", "Ashes", "Lead ore", "Nickel ore", "Camphor logs", "Ironwood logs", "Rosewood logs",
+			"Small salvage", "Fishy salvage", "Barracuda salvage", "Large salvage", "Plundered salvage", "Martial salvage",
+			"Fremennik salvage", "Opulent salvage"})
 		{
 			GATHERED.add(key(name));
 		}

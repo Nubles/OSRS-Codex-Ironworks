@@ -178,6 +178,31 @@ public final class Ways
 		add("Amethyst", Kind.GATHER, "Mine it in the Mining Guild", Skill.MINING, 92);
 		add("Molten glass", Kind.MAKE, "Cast Superglass Make on sand and seaweed", Skill.MAGIC, 77);
 		add("Air orb", Kind.MAKE, "Charge unpowered orbs at the Air Obelisk", Skill.MAGIC, 66);
+		// Sailing: shipwrecks to salvage, fish at sea, and the woods and ores boats are built from
+		add("Small salvage", Kind.GATHER, "Salvage small shipwrecks from your boat", Skill.SAILING, 15);
+		add("Fishy salvage", Kind.GATHER, "Salvage fisherman's shipwrecks from your boat", Skill.SAILING, 26);
+		add("Barracuda salvage", Kind.GATHER, "Salvage barracuda shipwrecks from your boat", Skill.SAILING, 35);
+		add("Large salvage", Kind.GATHER, "Salvage large shipwrecks from your boat", Skill.SAILING, 53);
+		add("Plundered salvage", Kind.GATHER, "Salvage pirate shipwrecks from your boat", Skill.SAILING, 64);
+		add("Martial salvage", Kind.GATHER, "Salvage mercenary shipwrecks from your boat", Skill.SAILING, 73);
+		add("Fremennik salvage", Kind.GATHER, "Salvage Fremennik shipwrecks from your boat", Skill.SAILING, 80);
+		add("Opulent salvage", Kind.GATHER, "Salvage merchant shipwrecks from your boat", Skill.SAILING, 87);
+		add("Raw swordtip squid", Kind.GATHER, "Lantern harpooning; first docked at the Onyx Crest with 47 Sailing", Skill.FISHING, 52);
+		add("Raw jumbo squid", Kind.GATHER, "Lantern harpooning; first docked at the Onyx Crest with 47 Sailing", Skill.FISHING, 69);
+		add("Raw giant krill", Kind.GATHER, "Trawl giant krill shoals at sea", Skill.FISHING, 69);
+		add("Raw haddock", Kind.GATHER, "Trawl haddock shoals at sea", Skill.FISHING, 73);
+		add("Raw yellowfin", Kind.GATHER, "Trawl yellowfin shoals at sea", Skill.FISHING, 79);
+		add("Raw halibut", Kind.GATHER, "Trawl halibut shoals at sea", Skill.FISHING, 83);
+		add("Raw bluefin", Kind.GATHER, "Trawl bluefin shoals at sea", Skill.FISHING, 87);
+		add("Raw marlin", Kind.GATHER, "Trawl marlin shoals at sea", Skill.FISHING, 91);
+		add("Camphor logs", Kind.GATHER, "Chop camphor trees on the Great Conch", Skill.WOODCUTTING, 66);
+		add("Ironwood logs", Kind.GATHER, "Chop ironwood trees on Sunbleak Island (72 Sailing to dock)", Skill.WOODCUTTING, 80);
+		add("Rosewood logs", Kind.GATHER, "Chop rosewood trees on Drumstick Isle (79 Sailing to dock)", Skill.WOODCUTTING, 92);
+		add("Lead ore", Kind.GATHER, "Mine lead rocks", Skill.MINING, 25);
+		add("Nickel ore", Kind.GATHER, "Mine nickel rocks", Skill.MINING, 74);
+		add("Camphor plank", Kind.BUY, "Have camphor logs made into planks at a sawmill", null, 0);
+		add("Ironwood plank", Kind.BUY, "Have ironwood logs made into planks at a sawmill", null, 0);
+		add("Rosewood plank", Kind.BUY, "Have rosewood logs made into planks at a sawmill", null, 0);
 		// Ammunition
 		add("Broad bolts", Kind.BUY, "Slayer masters sell unfinished broad bolts once Broader Fletching is unlocked", Skill.FLETCHING, 55);
 		add("Broad arrows", Kind.BUY, "Slayer masters sell broad arrowheads once Broader Fletching is unlocked", Skill.FLETCHING, 52);

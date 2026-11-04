@@ -122,6 +122,62 @@ public class WorkshopTest
 	}
 
 	@Test
+	public void salvageIsSailingExperienceWaitingToBeSorted()
+	{
+		Workshop w = Workshop.plan(stocks("Small salvage", 100, "Opulent salvage", 10), LOOKUP, Collections.emptyMap(), Altar.GILDED);
+		assertEquals(100 * 5.5 + 10 * 95, w.plan(Skill.SAILING).xp, 0.01);
+	}
+
+	@Test
+	public void fishAndLogsFromTheSeaAreCookedAndBurned()
+	{
+		Workshop w = Workshop.plan(stocks("Raw halibut", 10, "Raw marlin", 10, "Rosewood logs", 10), LOOKUP,
+			Collections.emptyMap(), Altar.GILDED);
+		assertEquals(10 * 212.5 + 10 * 225, w.plan(Skill.COOKING).xp, 0.01);
+		assertEquals(10 * 268, w.plan(Skill.FIREMAKING).xp, 0.01);
+	}
+
+	@Test
+	public void cupronickelTakesTwoCopperForEachNickel()
+	{
+		// Cupronickel gives the most for its nickel, so copper goes to it first and the rest to bronze,
+		// whose ten bars go on to two platebodies.
+		Workshop w = Workshop.plan(stocks("Nickel ore", 10, "Copper ore", 30, "Tin ore", 30, "Lead ore", 9), LOOKUP,
+			Collections.emptyMap(), Altar.GILDED);
+		assertEquals(10 * 42 + 10 * 6.2 + 2 * 62.5 + 4 * 15.5, w.plan(Skill.SMITHING).xp, 0.01);
+	}
+
+	@Test
+	public void boatPartsAreMadeOnlyWhenPicked()
+	{
+		Map<String, Long> st = stocks("Runite bar", 10, "Oak plank", 10);
+		Workshop plain = Workshop.plan(st, LOOKUP, Collections.emptyMap(), Collections.emptyMap(), Altar.GILDED, Collections.emptyMap());
+		assertEquals(2 * 375, plain.plan(Skill.SMITHING).xp, 0.01);
+		assertEquals(10 * 60, plain.plan(Skill.CONSTRUCTION).xp, 0.01);
+		Map<String, String> picks = new HashMap<>();
+		picks.put("Runite bar", "Rune keel parts");
+		picks.put("Oak plank", "Oak hull parts");
+		Map<Skill, Integer> levels = new EnumMap<>(Skill.class);
+		levels.put(Skill.SMITHING, 90);
+		Workshop picked = Workshop.plan(st, LOOKUP, levels, Collections.emptyMap(), Altar.GILDED, picks);
+		assertEquals("Rune keel parts", picked.plan(Skill.SMITHING).makes.get(0).recipe.product);
+		assertEquals(2 * 375, picked.plan(Skill.SMITHING).xp, 0.01);
+		assertEquals(0, picked.plan(Skill.SMITHING).lockedXp, 0.01);
+		assertEquals(2 * 150, picked.plan(Skill.CONSTRUCTION).xp, 0.01);
+	}
+
+	@Test
+	public void sailingPlanksGoToHullParts()
+	{
+		Map<String, String> picks = new HashMap<>();
+		picks.put("Camphor logs", "Camphor plank");
+		Workshop w = Workshop.plan(stocks("Camphor logs", 10, "Coins", 1_000_000), LOOKUP, Collections.emptyMap(),
+			Collections.emptyMap(), Altar.GILDED, picks);
+		assertEquals(2 * 400, w.plan(Skill.CONSTRUCTION).xp, 0.01);
+		assertNull(w.plan(Skill.FIREMAKING));
+	}
+
+	@Test
 	public void chainsRunThroughSeveralSteps()
 	{
 		// Sand and soda ash become glass, glass an orb, the orb is charged, and a staff takes it.

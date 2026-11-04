@@ -13,7 +13,8 @@ import net.runelite.api.Skill;
  * game's, from the OSRS Wiki. Potions are counted in doses, as their stores are, so a three-dose
  * potion is one making that adds three doses. A strung longbow made from logs counts both the
  * cutting and the stringing. Planks used for Construction are counted at RuneLite's example build
- * for each kind, and need its level.
+ * for each kind, and need its level. Sailing adds its own: salvage sorted for Sailing experience, the
+ * fish and logs found at sea, and the bars, planks and parts a boat is built from.
  */
 public final class Recipes
 {
@@ -95,6 +96,16 @@ public final class Recipes
 		r(Skill.COOKING, 1, 40f, "Sardine", 325, 1, 0, "Raw sardine", 1);
 		r(Skill.COOKING, 1, 30f, "Anchovies", 319, 1, 0, "Raw anchovies", 1);
 		r(Skill.COOKING, 1, 30f, "Shrimps", 315, 1, 0, "Raw shrimps", 1);
+		// Fish caught at sea since Sailing (OSRS Wiki: Raw haddock, Raw marlin and the rest).
+		r(Skill.COOKING, 56, 150f, "Swordtip squid", 31556, 1, 0, "Raw swordtip squid", 1);
+		r(Skill.COOKING, 69, 177.5f, "Giant krill", 32312, 1, 0, "Raw giant krill", 1);
+		r(Skill.COOKING, 71, 180f, "Jumbo squid", 31564, 1, 0, "Raw jumbo squid", 1);
+		r(Skill.COOKING, 73, 180f, "Haddock", 32320, 1, 0, "Raw haddock", 1);
+		r(Skill.COOKING, 79, 200f, "Yellowfin", 32328, 1, 0, "Raw yellowfin", 1);
+		r(Skill.COOKING, 83, 212.5f, "Halibut", 32336, 1, 0, "Raw halibut", 1);
+		r(Skill.COOKING, 87, 215f, "Bluefin", 32344, 1, 0, "Raw bluefin", 1);
+		// The wiki has marlin at 91 since February 2026; RuneLite's calculator still says 93.
+		r(Skill.COOKING, 91, 225f, "Marlin", 32352, 1, 0, "Raw marlin", 1);
 		r(Skill.CRAFTING, 1, 0f, "Green dragon leather", 1745, 1, 0, "Green dragonhide", 1);
 		r(Skill.CRAFTING, 1, 0f, "Blue dragon leather", 2505, 1, 0, "Blue dragonhide", 1);
 		r(Skill.CRAFTING, 1, 0f, "Red dragon leather", 2507, 1, 0, "Red dragonhide", 1);
@@ -138,11 +149,35 @@ public final class Recipes
 		r(Skill.SMITHING, 48, 187.5f, "Steel platebody", 1119, 1, 1, "Steel bar", 5);
 		r(Skill.SMITHING, 33, 125f, "Iron platebody", 1115, 1, 1, "Iron bar", 5);
 		r(Skill.SMITHING, 18, 62.5f, "Bronze platebody", 1117, 1, 1, "Bronze bar", 5);
+		// Sailing's metals: lead and cupronickel bars for ship parts, and keel parts hammered from bars,
+		// which are only made when picked (they need Pandemonium, a quest the Make tab cannot check).
+		r(Skill.SMITHING, 25, 15.5f, "Lead bar", 32889, 1, 0, "Lead ore", 2);
+		r(Skill.SMITHING, 74, 42f, "Cupronickel bar", 32892, 1, 0, "Nickel ore", 1, "Copper ore", 2);
+		boat(Skill.SMITHING, 10, 62.5f, "Bronze keel parts", 31999, "Bronze bar");
+		boat(Skill.SMITHING, 22, 125f, "Iron keel parts", 32002, "Iron bar");
+		boat(Skill.SMITHING, 38, 187.5f, "Steel keel parts", 32005, "Steel bar");
+		boat(Skill.SMITHING, 56, 250f, "Mithril keel parts", 32008, "Mithril bar");
+		boat(Skill.SMITHING, 74, 312.5f, "Adamant keel parts", 32011, "Adamantite bar");
+		boat(Skill.SMITHING, 86, 375f, "Rune keel parts", 32014, "Runite bar");
 		// The sawmill turns logs and coins into planks for no experience; only when the player picks it.
 		sawmill("Plank", 960, "Logs", 100);
 		sawmill("Oak plank", 8778, "Oak logs", 250);
 		sawmill("Teak plank", 8780, "Teak logs", 500);
 		sawmill("Mahogany plank", 8782, "Mahogany logs", 1500);
+		sawmill("Camphor plank", 31432, "Camphor logs", 2500);
+		sawmill("Ironwood plank", 31435, "Ironwood logs", 5000);
+		sawmill("Rosewood plank", 31438, "Rosewood logs", 7500);
+		// Hull parts for the boat, 5 planks each at a shipwrights' workbench. Plain to mahogany planks
+		// give more experience built into furniture, so their hull parts are made only when picked;
+		// the Sailing planks have no other Construction use. The wiki has ironwood at 75 since
+		// July 2026; RuneLite's calculator still says 77.
+		boat(Skill.CONSTRUCTION, 1, 72.5f, "Wooden hull parts", 32041, "Plank");
+		boat(Skill.CONSTRUCTION, 8, 150f, "Oak hull parts", 32044, "Oak plank");
+		boat(Skill.CONSTRUCTION, 23, 225f, "Teak hull parts", 32047, "Teak plank");
+		boat(Skill.CONSTRUCTION, 41, 350f, "Mahogany hull parts", 32050, "Mahogany plank");
+		r(Skill.CONSTRUCTION, 53, 400f, "Camphor hull parts", 32053, 1, 1, "Camphor plank", 5);
+		r(Skill.CONSTRUCTION, 75, 437.5f, "Ironwood hull parts", 32056, 1, 1, "Ironwood plank", 5);
+		r(Skill.CONSTRUCTION, 84, 475f, "Rosewood hull parts", 32059, 1, 1, "Rosewood plank", 5);
 		r(Skill.CONSTRUCTION, 1, 29f, "Plank", 960, 0, 9, "Plank", 1);
 		r(Skill.CONSTRUCTION, 15, 60f, "Oak plank", 8778, 0, 9, "Oak plank", 1);
 		r(Skill.CONSTRUCTION, 35, 90f, "Teak plank", 8780, 0, 9, "Teak plank", 1);
@@ -156,6 +191,19 @@ public final class Recipes
 		r(Skill.FIREMAKING, 60, 202.5f, "Yew logs", 1515, 0, 9, "Yew logs", 1);
 		r(Skill.FIREMAKING, 75, 303.8f, "Magic logs", 1513, 0, 9, "Magic logs", 1);
 		r(Skill.FIREMAKING, 90, 350f, "Redwood logs", 19669, 0, 9, "Redwood logs", 1);
+		r(Skill.FIREMAKING, 66, 180f, "Camphor logs", 32904, 0, 9, "Camphor logs", 1);
+		r(Skill.FIREMAKING, 80, 220.5f, "Ironwood logs", 32907, 0, 9, "Ironwood logs", 1);
+		r(Skill.FIREMAKING, 92, 268f, "Rosewood logs", 32910, 0, 9, "Rosewood logs", 1);
+		// Salvage from shipwrecks is sorted at a salvaging station for Sailing experience and loot
+		// (OSRS Wiki: Salvaging); the loot is random, so only the experience is counted.
+		r(Skill.SAILING, 15, 5.5f, "Small salvage", 32847, 0, 9, "Small salvage", 1);
+		r(Skill.SAILING, 26, 9f, "Fishy salvage", 32849, 0, 9, "Fishy salvage", 1);
+		r(Skill.SAILING, 35, 15.5f, "Barracuda salvage", 32851, 0, 9, "Barracuda salvage", 1);
+		r(Skill.SAILING, 53, 24f, "Large salvage", 32853, 0, 9, "Large salvage", 1);
+		r(Skill.SAILING, 64, 31.5f, "Plundered salvage", 32855, 0, 9, "Plundered salvage", 1);
+		r(Skill.SAILING, 73, 63.5f, "Martial salvage", 32857, 0, 9, "Martial salvage", 1);
+		r(Skill.SAILING, 80, 75f, "Fremennik salvage", 32859, 0, 9, "Fremennik salvage", 1);
+		r(Skill.SAILING, 87, 95f, "Opulent salvage", 32861, 0, 9, "Opulent salvage", 1);
 		r(Skill.FARMING, 15, 481.3f, "Acorn", 5312, 0, 9, "Acorn", 1);
 		r(Skill.FARMING, 30, 1481.5f, "Willow seed", 5313, 0, 9, "Willow seed", 1);
 		r(Skill.FARMING, 35, 7325f, "Teak seed", 21486, 0, 9, "Teak seed", 1);
@@ -192,6 +240,14 @@ public final class Recipes
 		in.put(logs, 1);
 		in.put("Coins", coins);
 		ALL.add(new Recipe(Skill.CONSTRUCTION, 1, 0, plank, item, 1, 0, in, true));
+	}
+
+	/** A part for the player's boat from five of a store, made only when the player picks it. */
+	private static void boat(Skill skill, int level, float xp, String part, int item, String from)
+	{
+		Map<String, Integer> in = new LinkedHashMap<>();
+		in.put(from, 5);
+		ALL.add(new Recipe(skill, level, xp, part, item, 1, 1, in, true));
 	}
 
 	public static List<Recipe> all()

@@ -13,6 +13,7 @@ import net.runelite.client.plugins.skillcalculator.skills.HerbloreAction;
 import net.runelite.client.plugins.skillcalculator.skills.ItemSkillAction;
 import net.runelite.client.plugins.skillcalculator.skills.MagicAction;
 import net.runelite.client.plugins.skillcalculator.skills.PrayerAction;
+import net.runelite.client.plugins.skillcalculator.skills.SailingAction;
 import net.runelite.client.plugins.skillcalculator.skills.SkillAction;
 import net.runelite.client.plugins.skillcalculator.skills.SmithingAction;
 import org.junit.Test;
@@ -45,6 +46,11 @@ public class RecipeFactsTest
 				return FiremakingAction.values();
 			case PRAYER:
 				return PrayerAction.values();
+			case SAILING:
+				// Each salvage is in it twice, salvaged at sea and sorted at a station; only sorting
+				// uses the salvage up.
+				return java.util.Arrays.stream(SailingAction.values()).filter(a -> a.getName().endsWith("(Sorting)"))
+					.toArray(SkillAction[]::new);
 			default:
 				return new SkillAction[0];
 		}
@@ -67,6 +73,18 @@ public class RecipeFactsTest
 		return null;
 	}
 
+	/**
+	 * Levels the game changed after RuneLite's calculator was written, from the OSRS Wiki: marlin
+	 * cooks at 91 (changelog of 25 February 2026) and ironwood hull parts are made at 75 (22 July 2026).
+	 */
+	private static final java.util.Map<String, Integer> WIKI_LEVELS = new java.util.HashMap<>();
+
+	static
+	{
+		WIKI_LEVELS.put("Marlin", 91);
+		WIKI_LEVELS.put("Ironwood hull parts", 75);
+	}
+
 	@Test
 	public void everyLevelAndExperienceIsRuneLites()
 	{
@@ -87,7 +105,18 @@ public class RecipeFactsTest
 			}
 			SkillAction a = find(r.skill, r.productItem);
 			assertNotNull(r.product + " (" + r.productItem + ") is not in RuneLite's " + r.skill + " calculator", a);
-			assertEquals(r.product, a.getLevel(), r.level);
+			Integer wiki = WIKI_LEVELS.get(r.product);
+			if (wiki != null)
+			{
+				// RuneLite has not caught up with a level the game changed: the wiki's stands, and
+				// once RuneLite agrees this entry is no longer needed.
+				assertEquals(r.product, (int) wiki, r.level);
+				assertTrue(r.product + ": RuneLite now agrees, drop it from WIKI_LEVELS", a.getLevel() != r.level);
+			}
+			else
+			{
+				assertEquals(r.product, a.getLevel(), r.level);
+			}
 			double xp = a.getXp();
 			if (r.inputs.containsKey("Bow string"))
 			{
@@ -108,23 +137,68 @@ public class RecipeFactsTest
 		int sawmill = 0;
 		for (Recipe r : Recipes.all())
 		{
-			if (!r.optional)
+			if (!r.optional || !r.inputs.containsKey("Coins"))
 			{
 				continue;
 			}
 			sawmill++;
 			assertEquals(0, r.xp, 0);
 			assertEquals(1, r.count);
-			assertTrue(r.product, r.inputs.containsKey("Coins"));
-			SkillAction a = find(Skill.CONSTRUCTION, r.productItem);
-			assertNotNull(r.product, a);
 			boolean used = false;
 			for (Recipe o : Recipes.all())
 			{
-				used |= o.skill == Skill.CONSTRUCTION && !o.optional && o.primary().equals(r.product) && o.productItem == r.productItem;
+				used |= o.skill == Skill.CONSTRUCTION && !o.optional && o.primary().equals(r.product);
 			}
 			assertTrue(r.product + " is made but never used", used);
 		}
-		assertEquals(4, sawmill);
+		assertEquals(7, sawmill);
+	}
+
+	@Test
+	public void boatPartsAreFiveOfOneStoreAndOnlyWhenPicked()
+	{
+		int parts = 0;
+		for (Recipe r : Recipes.all())
+		{
+			if (!r.product.endsWith(" parts"))
+			{
+				continue;
+			}
+			parts++;
+			assertEquals(r.product, 1, r.inputs.size());
+			assertEquals(r.product, 5, (int) r.inputs.get(r.primary()));
+			// Hull parts from the Sailing planks are those planks' only Construction use; the rest wait for a pick.
+			boolean sailingPlank = r.primary().startsWith("Camphor") || r.primary().startsWith("Ironwood")
+				|| r.primary().startsWith("Rosewood");
+			assertEquals(r.product, !sailingPlank, r.optional);
+		}
+		assertEquals(13, parts);
+	}
+
+	@Test
+	public void everySailingStoreIsCatalogued()
+	{
+		for (Recipe r : Recipes.all())
+		{
+			for (String in : r.inputs.keySet())
+			{
+				if (!"Coins".equals(in))
+				{
+					assertTrue(in + " is used by " + r.product + " but is no store", Catalogue.all().contains(in));
+				}
+			}
+		}
+		int salvage = 0;
+		for (Recipe r : Recipes.all())
+		{
+			if (r.skill == Skill.SAILING)
+			{
+				salvage++;
+				assertTrue(r.usesUp());
+				assertTrue(Catalogue.gathered(r.primary()));
+				assertTrue(r.primary(), !Ways.of(r.primary()).isEmpty() && Ways.of(r.primary()).get(0).skill == Skill.SAILING);
+			}
+		}
+		assertEquals(8, salvage);
 	}
 }

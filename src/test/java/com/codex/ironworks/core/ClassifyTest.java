@@ -76,6 +76,20 @@ public class ClassifyTest
 	}
 
 	@Test
+	public void salvageIsGatheredAtSeaAndSortedAway()
+	{
+		Flow hooked = only(delta("Large salvage", 1), xp(Skill.SAILING));
+		assertEquals(Source.GATHERED, hooked.source);
+		assertEquals("Sailing", hooked.skill);
+		Flow sorted = only(delta("Large salvage", -1), xp(Skill.SAILING));
+		assertEquals(Use.MADE_INTO, sorted.use);
+		assertEquals("Sailing", sorted.skill);
+		// Sailing experience alone does not use up a store Sailing does not sort, such as fish caught at sea.
+		Flow fish = only(delta("Raw halibut", -1), xp(Skill.SAILING));
+		assertTrue(fish.use != Use.MADE_INTO);
+	}
+
+	@Test
 	public void gatheringAndFarmingAreTheirOwnHands()
 	{
 		Flow fish = only(delta("Raw shark", 1), xp(Skill.FISHING));

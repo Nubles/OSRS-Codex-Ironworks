@@ -209,6 +209,19 @@ public final class Classify
 		out.add(Flow.in(store, units, Source.OTHER, null));
 	}
 
+	/** Whether the store is one Sailing sorts through, such as salvage. */
+	private static boolean sorted(String store)
+	{
+		for (Recipe r : Recipes.using(store))
+		{
+			if (r.skill == Skill.SAILING)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/** The skill a gain is put down to: farming first, then making or gathering as the item is. */
 	private static Skill gainSkill(String store, Set<Skill> xp)
 	{
@@ -310,6 +323,11 @@ public final class Classify
 		if (made == null && xp.contains(Skill.MAGIC))
 		{
 			made = Skill.MAGIC;
+		}
+		if (made == null && xp.contains(Skill.SAILING) && sorted(store))
+		{
+			// Salvage sorted at a salvaging station: Sailing experience, and the salvage gone.
+			made = Skill.SAILING;
 		}
 		if (made != null)
 		{
