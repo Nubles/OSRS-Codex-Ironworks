@@ -60,6 +60,8 @@ public final class Works
 	Map<Integer, String> names = new HashMap<>();
 	/** The last death's items not yet taken back, or null. */
 	Death death;
+	/** Units lost on death not yet taken back nor written off, by store: taking them back is no gain. */
+	Map<String, Long> grave = new HashMap<>();
 	/** Guide steps ticked by hand or seen done in the moment, by step key. */
 	List<String> ticked = new ArrayList<>();
 	/** True while the player follows the guide, so the game points the way. */
@@ -778,6 +780,9 @@ public final class Works
 				case "death":
 					death = gson.fromJson(value, Death.class);
 					break;
+				case "grave":
+					grave = gson.fromJson(value, COUNTS);
+					break;
 				case "following":
 					following = value.getAsBoolean();
 					break;
@@ -889,6 +894,7 @@ public final class Works
 		places = p;
 		seen = counts(seen);
 		sacks = counts(sacks);
+		grave = counts(grave);
 		Map<String, Integer> ic = new HashMap<>();
 		if (icons != null)
 		{
