@@ -2,6 +2,7 @@ package com.codex.ironworks.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import com.google.gson.Gson;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -191,6 +192,71 @@ public class TrackerTest
 			tick(units());
 		}
 		assertEquals(10, works.window(DAY, 0).tally("Shark").out(Use.DIED));
+	}
+
+	/** The game's own record of the death, as the plugin keeps it once the player is back up. */
+	private void deathOnRecord()
+	{
+		works.died(Collections.singletonMap(385, 10L), Collections.singletonMap(385, "Shark"), 301, time);
+	}
+
+	@Test
+	public void itemsTakenBackAfterLoggingInAgainAreNotLoot()
+	{
+		tick(units("Shark", 10));
+		tick(units(), new Classify.Context().died(true));
+		deathOnRecord();
+		tracker.restart(DAY);
+		tracker = new Tracker(works);
+		tick(units());
+		assertTrue(tick(units("Shark", 10), click("Take", "Shark", "Shark")).isEmpty());
+		assertEquals(0, works.window(DAY, 0).tally("Shark").in(Source.LOOTED));
+		assertEquals(0, works.window(DAY, 0).tally("Shark").out(Use.DIED));
+	}
+
+	@Test
+	public void itemsTakenBackFromDeathsOfficeLongAfterAreNotLoot()
+	{
+		tick(units("Shark", 10));
+		tick(units(), new Classify.Context().died(true));
+		deathOnRecord();
+		for (int i = 0; i < Tracker.GRAVE_TICKS * 3; i++)
+		{
+			tick(units());
+		}
+		assertEquals(0, works.window(DAY, 0).tally("Shark").out(Use.DIED));
+		assertTrue(tick(units("Shark", 10), click("Take", "Shark", "Shark")).isEmpty());
+		assertEquals(0, works.window(DAY, 0).tally("Shark").in(Source.LOOTED));
+		assertEquals(0, works.window(DAY, 0).tally("Shark").out(Use.DIED));
+	}
+
+	@Test
+	public void whatIsNeverTakenBackIsLostOnceTheDeathIsSettled()
+	{
+		tick(units("Shark", 10));
+		tick(units(), new Classify.Context().died(true));
+		deathOnRecord();
+		tick(units("Shark", 4), click("Take", "Shark", "Shark"));
+		tick(units("Shark", 4));
+		assertEquals(0, works.window(DAY, 0).tally("Shark").out(Use.DIED));
+		works.forgetDeath();
+		tick(units("Shark", 4));
+		assertEquals(6, works.window(DAY, 0).tally("Shark").out(Use.DIED));
+		assertEquals(0, works.window(DAY, 0).tally("Shark").in(Source.LOOTED));
+	}
+
+	@Test
+	public void theGraveIsSavedWithTheAccount()
+	{
+		tick(units("Shark", 10));
+		tick(units(), new Classify.Context().died(true));
+		deathOnRecord();
+		Gson gson = new Gson();
+		works = Works.read(gson, works.write(gson), time).works;
+		tracker = new Tracker(works);
+		tick(units());
+		assertTrue(tick(units("Shark", 10), click("Take", "Shark", "Shark")).isEmpty());
+		assertEquals(0, works.window(DAY, 0).tally("Shark").in(Source.LOOTED));
 	}
 
 	@Test

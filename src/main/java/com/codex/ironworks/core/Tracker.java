@@ -36,12 +36,23 @@ public final class Tracker
 	private int storage;
 	private int storageGrace;
 	private boolean deposit;
-	private final Map<String, Long> grave = new HashMap<>();
+	/** Ticks left before a grave no death record vouches for is written off. */
 	private int graveTicks;
+	/** True once a death on record has vouched for the grave, so it is written off when that record ends. */
+	private boolean vouched;
 
 	public Tracker(Works works)
 	{
 		this.works = works;
+	}
+
+	/**
+	 * Units lost on death and not yet taken back, by store. Kept with the account's saved works, so
+	 * items reclaimed after logging out, or from Death's Office long after, are still returns.
+	 */
+	private Map<String, Long> grave()
+	{
+		return works.grave;
 	}
 
 	/**
@@ -60,7 +71,7 @@ public final class Tracker
 		storage = 0;
 		storageGrace = 0;
 		deposit = false;
-		buryGrave(day);
+		// The grave is kept: its items are still the player's to take back after logging in again.
 	}
 
 	/** A world hop: nothing changes hands, but every window shuts and the next carried reading starts afresh. */
@@ -174,8 +185,22 @@ public final class Tracker
 		{
 			storageGrace--;
 		}
-		if (graveTicks > 0 && --graveTicks == 0)
+		if (graveTicks > 0)
 		{
+			graveTicks--;
+		}
+		if (grave().isEmpty())
+		{
+			vouched = false;
+		}
+		else if (works.getDeath() != null)
+		{
+			// While the death is on record its items wait at the grave or Death's Office.
+			vouched = true;
+		}
+		else if (!ctx.died && (vouched || graveTicks == 0))
+		{
+			// The death is settled or forgotten, or no record ever came: the rest is gone.
 			buryGrave(day);
 		}
 		works.record(flows, day);
@@ -271,22 +296,22 @@ public final class Tracker
 		{
 			if (!f.isGain() && f.use == Use.DIED)
 			{
-				grave.merge(f.store, f.units, Long::sum);
+				grave().merge(f.store, f.units, Long::sum);
 				graveTicks = GRAVE_TICKS;
 				continue;
 			}
-			long held = f.isGain() ? grave.getOrDefault(f.store, 0L) : 0;
+			long held = f.isGain() ? grave().getOrDefault(f.store, 0L) : 0;
 			if (held > 0 && f.source != Source.GATHERED && f.source != Source.MADE && f.source != Source.FARMED
 				&& f.source != Source.BOUGHT)
 			{
 				long back = Math.min(held, f.units);
 				if (held - back > 0)
 				{
-					grave.put(f.store, held - back);
+					grave().put(f.store, held - back);
 				}
 				else
 				{
-					grave.remove(f.store);
+					grave().remove(f.store);
 				}
 				if (f.units > back)
 				{
@@ -302,14 +327,15 @@ public final class Tracker
 	/** What was never taken back from a grave is gone. */
 	private void buryGrave(LocalDate day)
 	{
-		if (grave.isEmpty())
+		if (grave().isEmpty())
 		{
 			return;
 		}
 		List<Flow> lost = new ArrayList<>();
-		grave.forEach((k, v) -> lost.add(Flow.out(k, v, Use.DIED, null)));
-		grave.clear();
+		grave().forEach((k, v) -> lost.add(Flow.out(k, v, Use.DIED, null)));
+		grave().clear();
 		graveTicks = 0;
+		vouched = false;
 		works.record(lost, day);
 	}
 
